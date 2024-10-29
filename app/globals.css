@@ -3,19 +3,27 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  --RepasRed:   #Ea5548;
+  --RepasBlue:  #494B8B; 
+  --RepasGrey:  #e4ddd8; 
+  /*NOTE: Repo logotipo spalva nelabai tinka prie background*/
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --ContentBackground: rgb(247, 247, 247);
+
+  --background: var(--ContentBackground);
+  --foreground: var(--RepasBlue);
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+
+  font-family: 'Poppins';
+  /*font-family: Arial, Helvetica, sans-serif;*/ /*Old boilerplate fonts*/
+}
+/*To exlarge navbar links on hover*/
+@layer utilities {
+  .webkit-text-stroke {
+    -webkit-text-stroke: 1px var(--RepasRed); /* Adjust the color as needed */
+  }
 }
