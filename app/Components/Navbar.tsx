@@ -11,7 +11,7 @@ const Navbar = () => {
               <div className="flex flex-row my-auto">
                 <Link href="/kontaktai" style={{ textDecoration: "none" }}>
                 
-                  <button className="font-poppins text-base font-normal leading-6 xl:hover:webkit-text-stroke xl:hover:underline w-[55px]">
+                  <button className="ml-10 font-poppins text-base font-normal leading-6 xl:hover:webkit-text-stroke xl:hover:underline w-[55px]">
                     Kontaktai
                   </button>
                 </Link>
@@ -311,7 +311,7 @@ const Navbar = () => {
 
                 <div className="w-[16px] hidden xl:block"></div>
                 <Link href="/paslaugos" style={{ textDecoration: "none" }}>
-                  <div className="hidden xl:block w-[152px] h-[44px] text-center px-4 py-[10px] rounded-lg bg-[#Ea5548] xl:hover:bg-[#D43C33] text-white font-bold leading-6 font-poppins text-base">
+                  <div className="mr-10 hidden xl:block w-[152px] h-[44px] text-center px-4 py-[10px] rounded-lg bg-[#Ea5548] xl:hover:bg-[#D43C33] text-white font-bold leading-6 font-poppins text-base">
                     Užsisakyti
                   </div>
                 </Link>
