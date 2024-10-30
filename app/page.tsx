@@ -1,11 +1,9 @@
 import Link from "next/link";
 import ProductCard from "./Components/ProductCard";
-import Navbar from "./Components/Navbar";
 
 export default function Home() {
   return (
     <main>
-      <Navbar/>
 
       <h1>Boilerplate stuff to test out</h1>
 

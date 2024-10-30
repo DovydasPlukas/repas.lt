@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Poppins } from'next/font/google';
 import "./globals.css";
+import Navbar from "./Components/Navbar";
 
 const FontPoppins = Poppins({
   subsets:['latin'],
@@ -33,7 +34,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      ><Navbar/>
         {children}
       </body>
     </html>
