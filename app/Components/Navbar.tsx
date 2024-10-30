@@ -96,6 +96,11 @@ const Navbar = () => {
                 </svg>
               </Link>
               <div className="flex flex-row justify-end my-auto xl:w-[341px]">
+              <Link
+                rel="alternate"
+                href="/prisijungimas"
+                style={{ textDecoration: "none"}}
+              >
                 <svg
                   className="hidden xl:block  my-auto  p-auto cursor-pointer"
                   xmlns="http://www.w3.org/2000/svg"
@@ -126,10 +131,12 @@ const Navbar = () => {
                     stroke-linejoin="round"
                   ></path>
                 </svg>
+                </Link>
                 <Link
                   className="hidden"
-                  href="/login/"
+                  href="/paskyra"
                   style={{ textDecoration: "none" }}
+                  /*TODO: fix icon width, changed after putting Link*/
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -163,7 +170,7 @@ const Navbar = () => {
                 </Link>
                 <Link
                   className="flex flex-col justify-center mx-4"
-                  href="/"
+                  href="/logout"
                   style={{ textDecoration: "none" }}
                 >
                   <svg
@@ -269,45 +276,7 @@ const Navbar = () => {
                   </div>
                 </Link>
                 <div className="w-[16px]"></div>
-                <div className="hidden">
-                  <svg
-                    className="my-auto rounded-[3px] xl:hover:cursor-pointer'"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="27"
-                    height="21"
-                    viewBox="0 0 27 21"
-                    fill="none"
-                  >
-                    <g mask="url(#mask0_42701_11100)">
-                      <path
-                        d="M0.333252 4.5C0.333252 2.29086 2.12411 0.5 4.33325 0.5H22.9999C25.2091 0.5 26.9999 2.29086 26.9999 4.5V16.5C26.9999 18.7091 25.2091 20.5 22.9999 20.5H4.33325C2.12411 20.5 0.333252 18.7091 0.333252 16.5V4.5Z"
-                        fill="#41479B"
-                      ></path>
-                      <path
-                        d="M26.9999 17.8959L17.1388 10.5L26.9999 3.10417V0.5H23.5277L13.6666 7.89585L3.80547 0.5H0.333252V3.10417L10.1944 10.5L0.333252 17.8959V20.5H3.80552L13.6666 13.1042L23.5277 20.5H26.9999V17.8959Z"
-                        fill="white"
-                      ></path>
-                      <path
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
-                        d="M0.333281 0.5L0.333252 0.500039V1.54166L12.2777 10.5L0.333252 19.4584V20.5H1.72222L13.6666 11.5417L25.611 20.5H26.9999V19.4584L15.0555 10.5L26.9999 1.5417V0.5H25.6111L13.6666 9.45836L1.72215 0.5H0.333281Z"
-                        fill="#DC251C"
-                      ></path>
-                      <path
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
-                        d="M10.3333 7.16667V0.5H16.9999V7.16667H26.9999V13.8333H16.9999V20.5H10.3333V13.8333H0.333252V7.16667H10.3333Z"
-                        fill="white"
-                      ></path>
-                      <path
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
-                        d="M11.9999 8.83333V0.5H15.3333V8.83333H26.9999V12.1667H15.3333V20.5H11.9999V12.1667H0.333252V8.83333H11.9999Z"
-                        fill="#DC251C"
-                      ></path>
-                    </g>
-                  </svg>
-                </div>
+                
 
                 <div className="w-[16px] hidden xl:block"></div>
                 <Link href="/paslaugos" style={{ textDecoration: "none" }}>
