@@ -1,15 +1,5 @@
 export default function NotFound() {
   return (
-    /*
-        <div>
-        <div className='min-h-80 flex items-center justify-center bg"'>
-            <div className=" flex-col">
-            <h1 className="text-3xl font-bold text-red-600">Puslapis nebuvo rastas</h1>
-            <p>404 klaida</p>
-            </div>
-        </div>
-      </div>
-*/
     <div className="pt-20">
       <div className="text-xl leading-[34px] text-[#494B8B] font-poppins text-center font-bold px-6 mt-4 xl:text-[34px] xl:leading-[44px]">
         Ivyko klaida
@@ -107,6 +97,8 @@ export default function NotFound() {
           4
         </div>
       </div>
+      {/*Phone screen*/}
+      {/*TODO: fix bubbles, doesn't reach bottom, goes beyond width etc.*/}
       <div className="overflow-hidden  absolute bottom-0 w-screen -z-10 mx-auto">
         <svg
           xmlns="http://www.w3.org/2000/svg"

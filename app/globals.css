@@ -12,6 +12,10 @@
 
   --background: var(--ContentBackground);
   --foreground: var(--RepasBlue);
+
+  --footer-bg-color: #1e293b;
+  /*--footer-bg-color: var(--RepasBlue);*/
+  --footer-text-color: #ecf0f1; 
 }
 
 body {
@@ -19,11 +23,15 @@ body {
   background: var(--background);
 
   font-family: 'Poppins';
-  /*font-family: Arial, Helvetica, sans-serif;*/ /*Old boilerplate fonts*/
 }
 /*To exlarge navbar links on hover*/
 @layer utilities {
   .webkit-text-stroke {
     -webkit-text-stroke: 1px var(--RepasRed); /* Adjust the color as needed */
   }
+}
+
+footer {
+  background-color: var(--footer-bg-color);
+  color: var(--footer-text-color);
 }
