@@ -10,20 +10,16 @@ const Navbar = () => {
             <div className="flex flex-row justify-between pt-3 pb-2 md:py-3 xl:pt-6 border-b border-RepasBlue ">
               <div className="flex flex-row my-auto">
                 <Link href="/kontaktai" style={{ textDecoration: "none" }}>
-                
                   <button className="ml-10 font-poppins text-base font-normal leading-6 xl:hover:webkit-text-stroke xl:hover:underline w-[55px]">
                     Kontaktai
                   </button>
                 </Link>
                 <div className="w-4"></div>
-               
+
                 <div className="xl:w-[238px]"></div>
               </div>
-              <Link
-                rel="alternate"
-                href="/"
-                style={{ textDecoration: "none" }}
-              >{/* Repas logo */}
+              <Link rel="alternate" href="/" style={{ textDecoration: "none" }}>
+                {/* Repas logo */}
                 <svg
                   version="1.1"
                   className="hidden xl:block mt-1 xl:h-[51px] xl:w-[151px]"
@@ -95,119 +91,74 @@ const Navbar = () => {
                   />
                 </svg>
               </Link>
-              <div className="flex flex-row justify-end my-auto xl:w-[341px]">
-              <Link
-                rel="alternate"
-                href="/prisijungimas"
-                style={{ textDecoration: "none"}}
-              >
-                <svg
-                  className="hidden xl:block  my-auto  p-auto cursor-pointer"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="21"
-                  height="20"
-                  viewBox="0 0 21 20"
-                  fill="none"
-                >
-                  <path
-                    d="M7.4668 5.367V4.434C7.4668 2.399 9.15415 0.75 11.2375 0.75H16.2351C18.3123 0.75 19.9956 2.395 19.9956 4.425V15.565C19.9956 17.6 18.3072 19.25 16.2249 19.25H11.2262C9.15005 19.25 7.4668 17.604 7.4668 15.575V14.633"
-                    stroke="#Ea5548"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  ></path>
-                  <path
-                    d="M2.04082 10L15.3408 10"
-                    stroke="#4E4B66"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  ></path>
-                  <path
-                    d="M4.21191 12.916L1.60036 10.001L4.21191 7.08502"
-                    stroke="#4E4B66"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  ></path>
-                </svg>
-                </Link>
+              <div className="flex flex-row justify-end items-center xl:w-[341px]">
                 <Link
-                  className="hidden"
-                  href="/paskyra"
+                  rel="alternate"
+                  href="/prisijungimas"
                   style={{ textDecoration: "none" }}
-                  /*TODO: fix icon width, changed after putting Link*/
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="21"
-                    height="20"
-                    viewBox="0 0 21 20"
                     fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="size-6"
                   >
                     <path
-                      d="M14.9078 10H1.60547"
-                      stroke="#4E4B66"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    ></path>
-                    <path
-                      d="M12.9772 7.08398L15.9733 9.99998L12.9772 12.916"
-                      stroke="#4E4B66"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    ></path>
-                    <path
-                      d="M7.47119 5.367V4.434C7.47119 2.399 9.15854 0.75 11.2419 0.75H16.2395C18.3167 0.75 20 2.395 20 4.425V15.565C20 17.6 18.3116 19.25 16.2292 19.25H11.2306C9.15445 19.25 7.47119 17.604 7.47119 15.575V14.633"
-                      stroke="#4CC2F1"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    ></path>
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15M12 9l3 3m0 0-3 3m3-3H2.25"
+                    />
                   </svg>
                 </Link>
                 <Link
-                  className="flex flex-col justify-center mx-4"
+                  className="hidden"
                   href="/logout"
                   style={{ textDecoration: "none" }}
                 >
                   <svg
-                    className="hidden xl:block my-auto  cursor-pointer"
                     xmlns="http://www.w3.org/2000/svg"
-                    width="17"
-                    height="20"
-                    viewBox="0 0 17 20"
                     fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="size-6"
                   >
                     <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
-                      d="M8.16559 13.3281C4.29797 13.3281 0.995117 13.9129 0.995117 16.2548C0.995117 18.5967 4.27702 19.2024 8.16559 19.2024C12.0332 19.2024 15.3351 18.6167 15.3351 16.2757C15.3351 13.9348 12.0542 13.3281 8.16559 13.3281Z"
-                      stroke="#4E4B66"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    ></path>
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9"
+                    />
+                  </svg>
+                </Link>
+                <Link
+                  className="flex flex-col justify-center mx-4"
+                  href="/paskyra"
+                  style={{ textDecoration: "none" }}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="size-6"
+                  >
                     <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
-                      d="M8.16555 9.9883C10.7036 9.9883 12.7608 7.93021 12.7608 5.39211C12.7608 2.85402 10.7036 0.796875 8.16555 0.796875C5.62746 0.796875 3.56936 2.85402 3.56936 5.39211C3.56079 7.92164 5.6046 9.97973 8.13317 9.9883H8.16555Z"
-                      stroke="#4E4B66"
-                      stroke-width="1.42857"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    ></path>
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+                    />
                   </svg>
                 </Link>
                 <Link
                   className="flex flex-col justify-center mr-4"
-                  href="/"
+                  href="/order"
                   style={{ textDecoration: "none" }}
                 >
                   <svg
-                    className="hidden xl:block my-auto  cursor-pointer"
+                    className="hidden xl:block my-auto cursor-pointer"
                     xmlns="http://www.w3.org/2000/svg"
                     width="19"
                     height="20"
@@ -216,67 +167,37 @@ const Navbar = () => {
                   >
                     <path
                       d="M13.3006 14.2685H6.08056M13.3006 10.082H6.08056M8.83566 5.90522H6.08066M13.493 0.794922C13.493 0.794922 5.81596 0.798922 5.80396 0.798922C3.04396 0.815922 1.33496 2.63192 1.33496 5.40192V14.5979C1.33496 17.3819 3.05696 19.2049 5.84096 19.2049C5.84096 19.2049 13.517 19.2019 13.53 19.2019C16.29 19.1849 18 17.3679 18 14.5979V5.40192C18 2.61792 16.277 0.794922 13.493 0.794922Z"
-                      stroke="#4E4B66"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    ></path>
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
                   </svg>
                 </Link>
                 <Link
                   className="flex flex-col justify-center"
-                  href="/"
+                  href="/cart"
                   style={{ textDecoration: "none" }}
                 >
                   <div className="relative">
                     <svg
-                      className="my-auto xl:hover:cursor-pointer h-[24px] w-[25px]"
                       xmlns="http://www.w3.org/2000/svg"
-                      width="25"
-                      height="24"
-                      viewBox="0 0 23 22"
                       fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="size-6"
                     >
                       <path
-                        d="M1.33325 1L3.5819 1.39908L4.62299 14.1174C4.70623 15.1561 5.55272 15.9532 6.56894 15.9499H18.3625C19.3322 15.9521 20.1549 15.2204 20.2922 14.2361L21.3182 6.9662C21.4328 6.15363 20.8825 5.39982 20.0911 5.28232C20.0219 5.27234 3.94299 5.2668 3.94299 5.2668"
-                        stroke="#4E4B66"
-                        stroke-width="1.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      ></path>
-                      <path
-                        d="M13.6301 9.36384H16.628"
-                        stroke="#4E4B66"
-                        stroke-width="1.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      ></path>
-                      <path
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
-                        d="M6.09421 19.793C6.41962 19.793 6.68232 20.0635 6.68232 20.396C6.68232 20.7297 6.41962 21.0002 6.09421 21.0002C5.76881 21.0002 5.5061 20.7297 5.5061 20.396C5.5061 20.0635 5.76881 19.793 6.09421 19.793Z"
-                        fill="#4E4B66"
-                        stroke="#4E4B66"
-                        stroke-width="1.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      ></path>
-                      <path
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
-                        d="M18.2895 19.793C18.6149 19.793 18.8787 20.0635 18.8787 20.396C18.8787 20.7297 18.6149 21.0002 18.2895 21.0002C17.9641 21.0002 17.7014 20.7297 17.7014 20.396C17.7014 20.0635 17.9641 19.793 18.2895 19.793Z"
-                        fill="#4E4B66"
-                        stroke="#4E4B66"
-                        stroke-width="1.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      ></path>
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
+                      />
                     </svg>
                     <div className="hidden">0</div>
                   </div>
                 </Link>
                 <div className="w-[16px]"></div>
-                
 
                 <div className="w-[16px] hidden xl:block"></div>
                 <Link href="/paslaugos" style={{ textDecoration: "none" }}>
@@ -342,7 +263,6 @@ const Navbar = () => {
                   </div>
                 </Link>
               </div>
-
               <a></a> {/* Alternative button */}
             </div>
           </div>
