@@ -8,15 +8,13 @@ const Navbar = () => {
         <div className=" bg-white w-full px-4 fixed md:px-[28px] xl:px-[145px] 2xl:px-[0px] z-30">
           <div className=" sm:max-w-[688px]  md:max-w-[968px] lg:max-w-[1150px]  xl:max-w-[1550px] mx-auto">
             <div className="flex flex-row justify-between pt-3 pb-2 md:py-3 xl:pt-6 border-b border-RepasBlue ">
-              <div className="flex flex-row my-auto">
+              <div className="pl-10 my-auto">
                 <Link href="/kontaktai" style={{ textDecoration: "none" }}>
-                  <button className="ml-10 font-poppins text-base font-normal leading-6 xl:hover:webkit-text-stroke xl:hover:underline w-[55px]">
+                  <div className="font-poppins text-base font-normal leading-6 xl:hover:webkit-text-stroke xl:hover:underline w-[55px]">
                     Kontaktai
-                  </button>
+                  </div>
                 </Link>
-                <div className="w-4"></div>
-
-                <div className="xl:w-[238px]"></div>
+                <div className="xl:w-[254px]"></div>
               </div>
               <Link rel="alternate" href="/" style={{ textDecoration: "none" }}>
                 {/* Repas logo */}
@@ -91,7 +89,7 @@ const Navbar = () => {
                   />
                 </svg>
               </Link>
-              <div className="flex flex-row justify-end items-center xl:w-[341px]">
+              <div className="pr-10 flex flex-row justify-end items-center xl:w-[341px]">
                 <Link
                   rel="alternate"
                   href="/prisijungimas"
@@ -201,7 +199,7 @@ const Navbar = () => {
 
                 <div className="w-[16px] hidden xl:block"></div>
                 <Link href="/paslaugos" style={{ textDecoration: "none" }}>
-                  <div className="mr-10 hidden xl:block w-[152px] h-[44px] text-center px-4 py-[10px] rounded-lg bg-[#Ea5548] xl:hover:bg-[#D43C33] text-white font-bold leading-6 font-poppins text-base">
+                  <div className="hidden xl:block w-[152px] h-[44px] text-center px-4 py-[10px] rounded-lg bg-[#Ea5548] xl:hover:bg-[#D43C33] text-white font-bold leading-6 font-poppins text-base">
                     Užsisakyti
                   </div>
                 </Link>
