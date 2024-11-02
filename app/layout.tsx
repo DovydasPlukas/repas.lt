@@ -3,6 +3,7 @@ import { Poppins } from'next/font/google';
 import "./globals.css";
 import Navbar from "./Components/Navbar";
 import Footer from "./Components/Footer";
+import PageFill from "./Components/PageFill";
 
 const FontPoppins = Poppins({
   subsets:['latin'],
@@ -17,11 +18,12 @@ export const metadata: Metadata = {
 export default function RootLayout({children,}: Readonly<{children: React.ReactNode;}>) {
   return (
     <html lang="en">
-      <body className={`${FontPoppins}  antialiased`}>
+      <body className={`${FontPoppins}  antialiased flex flex-col min-h-screen`}>
         <Navbar/>
-        <main className="flex flex-col min-h-screen">
+        <main>
           {children}
         </main>
+        <PageFill/>
         <Footer/>
       </body>
     </html>
