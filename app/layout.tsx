@@ -20,7 +20,7 @@ export default function RootLayout({children,}: Readonly<{children: React.ReactN
     <html lang="en">
       <body className={`${FontPoppins}  antialiased flex flex-col min-h-screen`}>
         <Navbar/>
-        <main>
+        <main className="relative overflow-hidden">
           {children}
         </main>
         <PageFill/>

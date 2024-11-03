@@ -1,7 +1,7 @@
 'use client';
 import React from 'react'
 
-const AddToCart = () => {
+const TestPrideti = () => {
   return (
     <div>
       <button onClick={() => console.log('Click')}>Prideti paslauga</button>
@@ -9,4 +9,4 @@ const AddToCart = () => {
   )
 }
 
-export default AddToCart
+export default TestPrideti

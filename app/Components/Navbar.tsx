@@ -9,7 +9,7 @@ const Navbar = () => {
         <div className=" bg-white w-full px-4 fixed md:px-[28px] xl:px-[145px] 2xl:px-[0px] z-30">
           <div className=" sm:max-w-[688px]  md:max-w-[968px] lg:max-w-[1150px]  xl:max-w-[1550px] mx-auto">
             <div className="flex flex-row justify-between pt-3 pb-2 md:py-3 xl:pt-6 border-b border-RepasBlue ">
-              <div className="pl-10 my-auto">
+              <div className="pl-10 max-xl:pl-0  my-auto">
                 <Link href="/kontaktai" style={{ textDecoration: "none" }}>
                   <div className="font-poppins text-base font-normal leading-6 xl:hover:webkit-text-stroke xl:hover:underline w-[55px]">
                     Kontaktai
@@ -23,12 +23,12 @@ const Navbar = () => {
                   className="hidden xl:block  mx-auto md:mx-0 object-contain  xl:h-[50px] xl:w-[257px]"
                   src="/repas_logo_2.svg"
                   alt="Logo"
-                  width={150}         
-                  height={50}         
-                  priority            
+                  width={150}
+                  height={50}
+                  priority
                 />
               </Link>
-              <div className="pr-10 flex flex-row justify-end items-center xl:w-[341px]">
+              <div className="pr-10 max-xl:pr-0 flex flex-row justify-end items-center xl:w-[341px]">
                 <Link
                   rel="alternate"
                   href="/prisijungimas"
@@ -40,7 +40,7 @@ const Navbar = () => {
                     viewBox="0 0 24 24"
                     strokeWidth={1.5}
                     stroke="currentColor"
-                    className="size-6"
+                    className="size-6 hidden xl:block my-auto cursor-pointer"
                   >
                     <path
                       strokeLinecap="round"
@@ -60,7 +60,7 @@ const Navbar = () => {
                     viewBox="0 0 24 24"
                     strokeWidth={1.5}
                     stroke="currentColor"
-                    className="size-6"
+                    className="size-6 hidden xl:block my-auto  cursor-pointer"
                   >
                     <path
                       strokeLinecap="round"
@@ -80,7 +80,7 @@ const Navbar = () => {
                     viewBox="0 0 24 24"
                     strokeWidth={1.5}
                     stroke="currentColor"
-                    className="size-6"
+                    className="size-6 hidden xl:block my-auto  cursor-pointer"
                   >
                     <path
                       strokeLinecap="round"
@@ -123,7 +123,7 @@ const Navbar = () => {
                       viewBox="0 0 24 24"
                       strokeWidth={1.5}
                       stroke="currentColor"
-                      className="size-6"
+                      className="size-6 my-auto cursor-pointer"
                     >
                       <path
                         strokeLinecap="round"
@@ -145,8 +145,24 @@ const Navbar = () => {
               </div>
             </div>
             <div className="mb-3 xl:mb-3 pt-2 flex flex-row justify-between ">
-              <div className="xl:hidden"></div> {/* For mobile*/}
-              <a></a> {/* Alternative logo */}
+              {/* For mobile*/}
+              <div className="xl:hidden">
+                <Link href="/menu/" style={{ textDecoration: "none" }}>
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
+                  </svg>
+                </Link>
+              </div>
+              <Link rel="alternate" href="/" style={{ textDecoration: "none" }}>
+                <Image
+                  className="xl:hidden mx-auto md:mx-0 object-contain  xl:h-[50px] xl:w-[257px]"
+                  src="/repas_logo_2.svg"
+                  alt="Logo"
+                  width={70}
+                  height={26}
+                  priority
+                />
+              </Link>
               <div className="hidden xl:flex w-full flex-row justify-center space-x-6 mt-[6px] overflow-hidden">
                 {/* Desktop */}
                 <Link
@@ -200,7 +216,17 @@ const Navbar = () => {
                   </div>
                 </Link>
               </div>
-              <a></a> {/* Alternative button */}
+              {/* Alternative button */}
+              <div className="w-[16px] hidden xl:block"></div>
+              <Link
+                rel="alternate"
+                href="/paslaugos"
+                style={{ textDecoration: "none" }}
+              >
+                <div className="xl:hidden lg:px-3 px-[10px] py-[6px] rounded-lg bg-[#Ea5548] xl:hover:bg-[#D43C33] text-white font-bold leading-[22px] font-poppins text-sm">
+                  Užsisakyti
+                </div>
+              </Link>
             </div>
           </div>
         </div>

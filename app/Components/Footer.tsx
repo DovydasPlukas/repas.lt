@@ -20,7 +20,7 @@ const Footer = () => {
                   </Link>
                   <div className="mt-6 mb-4 md:mt-0 grid grid-cols-2 gap-x-6 md:gap-x-[65px] gap-y-2 xl:w-max">
                     <div className="text-right md:text-left leading-[22px]   xl:leading-6 font-semibold font-poppins text-sm  xl:text-base">
-                      Imone</div>
+                      Įmonė</div>
                     <div className="text-left leading-[22px] font-semibold  xl:leading-6 font-poppins text-sm xl:text-base ">
                       Aptarnavimo apskritis</div>
                     <Link  href="/apie-mus" style={{ textDecoration: "none" }}>
@@ -28,26 +28,25 @@ const Footer = () => {
                        Apie mus</div>
                     </Link>
                     <div className="text-[--RepasRed] text-left  leading-[22px] font-normal xl:leading-6 font-poppins text-sm xl:text-base ">
-                      Siauliai</div>
+                      Šiauliai</div>
                     <a  href="/kontaktai" style={{ textDecoration: "none" }}>
                     <div className="text-[--RepasRed] underline text-right md:text-left  leading-[22px] font-normal  xl:leading-6 hoverwhite xl:w-[91px] font-poppins text-sm xl:text-base ">
                       Susisiekite su mumis</div>
                     </a>
                     </div>
-                    <div className="w-[221px] lg:w-[57px]"></div>
                     </div>
                     <div className="w-[240px] md:w-full bg-[--RepasGrey] h-[1px] mx-auto md:my-2"></div>
                     <div className="md:flex flex-row-reverse justify-between">
 
                       <div className="grid grid-cols-2 gap-x-[27px] xl:gap-x-[25px]  mt-4 mb-2 lg:hidden">
                         <a rel="noopener noreferrer" target="_blank" className="text-right xl:w-[134px] text-[--RepasRed] leading-5 underline  xl:leading-[22px] hoverbold  text-xs font-poppins xl:text-sm" href="/terms-and-conditions/">
-                        Terminai ir salygos</a>
+                        Terminai ir sąlygos</a>
                         <a rel="noopener noreferrer" target="_blank" className="text-left xl:text-right xl:w-[99px]  text-[--RepasRed]  leading-5 underline xl:leading-[22px] hoverbold  text-xs font-poppins xl:text-sm" href="/privacy-notice/">
                         Privatumo politika</a>
                       </div>
                       <div className="hidden lg:flex flex-row  space-x-[24px]  mt-4 mb-2  w-[233px] xl:w-[300px]">
                         <a rel="noopener noreferrer" target="_blank" className="text-right xl:w-[150px] text-xs text-[--RepasRed] font-poppins leading-5 underline xl:text-sm xl:leading-[22px] hoverbold" href="/terms-and-conditions/">
-                        Terminai ir salygos</a>
+                        Terminai ir sąlygos</a>
                         <a rel="noopener noreferrer" target="_blank" className="text-left xl:text-right xl:w-[150px]  text-xs text-[--RepasRed] font-poppins leading-5 underline xl:text-sm xl:leading-[22px] hoverbold" href="/privacy-notice/">
                         Privatumo politika</a>
                         </div>
@@ -56,7 +55,7 @@ const Footer = () => {
                         </div>
                         </div>
                         </div>
-                        <div className="xl:hidden h-[75px]"></div>
+                        <div className="xl:hidden h-[25px]"></div>
                         </footer>
   );
 };
