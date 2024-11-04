@@ -5,7 +5,7 @@ const Card_4 = () => {
         <a
           rel="alternate"
           className="group w-full flex flex-col py-3 px-2 rounded-[10px]  md:px-4 md:py-6 lg:h-[382px] xl:h-[360px] bg-[#f3d37a] xl:hover:bg-[#fad879] xl:hover:text-black"
-          href="/skalbimo-masiniu-tvarkymas"
+          href="/skalbimo-masinu-tvarkymas"
           style={{ textDecoration: "none" }}
         >
           <div className="w-[64px] h-[74px] md:hidden flex flex-col justify-center items-center mx-auto">

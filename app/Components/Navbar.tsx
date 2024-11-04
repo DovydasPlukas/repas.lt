@@ -1,8 +1,17 @@
 // components/Navbar.tsx
 import Link from 'next/link';
 import Image from 'next/image';
+import { PASLAUGOS_LINKS } from '../constants/constants';
+
+//TODO: Add auth logic
+//TODO: Add shopping card logic
+//TODO: Fix menu on small devices
+//TODO: Fix links with constants.ts
+//TODO: Put svg/jsx into a new file
 
 const Navbar = () => {
+  const isUserLoggedIn = true;
+
   return (
     <nav className="h-[99px]   xl:h-[142px]">
       <div>
@@ -29,28 +38,11 @@ const Navbar = () => {
                 />
               </Link>
               <div className="pr-10 max-xl:pr-0 flex flex-row justify-end items-center xl:w-[341px]">
+               
+
+                {isUserLoggedIn? (
+                <>
                 <Link
-                  rel="alternate"
-                  href="/prisijungimas"
-                  style={{ textDecoration: "none" }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="size-6 hidden xl:block my-auto cursor-pointer"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15M12 9l3 3m0 0-3 3m3-3H2.25"
-                    />
-                  </svg>
-                </Link>
-                <Link
-                  className="hidden"
                   href="/logout"
                   style={{ textDecoration: "none" }}
                 >
@@ -111,6 +103,30 @@ const Navbar = () => {
                     />
                   </svg>
                 </Link>
+                </>
+                ):(
+                  <Link
+                  rel="alternate"
+                  href="/prisijungimas"
+                  style={{ textDecoration: "none" }}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="size-6 hidden xl:block my-auto cursor-pointer mr-3"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15M12 9l3 3m0 0-3 3m3-3H2.25"
+                    />
+                  </svg>
+                </Link>
+                )}
+
                 <Link
                   className="flex flex-col justify-center"
                   href="/cart"
@@ -134,7 +150,8 @@ const Navbar = () => {
                     <div className="hidden">0</div>
                   </div>
                 </Link>
-                <div className="w-[16px]"></div>
+                {isUserLoggedIn ?(<div className="w-[16px]"></div>):(<div></div>)}
+                
 
                 <div className="w-[16px] hidden xl:block"></div>
                 <Link href="/paslaugos" style={{ textDecoration: "none" }}>
@@ -163,59 +180,22 @@ const Navbar = () => {
                   priority
                 />
               </Link>
-              <div className="hidden xl:flex w-full flex-row justify-center space-x-6 mt-[6px] overflow-hidden">
                 {/* Desktop */}
-                <Link
-                  rel="alternate"
-                  href="/skalbimas"
-                  style={{ textDecoration: "none" }}
-                  className="flex-1 text-center"
-                >
-                  <div className="font-normal text-RepasBlue xl:hover:underline xl:hover:webkit-text-stroke">
-                    Skalbimas
-                  </div>
-                </Link>
-                <Link
-                  rel="alternate"
-                  href="/kostiumu-valymas"
-                  style={{ textDecoration: "none" }}
-                  className="flex-1 text-center"
-                >
-                  <div className="font-normal text-RepasBlue xl:hover:underline xl:hover:webkit-text-stroke">
-                    Kostiumu valymas
-                  </div>
-                </Link>
-                <Link
-                  rel="alternate"
-                  href="/lyginimas"
-                  style={{ textDecoration: "none" }}
-                  className="flex-1 text-center"
-                >
-                  <div className="font-normal text-RepasBlue xl:hover:underline xl:hover:webkit-text-stroke">
-                    Lyginimas
-                  </div>
-                </Link>
-                <Link
-                  rel="alternate"
-                  href="/patalines-valymas"
-                  style={{ textDecoration: "none" }}
-                  className="flex-1 text-center"
-                >
-                  <div className="font-normal text-RepasBlue xl:hover:underline xl:hover:webkit-text-stroke">
-                    Patalines valymas
-                  </div>
-                </Link>
-                <Link
-                  rel="alternate"
-                  href="/skalbimo-masiniu-tvarkymas"
-                  style={{ textDecoration: "none" }}
-                  className="flex-1 text-center"
-                >
-                  <div className="font-normal text-RepasBlue xl:hover:underline xl:hover:webkit-text-stroke">
-                    Skalbimo masiniu tvarkymas
-                  </div>
-                </Link>
-              </div>
+                <div className="hidden xl:flex w-full flex-row justify-center space-x-6 mt-[6px] overflow-hidden">
+                  {PASLAUGOS_LINKS.map((link) => (
+                    <Link
+                      key={link.href}
+                      rel="alternate"
+                      href={link.href}
+                      style={{ textDecoration: 'none' }}
+                      className="flex-1 text-center"
+                    >
+                      <div className="font-normal text-RepasBlue xl:hover:underline xl:hover:webkit-text-stroke">
+                        {link.label}
+                      </div>
+                    </Link>
+                  ))}
+                </div>
               {/* Alternative button */}
               <div className="w-[16px] hidden xl:block"></div>
               <Link

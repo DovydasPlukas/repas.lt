@@ -1,6 +1,11 @@
 import React from 'react'
 import Cards from '../Components/Cards'
 
+export const metadata = {
+  title: "Paslaugos",
+  description: "Paslaugos puslapis",
+};
+
 const PaslaugosPage = () => {
   return (
      

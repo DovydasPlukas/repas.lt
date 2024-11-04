@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({children,}: Readonly<{children: React.ReactNode;}>) {
   return (
-    <html lang="en">
+    <html lang="lt">
       <body className={`${FontPoppins}  antialiased flex flex-col min-h-screen`}>
         <Navbar/>
         <main className="relative overflow-hidden">
