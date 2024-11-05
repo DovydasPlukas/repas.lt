@@ -8,6 +8,7 @@ export const LogoutIcon = () => (
     strokeWidth={1.5}
     stroke="currentColor"
     className="size-6 hidden xl:block my-auto cursor-pointer"
+    aria-label="Atsijungti"
   >
     <path
       strokeLinecap="round"
@@ -25,6 +26,7 @@ export const LogoutIcon = () => (
       strokeWidth={1.5}
       stroke="currentColor"
       className="size-6 hidden xl:block my-auto cursor-pointer"
+      aria-label="Paskyra"
     >
       <path
         strokeLinecap="round"
@@ -42,6 +44,7 @@ export const LogoutIcon = () => (
       viewBox="0 0 19 20"
       fill="none"
       className="hidden xl:block my-auto cursor-pointer"
+      aria-label="Užsakymai"
     >
       <path
         d="M13.3006 14.2685H6.08056M13.3006 10.082H6.08056M8.83566 5.90522H6.08066M13.493 0.794922C13.493 0.794922 5.81596 0.798922 5.80396 0.798922C3.04396 0.815922 1.33496 2.63192 1.33496 5.40192V14.5979C1.33496 17.3819 3.05696 19.2049 5.84096 19.2049C5.84096 19.2049 13.517 19.2019 13.53 19.2019C16.29 19.1849 18 17.3679 18 14.5979V5.40192C18 2.61792 16.277 0.794922 13.493 0.794922Z"
@@ -61,6 +64,7 @@ export const LogoutIcon = () => (
       strokeWidth={1.5}
       stroke="currentColor"
       className="size-6 my-auto cursor-pointer"
+      aria-label="Vežimėlis"
     >
       <path
         strokeLinecap="round"
@@ -78,6 +82,7 @@ export const LogoutIcon = () => (
       strokeWidth={1.5}
       stroke="currentColor"
       className="size-6 hidden xl:block my-auto cursor-pointer mr-3"
+      aria-label="Prisijungti"
     >
       <path
         strokeLinecap="round"
@@ -95,6 +100,7 @@ export const LogoutIcon = () => (
       strokeWidth={1.5}
       stroke="currentColor"
       className="size-6"
+      aria-label="Menu"
     >
       <path
         strokeLinecap="round"

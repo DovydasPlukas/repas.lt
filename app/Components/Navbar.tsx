@@ -25,7 +25,7 @@ const Navbar = () => {
                 </Link>
                 <div className="xl:w-[254px]"></div>
               </div>
-              <Link href="/">
+              <Link href="/" aria-label="Logo">
                 <Image
                   className="hidden xl:block mx-auto md:mx-0 object-contain xl:h-[50px] xl:w-[257px]"
                   src="/repas_logo_2.svg"
@@ -62,7 +62,7 @@ const Navbar = () => {
                 </Link>
                 {isUserLoggedIn ? (<div className="w-[16px]"></div>) : (<div></div>)}
                 <div className="w-[16px] hidden xl:block"></div>
-                <Link href={USER_NAV_LINKS.services.href}>
+                <Link href={USER_NAV_LINKS.services.href} aria-label='Užsisakyti'>
                   <div className="hidden xl:block w-[152px] h-[44px] text-center px-4 py-[10px] rounded-lg bg-[#Ea5548] xl:hover:bg-[#D43C33] text-white font-bold leading-6 font-poppins text-base">
                     {USER_NAV_LINKS.services.label}
                   </div>
@@ -77,7 +77,7 @@ const Navbar = () => {
                   <MenuIcon />
                 </Link>
               </div>
-              <Link href="/">
+              <Link href="/" aria-label="Logo">
                 <Image
                   className="xl:hidden mx-auto md:mx-0 object-contain xl:h-[50px] xl:w-[257px]"
                   src="/repas_logo_2.svg"
@@ -87,7 +87,7 @@ const Navbar = () => {
                   priority
                 />
               </Link>
-              <Link href={USER_NAV_LINKS.services.href}>
+              <Link href={USER_NAV_LINKS.services.href} aria-label="Užsisakyti">
                 <div className="xl:hidden lg:px-3 px-[10px] py-[6px] rounded-lg bg-[#Ea5548] xl:hover:bg-[#D43C33] text-white font-bold leading-[22px] font-poppins text-sm">
                   {USER_NAV_LINKS.services.label}
                 </div>
