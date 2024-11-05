@@ -9,7 +9,7 @@ import { LogoutIcon, AccountIcon, OrderIcon, CartIcon, LoginIcon, MenuIcon  } fr
 //TODO: Fix menu on small devices
 
 const Navbar = () => {
-  const isUserLoggedIn = false;
+  const isUserLoggedIn = true;
 
   return (
     <nav className="h-[99px] xl:h-[142px]">
@@ -25,7 +25,7 @@ const Navbar = () => {
                 </Link>
                 <div className="xl:w-[254px]"></div>
               </div>
-              <Link href="/" aria-label="Logo">
+              <Link href="/" aria-label="Logo" className='hidden xl:block' >
                 <Image
                   className="hidden xl:block mx-auto md:mx-0 object-contain xl:h-[50px] xl:w-[257px]"
                   src="/repas_logo_2.svg"
@@ -38,18 +38,18 @@ const Navbar = () => {
               <div className="pr-10 max-xl:pr-0 flex flex-row justify-end items-center xl:w-[341px]">
                 {isUserLoggedIn ? (
                   <>
-                    <Link href={USER_NAV_LINKS.logout.href}>
+                    <Link href={USER_NAV_LINKS.logout.href} className='hidden xl:block'>
                       <LogoutIcon />
                     </Link>
-                    <Link className="flex flex-col justify-center mx-4" href={USER_NAV_LINKS.account.href}>
+                    <Link className="hidden xl:flex flex-col justify-center mx-4" href={USER_NAV_LINKS.account.href} >
                       <AccountIcon />
                     </Link>
-                    <Link className="flex flex-col justify-center mr-4" href={USER_NAV_LINKS.order.href}>
+                    <Link className="hidden xl:flex flex-col justify-center mr-4" href={USER_NAV_LINKS.order.href}>
                       <OrderIcon />
                     </Link>
                   </>
                 ) : (
-                  <Link href={USER_NAV_LINKS.login.href}>
+                  <Link href={USER_NAV_LINKS.login.href} className='hidden xl:block'>
                     <LoginIcon />
                   </Link>
                 )}
@@ -62,7 +62,7 @@ const Navbar = () => {
                 </Link>
                 {isUserLoggedIn ? (<div className="w-[16px]"></div>) : (<div></div>)}
                 <div className="w-[16px] hidden xl:block"></div>
-                <Link href={USER_NAV_LINKS.services.href} aria-label='Užsisakyti'>
+                <Link href={USER_NAV_LINKS.services.href} aria-label='Užsisakyti' className='hidden xl:block'>
                   <div className="hidden xl:block w-[152px] h-[44px] text-center px-4 py-[10px] rounded-lg bg-[#Ea5548] xl:hover:bg-[#D43C33] text-white font-bold leading-6 font-poppins text-base">
                     {USER_NAV_LINKS.services.label}
                   </div>
@@ -77,7 +77,7 @@ const Navbar = () => {
                   <MenuIcon />
                 </Link>
               </div>
-              <Link href="/" aria-label="Logo">
+              <Link href="/" aria-label="Logo" className="xl:hidden">
                 <Image
                   className="xl:hidden mx-auto md:mx-0 object-contain xl:h-[50px] xl:w-[257px]"
                   src="/repas_logo_2.svg"
@@ -87,7 +87,7 @@ const Navbar = () => {
                   priority
                 />
               </Link>
-              <Link href={USER_NAV_LINKS.services.href} aria-label="Užsisakyti">
+              <Link href={USER_NAV_LINKS.services.href} aria-label="Užsisakyti" className="xl:hidden">
                 <div className="xl:hidden lg:px-3 px-[10px] py-[6px] rounded-lg bg-[#Ea5548] xl:hover:bg-[#D43C33] text-white font-bold leading-[22px] font-poppins text-sm">
                   {USER_NAV_LINKS.services.label}
                 </div>
