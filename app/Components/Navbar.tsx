@@ -1,35 +1,33 @@
 // components/Navbar.tsx
 import Link from 'next/link';
 import Image from 'next/image';
-import { PASLAUGOS_LINKS } from '../constants/constants';
+import { PASLAUGOS_LINKS, USER_NAV_LINKS } from '../constants/constants';
+import { LogoutIcon, AccountIcon, OrderIcon, CartIcon, LoginIcon, MenuIcon  } from './SvgIcons';
 
 //TODO: Add auth logic
 //TODO: Add shopping card logic
 //TODO: Fix menu on small devices
-//TODO: Fix links with constants.ts
-//TODO: Put svg/jsx into a new file
 
 const Navbar = () => {
-  const isUserLoggedIn = true;
+  const isUserLoggedIn = false;
 
   return (
-    <nav className="h-[99px]   xl:h-[142px]">
+    <nav className="h-[99px] xl:h-[142px]">
       <div>
-        <div className=" bg-white w-full px-4 fixed md:px-[28px] xl:px-[145px] 2xl:px-[0px] z-30">
-          <div className=" sm:max-w-[688px]  md:max-w-[968px] lg:max-w-[1150px]  xl:max-w-[1550px] mx-auto">
+        <div className="bg-white w-full px-4 fixed md:px-[28px] xl:px-[145px] 2xl:px-[0px] z-30">
+          <div className="sm:max-w-[688px] md:max-w-[968px] lg:max-w-[1150px] xl:max-w-[1550px] mx-auto">
             <div className="flex flex-row justify-between pt-3 pb-2 md:py-3 xl:pt-6 border-b border-RepasBlue ">
-              <div className="pl-10 max-xl:pl-0  my-auto">
-                <Link href="/kontaktai" style={{ textDecoration: "none" }}>
-                  <div className="font-poppins text-base font-normal leading-6 xl:hover:webkit-text-stroke xl:hover:underline w-[55px]">
-                    Kontaktai
-                  </div>
+              <div className="pl-10 max-xl:pl-0 my-auto">
+                <Link href={USER_NAV_LINKS.contact.href}>
+                  <span className="font-poppins text-base font-normal leading-6 xl:hover:webkit-text-stroke xl:hover:underline">
+                    {USER_NAV_LINKS.contact.label}
+                  </span>
                 </Link>
                 <div className="xl:w-[254px]"></div>
               </div>
-              <Link rel="alternate" href="/" style={{ textDecoration: "none" }}>
-                {/* Repas logo */}
+              <Link href="/">
                 <Image
-                  className="hidden xl:block  mx-auto md:mx-0 object-contain  xl:h-[50px] xl:w-[257px]"
+                  className="hidden xl:block mx-auto md:mx-0 object-contain xl:h-[50px] xl:w-[257px]"
                   src="/repas_logo_2.svg"
                   alt="Logo"
                   width={150}
@@ -38,141 +36,50 @@ const Navbar = () => {
                 />
               </Link>
               <div className="pr-10 max-xl:pr-0 flex flex-row justify-end items-center xl:w-[341px]">
-               
-
-                {isUserLoggedIn? (
-                <>
-                <Link
-                  href="/logout"
-                  style={{ textDecoration: "none" }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="size-6 hidden xl:block my-auto  cursor-pointer"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9"
-                    />
-                  </svg>
-                </Link>
-                <Link
-                  className="flex flex-col justify-center mx-4"
-                  href="/paskyra"
-                  style={{ textDecoration: "none" }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="size-6 hidden xl:block my-auto  cursor-pointer"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
-                    />
-                  </svg>
-                </Link>
-                <Link
-                  className="flex flex-col justify-center mr-4"
-                  href="/order"
-                  style={{ textDecoration: "none" }}
-                >
-                  <svg
-                    className="hidden xl:block my-auto cursor-pointer"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="19"
-                    height="20"
-                    viewBox="0 0 19 20"
-                    fill="none"
-                  >
-                    <path
-                      d="M13.3006 14.2685H6.08056M13.3006 10.082H6.08056M8.83566 5.90522H6.08066M13.493 0.794922C13.493 0.794922 5.81596 0.798922 5.80396 0.798922C3.04396 0.815922 1.33496 2.63192 1.33496 5.40192V14.5979C1.33496 17.3819 3.05696 19.2049 5.84096 19.2049C5.84096 19.2049 13.517 19.2019 13.53 19.2019C16.29 19.1849 18 17.3679 18 14.5979V5.40192C18 2.61792 16.277 0.794922 13.493 0.794922Z"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </Link>
-                </>
-                ):(
-                  <Link
-                  rel="alternate"
-                  href="/prisijungimas"
-                  style={{ textDecoration: "none" }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="size-6 hidden xl:block my-auto cursor-pointer mr-3"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15M12 9l3 3m0 0-3 3m3-3H2.25"
-                    />
-                  </svg>
-                </Link>
+                {isUserLoggedIn ? (
+                  <>
+                    <Link href={USER_NAV_LINKS.logout.href}>
+                      <LogoutIcon />
+                    </Link>
+                    <Link className="flex flex-col justify-center mx-4" href={USER_NAV_LINKS.account.href}>
+                      <AccountIcon />
+                    </Link>
+                    <Link className="flex flex-col justify-center mr-4" href={USER_NAV_LINKS.order.href}>
+                      <OrderIcon />
+                    </Link>
+                  </>
+                ) : (
+                  <Link href={USER_NAV_LINKS.login.href}>
+                    <LoginIcon />
+                  </Link>
                 )}
 
-                <Link
-                  className="flex flex-col justify-center"
-                  href="/cart"
-                  style={{ textDecoration: "none" }}
-                >
+                <Link className="flex flex-col justify-center" href={USER_NAV_LINKS.cart.href}>
                   <div className="relative">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className="size-6 my-auto cursor-pointer"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
-                      />
-                    </svg>
+                    <CartIcon />
                     <div className="hidden">0</div>
                   </div>
                 </Link>
-                {isUserLoggedIn ?(<div className="w-[16px]"></div>):(<div></div>)}
-                
-
+                {isUserLoggedIn ? (<div className="w-[16px]"></div>) : (<div></div>)}
                 <div className="w-[16px] hidden xl:block"></div>
-                <Link href="/paslaugos" style={{ textDecoration: "none" }}>
+                <Link href={USER_NAV_LINKS.services.href}>
                   <div className="hidden xl:block w-[152px] h-[44px] text-center px-4 py-[10px] rounded-lg bg-[#Ea5548] xl:hover:bg-[#D43C33] text-white font-bold leading-6 font-poppins text-base">
-                    Užsisakyti
+                    {USER_NAV_LINKS.services.label}
                   </div>
                 </Link>
               </div>
             </div>
             <div className="mb-3 xl:mb-3 pt-2 flex flex-row justify-between ">
-              {/* For mobile*/}
+              
+              {/* For mobile */}
               <div className="xl:hidden">
-                <Link href="/menu/" style={{ textDecoration: "none" }}>
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
-                  </svg>
+                <Link href="/menu">
+                  <MenuIcon />
                 </Link>
               </div>
-              <Link rel="alternate" href="/" style={{ textDecoration: "none" }}>
+              <Link href="/">
                 <Image
-                  className="xl:hidden mx-auto md:mx-0 object-contain  xl:h-[50px] xl:w-[257px]"
+                  className="xl:hidden mx-auto md:mx-0 object-contain xl:h-[50px] xl:w-[257px]"
                   src="/repas_logo_2.svg"
                   alt="Logo"
                   width={70}
@@ -180,33 +87,25 @@ const Navbar = () => {
                   priority
                 />
               </Link>
-                {/* Desktop */}
-                <div className="hidden xl:flex w-full flex-row justify-center space-x-6 mt-[6px] overflow-hidden">
-                  {PASLAUGOS_LINKS.map((link) => (
-                    <Link
-                      key={link.href}
-                      rel="alternate"
-                      href={link.href}
-                      style={{ textDecoration: 'none' }}
-                      className="flex-1 text-center"
-                    >
-                      <div className="font-normal text-RepasBlue xl:hover:underline xl:hover:webkit-text-stroke">
-                        {link.label}
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              {/* Alternative button */}
-              <div className="w-[16px] hidden xl:block"></div>
-              <Link
-                rel="alternate"
-                href="/paslaugos"
-                style={{ textDecoration: "none" }}
-              >
+              <Link href={USER_NAV_LINKS.services.href}>
                 <div className="xl:hidden lg:px-3 px-[10px] py-[6px] rounded-lg bg-[#Ea5548] xl:hover:bg-[#D43C33] text-white font-bold leading-[22px] font-poppins text-sm">
-                  Užsisakyti
+                  {USER_NAV_LINKS.services.label}
                 </div>
               </Link>
+              {/* Paslaugos navbar*/}
+              <div className="hidden xl:flex w-full flex-row justify-center space-x-6 mt-[6px] overflow-hidden">
+                {PASLAUGOS_LINKS.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="flex-1 text-center"
+                  >
+                    <div className="font-normal text-RepasBlue xl:hover:underline xl:hover:webkit-text-stroke">
+                      {link.label}
+                    </div>
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
         </div>
