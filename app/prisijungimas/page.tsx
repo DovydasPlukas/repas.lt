@@ -19,21 +19,21 @@ const AuthPage: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen bg-[--background]">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded shadow-md">
         <h2 className="text-2xl font-semibold text-center">
-          {isLogin ? 'Login' : 'Register'}
+          {isLogin ? 'Prisijungti' : 'Registruotis'}
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           {!isLogin && (
             <div>
               <label htmlFor="name" className="block text-sm font-medium">
-                Name
+                Vardas
               </label>
               <input
                 type="text"
-                id="name"
-                className="w-full px-4 py-2 mt-1 text-gray-800 bg-gray-100 border rounded focus:ring-2 focus:ring-blue-500"
+                id="Vardas"
+                className="w-full px-4 py-2 mt-1 text-gray-800 bg-gray-100 border rounded focus:ring-2 focus:ring-[--RepasRed]"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
@@ -42,12 +42,12 @@ const AuthPage: React.FC = () => {
           )}
           <div>
             <label htmlFor="email" className="block text-sm font-medium">
-              Email
+              El. paštas
             </label>
             <input
               type="email"
               id="email"
-              className="w-full px-4 py-2 mt-1 text-gray-800 bg-gray-100 border rounded focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 mt-1 text-gray-800 bg-gray-100 border rounded focus:ring-2 focus:ring-[--RepasRed]"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -55,12 +55,12 @@ const AuthPage: React.FC = () => {
           </div>
           <div>
             <label htmlFor="password" className="block text-sm font-medium">
-              Password
+              Slaptažodis
             </label>
             <input
               type="password"
               id="password"
-              className="w-full px-4 py-2 mt-1 text-gray-800 bg-gray-100 border rounded focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 mt-1 text-gray-800 bg-gray-100 border rounded focus:ring-2 focus:ring-[--RepasRed]"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -68,18 +68,18 @@ const AuthPage: React.FC = () => {
           </div>
           <button
             type="submit"
-            className="w-full py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
+            className="w-full py-2 text-white bg-[--RepasRed] rounded hover:bg-[#ff6354]"
           >
-            {isLogin ? 'Login' : 'Register'}
+            {isLogin ? 'Prisijungti' : 'Registurotis'}
           </button>
         </form>
         <p className="text-center">
-          {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}
+          {isLogin ? "Neturite paskyros?" : 'Turite paskyrą?'}{' '}
           <button
             onClick={handleToggle}
-            className="font-medium text-blue-500 hover:underline"
+            className="font-medium text-[--RepasRed] hover:underline"
           >
-            {isLogin ? 'Register' : 'Login'}
+            {isLogin ? 'Registruotis' : 'Prisijungti'}
           </button>
         </p>
       </div>

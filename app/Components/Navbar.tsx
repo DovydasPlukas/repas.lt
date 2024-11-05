@@ -9,7 +9,7 @@ import { LogoutIcon, AccountIcon, OrderIcon, CartIcon, LoginIcon, MenuIcon  } fr
 //TODO: Fix menu on small devices
 
 const Navbar = () => {
-  const isUserLoggedIn = true;
+  const isUserLoggedIn = false;
 
   return (
     <nav className="h-[99px] xl:h-[142px]">
@@ -28,7 +28,7 @@ const Navbar = () => {
               <Link href="/" aria-label="Logo" className='hidden xl:block' >
                 <Image
                   className="hidden xl:block mx-auto md:mx-0 object-contain xl:h-[50px] xl:w-[257px]"
-                  src="/repas_logo_2.svg"
+                  src="/repas_logo.svg"
                   alt="Logo"
                   width={150}
                   height={50}
@@ -80,7 +80,7 @@ const Navbar = () => {
               <Link href="/" aria-label="Logo" className="xl:hidden">
                 <Image
                   className="xl:hidden mx-auto md:mx-0 object-contain xl:h-[50px] xl:w-[257px]"
-                  src="/repas_logo_2.svg"
+                  src="/repas_logo.svg"
                   alt="Logo"
                   width={70}
                   height={26}

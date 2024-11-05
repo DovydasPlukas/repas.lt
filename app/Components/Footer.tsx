@@ -11,7 +11,7 @@ const Footer = () => {
                   <Link rel="alternate" href="/" style={{ textDecoration: "none" }}>
                   <Image
                     className="mx-auto md:mx-0 object-contain  xl:h-[120px] xl:w-[260px]"
-                    src="/repas_logo_2.svg"
+                    src="/repas_logo.svg"
                     alt="Logo"
                     width={200}         
                     height={80}         
@@ -35,7 +35,7 @@ const Footer = () => {
                     </a>
                     </div>
                     </div>
-                    <div className="w-[240px] md:w-full bg-[--RepasGrey] h-[1px] mx-auto md:my-2"></div>
+                    <div className="w-[240px] md:w-full bg-[--RepasRed] h-[1px] mx-auto md:my-2"></div>
                     <div className="md:flex flex-row-reverse justify-between">
 
                       <div className="grid grid-cols-2 gap-x-[27px] xl:gap-x-[25px]  mt-4 mb-2 lg:hidden">
