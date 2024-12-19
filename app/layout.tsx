@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Poppins } from'next/font/google';
 import "./globals.css";
-import Navbar from "./Components/Navbar";
-import Footer from "./Components/Footer";
-import PageFill from "./Components/PageFill";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import PageFill from "../components/PageFill";
 
 const FontPoppins = Poppins({
   subsets:['latin'],
@@ -20,7 +20,7 @@ export default function RootLayout({children,}: Readonly<{children: React.ReactN
     <html lang="lt">
       <body className={`${FontPoppins}  antialiased flex flex-col min-h-screen`}>
         <Navbar/>
-        <main className="relative overflow-hidden">
+        <main className="relative overflow-hidden bg-[--ContentBackground]">
           {children}
         </main>
         <PageFill/>

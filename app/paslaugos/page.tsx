@@ -1,5 +1,5 @@
 import React from 'react'
-import Cards from '../Components/Cards'
+import Cards from '@/components/Cards'
 
 export const metadata = {
   title: "Paslaugos",

@@ -1,6 +1,7 @@
 import Link from "next/link";
-import TestCard from "./Components/TestCard";
-import Cards from "./Components/Cards";
+import TestCard from "@/components/TestCard";
+import Cards from "@/components/Cards";
+
 
 export default function Home() {
   return (

@@ -1,8 +1,9 @@
 // components/Navbar.tsx
 import Link from 'next/link';
 import Image from 'next/image';
-import { PASLAUGOS_LINKS, USER_NAV_LINKS } from '../constants/constants';
+import { PASLAUGOS_LINKS, USER_NAV_LINKS } from '../app/constants/constants';
 import { LogoutIcon, AccountIcon, OrderIcon, CartIcon, LoginIcon, MenuIcon  } from './SvgIcons';
+
 
 //TODO: Add auth logic
 //TODO: Add shopping card logic
@@ -16,7 +17,7 @@ const Navbar = () => {
       <div>
         <div className="bg-white w-full px-4 fixed md:px-[28px] xl:px-[145px] 2xl:px-[0px] z-30">
           <div className="sm:max-w-[688px] md:max-w-[968px] lg:max-w-[1150px] xl:max-w-[1550px] mx-auto">
-            <div className="flex flex-row justify-between pt-3 pb-2 md:py-3 xl:pt-6 border-b border-[--RepasGrey] ">
+            <div className="flex flex-row justify-between pt-3 pb-2 md:py-3 xl:pt-6 border-b border-[--RepasBlue] ">
               <div className="pl-10 max-xl:pl-0 my-auto">
                 <Link href={USER_NAV_LINKS.contact.href}>
                   <span className="font-poppins text-base font-normal leading-6 xl:hover:webkit-text-stroke xl:hover:underline">
