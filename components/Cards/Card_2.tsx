@@ -4,7 +4,7 @@ const Card_2 = () => {
   return (
     <a
       rel="alternate"
-      className="group w-full flex flex-col py-3 px-2 rounded-[10px]  md:px-4 md:py-6 lg:h-[382px] xl:h-[360px] bg-[#5F74D9] xl:hover:bg-[#435299]"
+      className="group w-full flex flex-col py-3 px-2 rounded-[10px]  md:px-4 md:py-6 lg:h-[382px] xl:h-[360px] bg-[#984447] xl:hover:bg-[#b75255]"
       href="/kostiumu-valymas"
       style={{ textDecoration: "none" }}
     >
@@ -76,25 +76,18 @@ const Card_2 = () => {
           ></path>
         </svg>
       </div>
-      <h4 className="my-1 md:my-4  xl:group-hover:underline text-offWhite ">
-        <div className="hidden xl:block">Kostiumu valymas</div>
-        <div className="xl:hidden">
-        Kostiumu valymas<div></div>
-        </div>
-      </h4>
-      <div className="font-poppins text-sm md:text-base font-normal leading-[22px] md:leading-6 text-center text-lightGrey xl:hover:text-[#F7F8FF]">
-        <div className="xl:hidden">
-        Kostiumu valymas
-        </div>
-        <div className="hidden xl:block">
-        Kostiumu valymas
-        </div>
-      </div>
-      <div className="flex-1"></div>
-      <button className="border font-bold mt-3 w-full h-10 border-white rounded-[10px] text-white text-xs leading-[14px] md:h-[50px] md:text-sm md:leading-[22px] font-poppins  xl:group-hover:bg-[#AFBAEC] xl:group-hover:border-[#AFBAEC] xl:group-hover:text-[#435299]">
-      Užsisakyti
-      </button>
-    </a>
+
+          <div className="my-1 md:my-4 text-white font-bold text-center group-hover:underline">
+            <h4>Kostiumų valymas</h4>
+          </div>
+          <div className="font-poppins text-sm md:text-base font-normal text-white leading-[22px] md:leading-6 text-center break-words xl:group-hover:text-mlBlack">
+            Specialus kostiumų valymas (paklausti)
+          </div>
+          <div className="flex-1"></div>
+          <button className="border font-bold mt-3 w-full h-10 border-white rounded-[10px] text-white text-xs leading-[14px] md:h-[50px] md:text-sm md:leading-[22px] font-poppins  xl:group-hover:bg-white xl:group-hover:border-white xl:group-hover:text-red-600">
+          Užsisakyti
+          </button>
+        </a>
   );
 };
 

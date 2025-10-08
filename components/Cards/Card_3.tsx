@@ -5,7 +5,7 @@ const Card_3 = () => {
    
         <a
           rel="alternate"
-          className="group w-full flex flex-col py-3 px-2 rounded-[10px]  md:px-4 md:py-6 lg:h-[382px] xl:h-[360px]  bg-[#23D2C3] xl:hover:bg-[#01BCAD]"
+          className="group w-full flex flex-col py-3 px-2 rounded-[10px]  md:px-4 md:py-6 lg:h-[382px] xl:h-[360px]  bg-[#45B69C] xl:hover:bg-[#4dcaad]"
           href="/lyginimas"
           style={{ textDecoration: "none" }}
         >
@@ -53,20 +53,15 @@ const Card_3 = () => {
               ></path>
             </svg>
           </div>
-          <h4 className="my-1 md:my-4  xl:group-hover:underline  ">
-            <div className="hidden xl:block">Lyginimas</div>
-            <div className="xl:hidden">
-            Lyginimas<div></div>
-            </div>
-          </h4>
-          <div className="font-poppins text-sm md:text-base font-normal text-textDarkGrey leading-[22px] md:leading-6 text-center break-words xl:group-hover:text-mlBlack">
-            <div className="xl:hidden">Lyginimas</div>
-            <div className="hidden xl:block">
-            Lyginimas
-            </div>
+
+          <div className="my-1 md:my-4 text-white font-bold text-center group-hover:underline">
+            <h4>Lyginimas</h4>
+          </div>
+          <div className="font-poppins text-sm md:text-base font-normal text-white leading-[22px] md:leading-6 text-center break-words xl:group-hover:text-mlBlack">
+            Drabužių ir audinių išlyginimas (paklausti)
           </div>
           <div className="flex-1"></div>
-          <button className="border font-bold mt-3 w-full h-10 border-white rounded-[10px] text-white text-xs leading-[14px] md:h-[50px] md:text-sm md:leading-[22px] font-poppins  xl:group-hover:bg-[#9EF2EB] xl:group-hover:border-[#9EF2EB] xl:group-hover:text-[#01BCAD]">
+          <button className="border font-bold mt-3 w-full h-10 border-white rounded-[10px] text-white text-xs leading-[14px] md:h-[50px] md:text-sm md:leading-[22px] font-poppins  xl:group-hover:bg-white xl:group-hover:border-white xl:group-hover:text-red-600">
           Užsisakyti
           </button>
         </a>

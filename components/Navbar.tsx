@@ -28,7 +28,7 @@ const Navbar = () => {
               </div>
               <Link href="/" aria-label="Logo" className='hidden xl:block' >
                 <Image
-                  className="hidden xl:block mx-auto md:mx-0 object-contain xl:h-[50px] xl:w-[257px]"
+                  className="hidden xl:block mx-auto md:mx-0 object-contain xl:h-[50px] xl:w-[257px] transition-all duration-300 hover:scale-105"
                   src="/repas_logo.svg"
                   alt="Logo"
                   width={150}
@@ -80,7 +80,7 @@ const Navbar = () => {
               </div>
               <Link href="/" aria-label="Logo" className="xl:hidden">
                 <Image
-                  className="xl:hidden mx-auto md:mx-0 object-contain xl:h-[50px] xl:w-[257px]"
+                  className="xl:hidden mx-auto md:mx-0 object-contain xl:h-[50px] xl:w-[257px] transition-all duration-300 hover:scale-105 hover:drop-shadow-2xl drop-shadow-xl active:scale-95"
                   src="/repas_logo.svg"
                   alt="Logo"
                   width={70}

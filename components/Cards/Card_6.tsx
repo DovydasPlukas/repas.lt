@@ -94,23 +94,16 @@ const Card_6 = () => {
               ></path>
             </svg>
           </div>
-          <h4 className="my-1 md:my-4  xl:group-hover:underline  ">
-            <div className="hidden xl:block">Susisiekite su mumis</div>
-            <div className="xl:hidden">
-              Susisiekite su mumis<div></div>
-            </div>
-          </h4>
-          <div className="font-poppins text-sm md:text-base font-normal text-textDarkGrey leading-[22px] md:leading-6 text-center break-words xl:group-hover:text-mlBlack">
-            <div className="xl:hidden">
-              Pagalba imoniu drabuziams
-            </div>
-            <div className="hidden xl:block">
-              Pagalba imoniu drabuziams
-            </div>
+
+          <div className="my-1 md:my-4 text-black font-bold text-center group-hover:underline">
+            <h4>Susisiekite su mumis</h4>
+          </div>
+          <div className="font-poppins text-sm md:text-base font-normal text-black leading-[22px] md:leading-6 text-center break-words xl:group-hover:text-mlBlack">
+            Kyla klausimų? Susisiekite su mumis ir mes jums padėsime!
           </div>
           <div className="flex-1"></div>
-          <button className="xl:group-hover:bg-[#EFF0F6] xl:group-hover:border-[#EFF0F6] xl:group-hover:text-[#4E4B66] border font-bold mt-3 w-full h-10 border-[#4E4B66] rounded-[10px] text-[#4E4B66] text-sm leading-[22px] md:h-[50px] font-bold font-poppins ">
-            Susisiekime
+          <button className="border font-bold mt-3 w-full h-10 border-black rounded-[10px] text-black text-xs leading-[14px] md:h-[50px] md:text-sm md:leading-[22px] font-poppins  xl:group-hover:bg-white xl:group-hover:border-white xl:group-hover:text-blue-600">
+          Susisiekti
           </button>
         </a>
   );

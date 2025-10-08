@@ -4,7 +4,7 @@ const Card_4 = () => {
   return (
         <a
           rel="alternate"
-          className="group w-full flex flex-col py-3 px-2 rounded-[10px]  md:px-4 md:py-6 lg:h-[382px] xl:h-[360px] bg-[#f3d37a] xl:hover:bg-[#fad879] xl:hover:text-black"
+          className="group w-full flex flex-col py-3 px-2 rounded-[10px]  md:px-4 md:py-6 lg:h-[382px] xl:h-[360px] bg-[#E3B23C] xl:hover:bg-[#f5bd3b] xl:hover:text-black"
           href="/skalbimo-masinu-tvarkymas"
           style={{ textDecoration: "none" }}
         >
@@ -22,25 +22,16 @@ const Card_4 = () => {
             <path strokeLinecap="round" strokeLinejoin="round" d="M4.867 19.125h.008v.008h-.008v-.008Z" />
           </svg>
           </div>
-          <h4 className="my-1 md:my-4 text-offWhite ">
-            <div className="hidden xl:block">Skalbimo masiniu tvarkymas
-            </div>
-            <div className="xl:hidden">
-            Skalbimo masiniu tvarkymas
-            <div></div>
-            </div>
-          </h4>
-          <div className="font-poppins text-sm md:text-base font-normal leading-[22px] md:leading-6 text-center text-lightGrey ">
-            <div className="xl:hidden">
-            Skalbimo masiniu tvarkymas
-            </div>
-            <div className="hidden xl:block">
-            Skalbimo masiniu tvarkymas
-            </div>
-          </div>
-          <div className="flex-1"></div>
-          <button className="border font-bold mt-3 w-full h-10 border-white rounded-[10px] text-black text-xs leading-[14px] md:h-[50px] md:text-sm md:leading-[22px] font-poppins">
-            Užsisakyti
+
+        <div className="my-1 md:my-4 text-white font-bold text-center group-hover:underline">
+            <h4>Skalbimo mašinų tvarkymas</h4>
+        </div>
+        <div className="font-poppins text-sm md:text-base font-normal text-white leading-[22px] md:leading-6 text-center break-words xl:group-hover:text-mlBlack">
+            Remontas jei skalbimo mašina kelia problemų
+        </div>
+        <div className="flex-1"></div>
+          <button className="border font-bold mt-3 w-full h-10 border-white rounded-[10px] text-white text-xs leading-[14px] md:h-[50px] md:text-sm md:leading-[22px] font-poppins  xl:group-hover:bg-white xl:group-hover:border-white xl:group-hover:text-red-600">
+          Užsisakyti
           </button>
         </a>
   );

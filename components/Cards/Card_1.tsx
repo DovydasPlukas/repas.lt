@@ -1,10 +1,11 @@
 import React from "react";
 
+
 const Card_1 = () => {
   return (
         <a
           rel="alternate"
-          className="group w-full flex flex-col py-3 px-2 rounded-[10px]  md:px-4 md:py-6 lg:h-[382px] xl:h-[360px] bg-[--RepasBlue] xl:hover:bg-[#49528bc9]"
+          className="group w-full flex flex-col py-3 px-2 rounded-[10px]  md:px-4 md:py-6 lg:h-[382px] xl:h-[360px] bg-[--RepasBlue] xl:hover:bg-[#505ba3]"
           href="/skalbimas"
           style={{ textDecoration: "none" }}
         >
@@ -78,22 +79,15 @@ const Card_1 = () => {
               ></path>
             </svg>
           </div>
-          <h4 className="my-1 md:my-4  xl:group-hover:underline  ">
-            <div className="hidden xl:block text-white">Skalbimas</div>
-            <div className="xl:hidden">
-              Skalbimas<div></div>
-            </div>
-          </h4>
+          
+          <div className="my-1 md:my-4 text-white font-bold text-center group-hover:underline">
+            <h4>Skalbimas</h4>
+          </div>
           <div className="font-poppins text-sm md:text-base font-normal text-white leading-[22px] md:leading-6 text-center break-words xl:group-hover:text-mlBlack">
-            <div className="xl:hidden">
-              Skalbiami drabuziai ir daugiau Lorem ipsom
-            </div>
-            <div className="hidden xl:block">
-            Skalbiami drabuziai ir daugiau Lorem ipsom<div></div>
-            </div>
+            Drabužių skalbimas pagal svorį (paklausti)
           </div>
           <div className="flex-1"></div>
-          <button className="border font-bold mt-3 w-full h-10 border-white rounded-[10px] text-white text-xs leading-[14px] md:h-[50px] md:text-sm md:leading-[22px] font-poppins  xl:group-hover:bg-mlUnderLoadBlue xl:group-hover:border-mlUnderLoadBlue xl:group-hover:text-mlBlue">
+          <button className="border font-bold mt-3 w-full h-10 border-white rounded-[10px] text-white text-xs leading-[14px] md:h-[50px] md:text-sm md:leading-[22px] font-poppins  xl:group-hover:bg-white xl:group-hover:border-white xl:group-hover:text-red-600">
           Užsisakyti
           </button>
         </a>
