@@ -64,7 +64,7 @@ const Navbar = () => {
                 {isUserLoggedIn ? (<div className="w-[16px]"></div>) : (<div></div>)}
                 <div className="w-[16px] hidden xl:block"></div>
                 <Link href={USER_NAV_LINKS.services.href} aria-label='Užsisakyti' className='hidden xl:block'>
-                  <div className="hidden xl:block w-[152px] h-[44px] text-center px-4 py-[10px] rounded-lg bg-[#Ea5548] xl:hover:bg-[#D43C33] text-white font-bold leading-6 font-poppins text-base">
+                  <div className="hidden xl:block w-[152px] h-[44px] text-center px-4 py-[10px] rounded-lg bg-[#Ea5548] xl:hover:bg-[#D43C33] text-white font-bold leading-6 font-poppins text-base transition-all duration-300 ease-in-out">
                     {USER_NAV_LINKS.services.label}
                   </div>
                 </Link>

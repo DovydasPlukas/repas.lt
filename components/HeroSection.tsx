@@ -54,7 +54,7 @@ export default function HeroSection() {
                                 />
                                 <Button 
                                     type="submit"
-                                    className="w-full bg-[#E9594B] hover:bg-[#E9594B]/90 text-white text-base sm:text-lg h-10 sm:h-12"
+                                    className="w-full bg-[#E9594B] transition-all duration-300 ease-in-out hover:bg-[#E9594B]/90 text-white text-base sm:text-lg h-10 sm:h-12"
                                 >
                                     Pateikti
                                 </Button>
