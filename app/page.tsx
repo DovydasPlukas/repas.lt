@@ -2,6 +2,8 @@ import Link from "next/link";
 import TestCard from "@/components/TestCard";
 import Cards from "@/components/Cards";
 import HeroSection from "@/components/HeroSection";
+import HowItWorks from "@/components/How_it_works";
+import FAQ from "@/components/Faq";
 
 
 export default function Home() {
@@ -22,11 +24,16 @@ export default function Home() {
             </div>
 
             {/*how it works container*/}
-          
+            <HowItWorks />
+            {/*FAQs*/}
+            <FAQ />
 
-            <div className="pt-10">
+
+            {/*Testing */}
+            <div className="pt-10 hidden">  {/*Hidden */}
             <h1>Boilerplate stuff to test out</h1>
             <Link href="/paslaugos">Paslaugos</Link> {/*changing <a> to <Link> to optimise */}
+
             <TestCard/> {/*Testing components */}
             <p>{new Date().toLocaleTimeString()}</p> {/*To test out if server client is static (helps with transporting code) */}
             </div>
