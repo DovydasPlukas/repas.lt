@@ -1,6 +1,8 @@
+"use client";
 // components/Navbar.tsx
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { PASLAUGOS_LINKS, USER_NAV_LINKS } from '../app/constants/constants';
 import { LogoutIcon, AccountIcon, OrderIcon, CartIcon, LoginIcon, MenuIcon  } from './SvgIcons';
 
@@ -11,6 +13,7 @@ import { LogoutIcon, AccountIcon, OrderIcon, CartIcon, LoginIcon, MenuIcon  } fr
 
 const Navbar = () => {
   const isUserLoggedIn = false;
+  const pathname = usePathname();
 
   return (
     <nav className="h-[99px] xl:h-[142px]">
@@ -20,7 +23,9 @@ const Navbar = () => {
             <div className="flex flex-row justify-between pt-3 pb-2 md:py-3 xl:pt-6 border-b border-[--RepasBlue] ">
               <div className="pl-10 max-xl:pl-0 my-auto">
                 <Link href={USER_NAV_LINKS.contact.href}>
-                  <span className="font-poppins text-base font-normal leading-6 xl:hover:webkit-text-stroke xl:hover:underline">
+                  <span className={`font-poppins text-base font-normal leading-6 ${
+                    pathname === USER_NAV_LINKS.contact.href ? 'webkit-text-stroke underline' : 'xl:hover:webkit-text-stroke xl:hover:underline'
+                  }`}>
                     {USER_NAV_LINKS.contact.label}
                   </span>
                 </Link>
@@ -101,7 +106,9 @@ const Navbar = () => {
                     href={link.href}
                     className="flex-1 text-center"
                   >
-                    <div className="font-normal text-RepasBlue xl:hover:underline xl:hover:webkit-text-stroke">
+                    <div className={`font-normal text-RepasBlue  ${
+                      pathname === link.href ? 'underline webkit-text-stroke' : 'xl:hover:underline xl:hover:webkit-text-stroke'
+                    }`}>
                       {link.label}
                     </div>
                   </Link>

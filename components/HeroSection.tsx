@@ -27,15 +27,15 @@ export default function HeroSection() {
                 />
             </div>
             <div className="relative w-full h-full overflow-hidden">
-                <div className="absolute inset-0 lg:bg-gradient-to-r from-black/30 to 60% lg:to-transparent">
+                <div className="absolute inset-0 lg:bg-gradient-to-r from-[#4F508E]/30 to 60% lg:to-transparent">
                     {/* Content Overlay */}
                     <div className="relative h-full container mx-auto px-4 sm:px-6 lg:px-8">
                         {/* Title and Description */}
                         <div className="absolute left-4 sm:left-6 lg:left-8 top-[15%] sm:top-[20%] w-full sm:w-[500px] lg:w-[600px]">
-                            <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-[#4F508E] lg:text-white mb-3 sm:mb-4 lg:mb-6 drop-shadow-lg">
+                            <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-[#4F508E] mb-3 sm:mb-4 lg:mb-6 drop-shadow-lg">
                                 Repas
                             </h1>
-                            <p className="text-lg sm:text-xl lg:text-2xl text-[#4F508E]/80 lg:text-white/90 drop-shadow-md leading-relaxed mb-8 sm:mb-10 lg:mb-12 max-w-[90%]">
+                            <p className="text-lg sm:text-xl lg:text-2xl text-[#4F508E]/80 lg:text-[#4F508E]/90 drop-shadow-md leading-relaxed mb-8 sm:mb-10 lg:mb-12 max-w-[90%]">
                                 Profesionalios skalbimo paslaugos jūsų patogumui. Kokybiškas drabužių priežiūros sprendimas.
                             </p>
                         </div>

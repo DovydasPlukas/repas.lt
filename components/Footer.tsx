@@ -39,19 +39,23 @@ const Footer = () => {
                     <div className="md:flex flex-row-reverse justify-between">
 
                       <div className="grid grid-cols-2 gap-x-[27px] xl:gap-x-[25px]  mt-4 mb-2 lg:hidden">
-                        <a rel="noopener noreferrer" target="_blank" className="text-right xl:w-[134px] text-[--RepasRed] leading-5 underline  xl:leading-[22px] hoverbold  text-xs font-poppins xl:text-sm" href="/terms-and-conditions/">
-                        Terminai ir sąlygos</a>
-                        <a rel="noopener noreferrer" target="_blank" className="text-left xl:text-right xl:w-[99px]  text-[--RepasRed]  leading-5 underline xl:leading-[22px] hoverbold  text-xs font-poppins xl:text-sm" href="/privacy-notice/">
-                        Privatumo politika</a>
+                        <Link href="/terms-and-conditions" className="text-right xl:w-[134px] text-[--RepasRed] leading-5 underline  xl:leading-[22px] hoverbold  text-xs font-poppins xl:text-sm">
+                          Terminai ir sąlygos
+                        </Link>
+                        <Link href="/privacy-notice" className="text-left xl:text-right xl:w-[99px]  text-[--RepasRed]  leading-5 underline xl:leading-[22px] hoverbold  text-xs font-poppins xl:text-sm">
+                          Privatumo politika
+                        </Link>
                       </div>
                       <div className="hidden lg:flex flex-row  space-x-[24px]  mt-4 mb-2  w-[233px] xl:w-[300px]">
-                        <a rel="noopener noreferrer" target="_blank" className="text-right xl:w-[150px] text-xs text-[--RepasRed] font-poppins leading-5 underline xl:text-sm xl:leading-[22px] hoverbold" href="/terms-and-conditions/">
-                        Terminai ir sąlygos</a>
-                        <a rel="noopener noreferrer" target="_blank" className="text-left xl:text-right xl:w-[150px]  text-xs text-[--RepasRed] font-poppins leading-5 underline xl:text-sm xl:leading-[22px] hoverbold" href="/privacy-notice/">
-                        Privatumo politika</a>
-                        </div>
+                        <Link href="/terms-and-conditions" className="text-right xl:w-[150px] text-xs text-[--RepasRed] font-poppins leading-5 underline xl:text-sm xl:leading-[22px] hoverbold">
+                          Terminai ir sąlygos
+                        </Link>
+                        <Link href="/privacy-notice" className="text-left xl:text-right xl:w-[150px]  text-xs text-[--RepasRed] font-poppins leading-5 underline xl:text-sm xl:leading-[22px] hoverbold">
+                          Privatumo politika
+                        </Link>
+                      </div>
                         <div className="text-center md:mt-4 text-xs xl:text-sm text-[--RepasRed] font-poppins leading-[18px] xl:leading-6  lg:w-[220px] xl:w-[267px] lg:text-left">
-                          © 2024 Repas</div>
+                          © 2025 Repas</div>
                         </div>
                         </div>
                         </div>
