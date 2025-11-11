@@ -76,7 +76,7 @@ const PrivacyNotice: React.FC = () => {
             <div className="space-y-4">
               <h2 className="text-2xl font-bold">6. Susisiekite</h2>
               <p className="text-gray-600 leading-relaxed">
-                Jei turite klausimų dėl savo asmens duomenų tvarkymo, galite susisiekti su mumis el. paštu: 00repas@00repas.lt
+                Jei turite klausimų dėl savo asmens duomenų tvarkymo, galite susisiekti su mumis el. paštu: repas@repas.lt
               </p>
             </div>
 

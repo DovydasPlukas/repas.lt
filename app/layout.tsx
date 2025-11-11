@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins } from'next/font/google';
 import "./globals.css";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import PageFill from "../components/PageFill";
+import SiteWrapper from "../components/SiteWrapper";
 
 const FontPoppins = Poppins({
   subsets:['latin'],
@@ -19,12 +17,11 @@ export default function RootLayout({children,}: Readonly<{children: React.ReactN
   return (
     <html lang="lt">
       <body className={`${FontPoppins}  antialiased flex flex-col min-h-screen`}>
-        <Navbar/>
-        <main className="relative overflow-hidden bg-[--ContentBackground]">
-          {children}
-        </main>
-        <PageFill/>
-        <Footer/>
+        <SiteWrapper isAdmin={true}> {/* Set isAdmin based on your auth logic */}
+          <main className="relative overflow-hidden bg-[--ContentBackground]">
+            {children}
+          </main>
+        </SiteWrapper>
       </body>
     </html>
   );

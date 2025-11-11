@@ -47,7 +47,7 @@ const SaklbimoMasiniuTvarkymasPage = () => {
             <h2 className="text-xl text-[--RepasBlue] font-semibold mb-4">Problemos (nebūtina)</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {additionalServices.map((service) => (
-                <div
+                <button
                   key={service.id}
                   className={`p-4 border rounded-lg cursor-pointer transition-all text-[--RepasBlue] ${
                     selectedServices.includes(service.id)
@@ -59,7 +59,7 @@ const SaklbimoMasiniuTvarkymasPage = () => {
                   <div className="flex justify-between items-center">
                     <span>{service.name}</span>
                   </div>
-                </div>
+                </button>
               ))}
             </div>
           </Card>

@@ -60,7 +60,7 @@ const KostiumuValymasPage = () => {
             <h2 className="text-xl text-[--RepasBlue] font-semibold mb-4">Papildomos Paslaugos</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {additionalServices.map((service) => (
-                <div
+                <button
                   key={service.id}
                   className={`p-4 border rounded-lg cursor-pointer transition-all text-[--RepasBlue] ${
                     selectedServices.includes(service.id)
@@ -73,7 +73,7 @@ const KostiumuValymasPage = () => {
                     <span>{service.name}</span>
                     <span className="font-semibold">{service.price}€</span>
                   </div>
-                </div>
+                </button>
               ))}
             </div>
           </Card>
@@ -83,7 +83,7 @@ const KostiumuValymasPage = () => {
             <h2 className="text-xl text-[--RepasBlue] font-semibold mb-4">Priedai</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {addons.map((addon) => (
-                <div
+                <button
                   key={addon.id}
                   className={`p-4 border rounded-lg cursor-pointer transition-all text-[--RepasBlue] ${
                     selectedAddons.includes(addon.id)
@@ -96,7 +96,7 @@ const KostiumuValymasPage = () => {
                     <span>{addon.name}</span>
                     <span className="font-semibold">{addon.price}€</span>
                   </div>
-                </div>
+                </button>
               ))}
             </div>
           </Card>

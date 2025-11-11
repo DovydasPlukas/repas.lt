@@ -1,7 +1,7 @@
 {/*washing machine svg source: https://www.svgrepo.com/svg/490476/washing-machine*/}
 export default function NotFound() {
   return (
-    <div className="pt-20">
+    <div className="pt-20 bg-[--ContentBackground]">
       <div className="text-xl leading-[34px] text-[#494B8B] font-poppins text-center font-bold px-6 mt-4 xl:text-[34px] xl:leading-[44px]">
         Įvyko klaida
       </div>
