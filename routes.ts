@@ -1,18 +1,20 @@
 /**
  * An array of public routes that do not require authentication.
+ * Not in use at the moment. Just a list of public routes.
  */
 export const publicRoutes = [
     "/",
     "/apie-mus",
     "/kontaktai",
-    '/skalbimas',
-    '/kostiumu-valymas',
-    '/lyginimas',
-    '/patalines-valymas',
-    '/skalbimo-masinu-tvarkymas',
-    '/paslaugos',
-    '/privacy-notice',
-    '/terms-and-conditions',
+    "/skalbimas",
+    "/kostiumu-valymas",
+    "/lyginimas",
+    "/patalines-valymas",
+    "/skalbimo-masinu-tvarkymas",
+    "/paslaugos",
+    "/privacy-notice",
+    "/terms-and-conditions",
+    "/new-verification"
 ]
 
 /**
@@ -20,7 +22,8 @@ export const publicRoutes = [
 */
 export const authRoutes = [
     "/prisijungimas",
-    "/registracija"
+    "/registracija",
+    "/error"
 ]
 
 /**
