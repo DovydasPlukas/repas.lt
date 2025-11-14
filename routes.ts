@@ -23,7 +23,9 @@ export const publicRoutes = [
 export const authRoutes = [
     "/prisijungimas",
     "/registracija",
-    "/error"
+    "/error",
+    "/reset",
+    "/new-password"
 ]
 
 /**
