@@ -3,13 +3,19 @@
 import { signIn } from "next-auth/react";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
+import { useSearchParams } from "next/navigation";
+
 import { Button } from "@/components/ui/button";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 
 export const Social = () => {
+    const searchParams = useSearchParams();
+    const callbackUrl = searchParams.get("callbackUrl");
+
+
     const onClick = (provider: "google") => {
         signIn(provider, {
-            callbackUrl: DEFAULT_LOGIN_REDIRECT,
+            callbackUrl: callbackUrl || DEFAULT_LOGIN_REDIRECT,
         });
     }
 
@@ -18,7 +24,7 @@ export const Social = () => {
             <Button size="lg" className="w-full" variant="outline" onClick={() => onClick("google")}>
                 <FcGoogle className="h-5 w-5"/>
             </Button>
-
+        {/* Facebook (not in use) */}
             <Button size="lg" className="w-full hidden" variant="outline" onClick={() => {}}>
                 <FaFacebook className="h-5 w-5 text-blue-600"/>
             </Button>

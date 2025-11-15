@@ -20,7 +20,7 @@ export const Header = (
             <h1 className={cn(
                 "text-3xl font-semibold", font.className,
             )}>
-                Auth
+                Repas
             </h1>
             <p className="text-muted-foreground text-sm">
                 {label}

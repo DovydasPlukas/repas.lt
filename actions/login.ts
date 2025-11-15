@@ -19,19 +19,22 @@ import {
 import { db } from "@/lib/db";
 import { getTwoFactorConfirmationByUserId } from "@/data/two-factor-confirmation";
 
-export const login = async (values: z.infer<typeof LoginSchema>) => {
+export const login = async (
+    values: z.infer<typeof LoginSchema>,
+    callbackUrl?: string | null,
+) => {
     const validatedFields = LoginSchema.safeParse(values);
 
-     if(!validatedFields.success){
-        return { error: "Invalid Fields!" };
+    if(!validatedFields.success){
+        return { error: "Neteisingi duomenys!" };
     }
     
-    const { email, password, code } = validatedFields.data
+    const { email, password, code } = validatedFields.data;
 
     const existingUser = await getUserByEmail(email);
 
     if (!existingUser || !existingUser.email || !existingUser.password){
-        return { error: "Email does not exist!"}
+        return { error: "El. paštas neegzistuoja!" };
     }
 
     if (!existingUser.emailVerified){
@@ -42,9 +45,9 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
         await sendVerificationEmail(
             verificationToken.email,
             verificationToken.token,
-        )
+        );
 
-        return { success: "Confirmation  email sent!"}
+        return { success: "Patvirtinimo el. laiškas išsiųstas!" };
     }
 
     if (existingUser.isTwoFactorEnabled && existingUser.email){
@@ -54,17 +57,17 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
             );
             
             if (!twoFactorToken) {
-                return { error: "Invalid code!" };
+                return { error: "Neteisingas kodas!" };
             }
 
             if (twoFactorToken.token !== code) {
-                return { error: "Invalid code!" };
+                return { error: "Neteisingas kodas!" };
             }
 
             const hasExpired = new Date(twoFactorToken.expires) < new Date();
 
             if (hasExpired) {
-                return { error: "Code expired!" };
+                return { error: "Kodo galiojimas pasibaigė!" };
             }
 
             await db.twoFactorToken.delete({
@@ -85,33 +88,31 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
             });
 
         } else {
-            const twoFactorToken = await generateTwoFactorToken(existingUser.email)
+            const twoFactorToken = await generateTwoFactorToken(existingUser.email);
             await sendTwoFactorTokenEmail(
                 twoFactorToken.email,
                 twoFactorToken.token,
             );
 
-            return { twoFactor: true};
+            return { twoFactor: true };
         }
     }
-
 
     try {
         await signIn("credentials", {
             email,
             password,
-            redirectTo: DEFAULT_LOGIN_REDIRECT
-        })
+            redirectTo: callbackUrl || DEFAULT_LOGIN_REDIRECT,
+        });
     } catch (error){
         if (error instanceof AuthError) {
             switch (error.type) {
                 case "CredentialsSignin":
-                    return { error: "Invalid credentials!" }
+                    return { error: "Neteisingi prisijungimo duomenys!" };
                 default:
-                    return { error: "Something went wrong!" }
+                    return { error: "Įvyko klaida!" };
             }
         }
         throw error;
-
     }
 };

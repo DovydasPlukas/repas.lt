@@ -16,15 +16,20 @@ export const settings = async (
     const user = await currentUser();
 
     if (!user) {
-        return { error: "Unauthorized"}
+        return { error: "Neleistina" };
     }
 
+    if (!user.id) {
+        return { error: "Neleistina" };
+    }
+    
     const dbUser = await getUserById(user.id);
 
     if (!dbUser){
-        return { error: "Unauthorized" }
+        return { error: "Neleistina" };
     }
 
+    // Blokuojame pakeitimus, jei vartotojas 0Auth
     if (user.is0Auth){
         values.email = undefined;
         values.password = undefined;
@@ -32,21 +37,29 @@ export const settings = async (
         values.isTwoFactorEnabled = undefined;
     }
 
+    // Tikriname, ar keičiamas email
     if (values.email && values.email !== user.email){
         const existingUser = await getUserByEmail(values.email);
 
         if (existingUser && existingUser.id !== user.id) {
-            return { error: "Email already in use!"}
+            return { error: "Šis el. paštas jau naudojamas!" };
         }
 
         const verificationToken = await generateVerificationToken(values.email);
+
+        if (!verificationToken.email) {
+            return { error: "Nepavyko gauti el. pašto patvirtinimo kodo!" };
+        }
+
         await sendVerificationEmail(
             verificationToken.email,
             verificationToken.token,
         );
 
-        return { success: "Verification email sent!" };
+        return { success: "Patvirtinimo el. laiškas išsiųstas!" };
     }
+
+    // Keičiamas slaptažodis
     if (values.password && values.newPassword && dbUser.password){
         const passwordsMatch = await bcrypt.compare(
             values.password,
@@ -54,7 +67,7 @@ export const settings = async (
         );
 
         if (!passwordsMatch) {
-            return { error: "Incorrect password!" };
+            return { error: "Įvestas slaptažodis neteisingas!" };
         }
 
         const hashedPassword = await bcrypt.hash(
@@ -65,13 +78,12 @@ export const settings = async (
         values.newPassword = undefined;
     }
 
-
     await db.user.update({
-        where: { id: dbUser.id},
+        where: { id: dbUser.id },
         data: {
             ...values,
         }
     });
 
-    return { success: "Settings Updated! "}
+    return { success: "Nustatymai sėkmingai atnaujinti!" };
 }

@@ -1,13 +1,12 @@
 import { UserRole } from "@prisma/client";
 import * as z from "zod";
 
-// change messages to lithuanian
 export const LoginSchema = z.object({
     email: z.string().email({
-        message: "Email is required",
+        message: "El. paštas yra privalomas",
     }),
-    password:z.string().min(1, {
-        message: "Password is required",
+    password: z.string().min(1, {
+        message: "Slaptažodis yra privalomas",
     }),
     code: z.optional(z.string()),
 });
@@ -15,25 +14,25 @@ export const LoginSchema = z.object({
 
 export const RegisterSchema = z.object({
     email: z.string().email({
-        message: "Email is required",
+        message: "El. paštas yra privalomas",
     }),
-    password:z.string().min(6, {
-        message: "Minimum 6 characters required",
+    password: z.string().min(6, {
+        message: "Reikalingi mažiausiai 6 simboliai",
     }),
-    name: z.string().min(1,{
-        message: "Name is required",
+    name: z.string().min(1, {
+        message: "Vardas yra privalomas",
     }),
 });
 
 export const ResetSchema = z.object({
     email: z.string().email({
-        message: "Email is required",
+        message: "El. paštas yra privalomas",
     }),
 });
 
 export const NewPasswordSchema = z.object({
     password: z.string().min(6, {
-        message: "Minimum of 6 characters required",
+        message: "Reikalingi mažiausiai 6 simboliai",
     }),
 });
 
@@ -51,17 +50,17 @@ export const SettingsSchema = z.object({
         }
 
         return true;
-    },{
-        message: "New password is required!",
+    }, {
+        message: "Naujas slaptažodis yra privalomas",
         path: ["newPassword"]
     })
-        .refine((data) => {
+    .refine((data) => {
         if (data.newPassword && !data.password) {
             return false;
         }
 
         return true;
-    },{
-        message: "Password is required!",
+    }, {
+        message: "Dabartinis slaptažodis yra privalomas",
         path: ["password"]
-    })
+    });

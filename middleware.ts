@@ -30,8 +30,18 @@ export default auth((req) => {
 
         // Only redirect when the route is explicitly protected.
         if (!isLoggedIn && isProtectedPrefix){
+            let callbackUrl = nextUrl.pathname;
+            if ( nextUrl.search) {
+                callbackUrl += nextUrl.search;
+            }
+
+            const encodedCallbackUrl = encodeURIComponent(callbackUrl);
+
             return Response.redirect(
-                new URL("/prisijungimas", nextUrl));
+                new URL(
+                    `/prisijungimas?callbackUrl=${encodedCallbackUrl}`,
+                     nextUrl
+                    ));
         }
 
         return null;
@@ -46,10 +56,3 @@ export const config = {
     '/(api|trpc)(.*)',
   ],
 }
-
-/*
-old matchers:
-  matcher:
-    ['/((?!.+\\.[//w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
-    ["/prisijungimas", "/registracija"],
-*/

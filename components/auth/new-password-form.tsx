@@ -5,7 +5,7 @@ import * as z from "zod";
 import { useState, useTransition } from "react";
 import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod"
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { NewPasswordSchema } from "@/schemas";
 import { Input } from "@/components/ui/input";
@@ -18,15 +18,15 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 
-import { CardWrapper } from "@/components/auth/card-wrapper"
+import { CardWrapper } from "@/components/auth/card-wrapper";
 import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/form/form-error";
 import { FormSuccess } from "@/components/form/form-success";
 import { newPassword } from "@/actions/new-password";
 
-export const NewPasswordForm = () =>{
+export const NewPasswordForm = () => {
     const searchParams = useSearchParams();
-    const token = searchParams.get("token")
+    const token = searchParams.get("token");
 
     const [error, setError] = useState<string | undefined>("");
     const [success, setSuccess] = useState<string | undefined>("");
@@ -39,10 +39,10 @@ export const NewPasswordForm = () =>{
         },
     });
 
-    const onSubmit = (values: z.infer<typeof NewPasswordSchema>) =>{
+    const onSubmit = (values: z.infer<typeof NewPasswordSchema>) => {
         setError("");
         setSuccess("");
-        
+
         startTransition(() => {
             newPassword(values, token)
                 .then((data) => {
@@ -54,14 +54,14 @@ export const NewPasswordForm = () =>{
 
     return (
         <CardWrapper
-            headerLabel="Enter a new password"
-            backButtonLabel="Back to login"
+            headerLabel="Įveskite naują slaptažodį"
+            backButtonLabel="Grįžti į prisijungimą"
             backButtonHref="/prisijungimas"
         >
             <Form {...form}>
-                <form 
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-6"
+                <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="space-y-6"
                 >
                     <div className="space-y-4">
                         <FormField
@@ -69,7 +69,7 @@ export const NewPasswordForm = () =>{
                             name="password"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Password</FormLabel>
+                                    <FormLabel>Slaptažodis</FormLabel>
                                     <FormControl>
                                         <Input
                                             {...field}
@@ -81,16 +81,18 @@ export const NewPasswordForm = () =>{
                                     <FormMessage />
                                 </FormItem>
                             )}
-                        />       
+                        />
                     </div>
-                    <FormError message={error}/>
-                    <FormSuccess message={success}/>
+
+                    <FormError message={error} />
+                    <FormSuccess message={success} />
+
                     <Button
                         disabled={isPending}
                         type="submit"
                         className="w-full"
                     >
-                        Reset password
+                        Atnaujinti slaptažodį
                     </Button>
                 </form>
             </Form>

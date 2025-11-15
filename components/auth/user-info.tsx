@@ -1,4 +1,4 @@
-import { ExtendedUser } from "@/next-auth"
+import { ExtendedUser } from "@/next-auth";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
@@ -11,16 +11,16 @@ export const UserInfo = ({
     user,
     label,
 }: UserInfoProps) => {
-    return(
+    return (
         <Card className="w-[600px] shadow-md">
             <CardHeader>
                 <p className="text-2xl font-semibold text-center">
                     {label} 
                 </p>
             </CardHeader>
-            <CardContent className="space y-4">
+            <CardContent className="space-y-4">
                 <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                    <p className="text-sm fort-medium">
+                    <p className="text-sm font-medium">
                         ID 
                     </p>
                     <p className="truncate text-xs max-w-[180px] font-mono p-1 bg-slate-100 rounded-md">
@@ -28,38 +28,38 @@ export const UserInfo = ({
                     </p>
                 </div>
                 <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                    <p className="text-sm fort-medium">
-                        Name
+                    <p className="text-sm font-medium">
+                        Vardas
                     </p>
                     <p className="truncate text-xs max-w-[180px] font-mono p-1 bg-slate-100 rounded-md">
                         {user?.name}
                     </p>
                 </div>
                 <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                    <p className="text-sm fort-medium">
-                        Email
+                    <p className="text-sm font-medium">
+                        El. paštas
                     </p>
                     <p className="truncate text-xs max-w-[180px] font-mono p-1 bg-slate-100 rounded-md">
                         {user?.email}
                     </p>
                 </div>
                 <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                    <p className="text-sm fort-medium">
-                        Role 
+                    <p className="text-sm font-medium">
+                        Rolė
                     </p>
                     <p className="truncate text-xs max-w-[180px] font-mono p-1 bg-slate-100 rounded-md">
                         {user?.role}
                     </p>
                 </div>
                 <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                    <p className="text-sm fort-medium">
-                        Two Factor Authentication 
+                    <p className="text-sm font-medium">
+                        Dviejų veiksnių autentifikavimas
                     </p>
                     <Badge variant={user?.isTwoFactorEnabled ? "success" : "destructive"}>
-                        {user?.isTwoFactorEnabled ? "ON" : "OFF"}
+                        {user?.isTwoFactorEnabled ? "ĮJUNGTA" : "IŠJUNGTA"}
                     </Badge>
                 </div>
             </CardContent>
         </Card>
-    )
-}
+    );
+};

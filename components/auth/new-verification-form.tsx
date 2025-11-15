@@ -14,24 +14,24 @@ export const NewVerificationForm = () => {
     const [success, setSuccess] = useState<string | undefined>();
 
     const searchParams = useSearchParams();
-
     const token = searchParams.get("token");
 
     const onSubmit = useCallback(() => {
-        if(success || error) return;
+        if (success || error) return;
 
         if (!token) {
-            setError("Missing token!");
+            setError("Trūksta token!");
             return;
         }
+
         newVerification(token)
             .then((data) => {
                 setSuccess(data.success);
                 setError(data.error);
             })
             .catch(() => {
-                setError("Something went wrong!");
-            })
+                setError("Įvyko klaida!");
+            });
     }, [token, success, error]);
 
     useEffect(() => {
@@ -40,19 +40,19 @@ export const NewVerificationForm = () => {
 
     return (
         <CardWrapper 
-        headerLabel="Confirm your verification"
-        backButtonLabel="Back to login"
-        backButtonHref="/prisijungimas"
+            headerLabel="Patvirtinkite savo el. paštą"
+            backButtonLabel="Grįžti į prisijungimą"
+            backButtonHref="/prisijungimas"
         >
-            <div className="flex items-center w-fuil justify-center">
+            <div className="flex items-center w-full justify-center">
                 {!success && !error && (
-                <BeatLoader />
+                    <BeatLoader />
                 )}
                 <FormSuccess message={success} />
-                {!success &&(
+                {!success && (
                     <FormError message={error} />
                 )}
             </div>
         </CardWrapper>
-    )
-}
+    );
+};

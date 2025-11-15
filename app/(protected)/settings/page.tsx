@@ -37,11 +37,11 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { UserRole } from "@prisma/client";
 
-const SettingsPage =  () => {
+const SettingsPage = () => {
     const user = useCurrentUser();
 
-    const [error, setError] =useState<string | undefined>();
-    const [success, setSuccess] =useState<string | undefined>();
+    const [error, setError] = useState<string | undefined>();
+    const [success, setSuccess] = useState<string | undefined>();
     const { update } = useSession();
     const [isPending, startTransition] = useTransition();
 
@@ -49,7 +49,7 @@ const SettingsPage =  () => {
         resolver: zodResolver(SettingsSchema),
         defaultValues: {
             name: user?.name || undefined,
-            email: user?.email ||undefined,
+            email: user?.email || undefined,
             password: undefined,
             newPassword: undefined,
             role: user?.role || undefined,
@@ -57,22 +57,20 @@ const SettingsPage =  () => {
         }
     });
 
-
-
-    const onSubmit = ( values: z.infer<typeof SettingsSchema>) => {
-        startTransition(() =>{
+    const onSubmit = (values: z.infer<typeof SettingsSchema>) => {
+        startTransition(() => {
             settings(values)
-            .then((data) => {
-                if (data.error){
-                    setError(data.error);
-                }
+                .then((data) => {
+                    if (data.error) {
+                        setError(data.error);
+                    }
 
-                if(data.success){
-                    update();
-                    setSuccess(data.success);
-                }
-            })
-            .catch(() => setError("Something went wrong!"));
+                    if (data.success) {
+                        update();
+                        setSuccess(data.success);
+                    }
+                })
+                .catch(() => setError("Įvyko klaida!"));
         });
     }
 
@@ -80,7 +78,7 @@ const SettingsPage =  () => {
         <Card className="w-[600px]">
             <CardHeader>
                 <p className="text-2xl font-semibold text-center">
-                    Settings
+                    Nustatymai
                 </p>
             </CardHeader>
             <CardContent>
@@ -89,17 +87,17 @@ const SettingsPage =  () => {
                         className="space-y-6"
                         onSubmit={form.handleSubmit(onSubmit)}
                     >
-                        <div className=" space-y-4">
-                            <FormField 
+                        <div className="space-y-4">
+                            <FormField
                                 control={form.control}
                                 name="name"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Name</FormLabel>
+                                        <FormLabel>Vardas</FormLabel>
                                         <FormControl>
-                                            <Input 
+                                            <Input
                                                 {...field}
-                                                placeholder="John Doe"
+                                                placeholder="Jonas Jonaitis"
                                                 disabled={isPending}
                                             />
                                         </FormControl>
@@ -108,69 +106,69 @@ const SettingsPage =  () => {
                                 )}
                             />
                             {user?.is0Auth === false && (
-                            <>
-                                <FormField 
-                                    control={form.control}
-                                    name="email"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Email</FormLabel>
-                                            <FormControl>
-                                                <Input 
-                                                    {...field}
-                                                    placeholder="john.doe@example.com"
-                                                    type="email"
-                                                    disabled={isPending}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField 
-                                    control={form.control}
-                                    name="password"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Password</FormLabel>
-                                            <FormControl>
-                                                <Input 
-                                                    {...field}
-                                                    placeholder="*****"
-                                                    type="password"
-                                                    disabled={isPending}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField 
-                                    control={form.control}
-                                    name="newPassword"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>New Password</FormLabel>
-                                            <FormControl>
-                                                <Input 
-                                                    {...field}
-                                                    placeholder="*****"
-                                                    type="password"
-                                                    disabled={isPending}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </>
+                                <>
+                                    <FormField
+                                        control={form.control}
+                                        name="email"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>El. paštas</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        {...field}
+                                                        placeholder="jonas.jonaitis@example.com"
+                                                        type="email"
+                                                        disabled={isPending}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="password"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Slaptažodis</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        {...field}
+                                                        placeholder="*****"
+                                                        type="password"
+                                                        disabled={isPending}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="newPassword"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Naujas slaptažodis</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        {...field}
+                                                        placeholder="*****"
+                                                        type="password"
+                                                        disabled={isPending}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </>
                             )}
-                            <FormField 
+                            <FormField
                                 control={form.control}
                                 name="role"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Role</FormLabel>
+                                        <FormLabel>Rolė</FormLabel>
                                         <Select
                                             disabled={isPending}
                                             onValueChange={field.onChange}
@@ -178,15 +176,15 @@ const SettingsPage =  () => {
                                         >
                                             <FormControl>
                                                 <SelectTrigger>
-                                                    <SelectValue  placeholder="Select a role" />
+                                                    <SelectValue placeholder="Pasirinkite rolę" />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
                                                 <SelectItem value={UserRole.ADMIN}>
-                                                    Admin
+                                                    ADMIN
                                                 </SelectItem>
                                                 <SelectItem value={UserRole.USER}>
-                                                    User
+                                                    USER
                                                 </SelectItem>
                                             </SelectContent>
                                         </Select>
@@ -195,19 +193,19 @@ const SettingsPage =  () => {
                                 )}
                             />
                             {user?.is0Auth === false && (
-                                <FormField 
+                                <FormField
                                     control={form.control}
                                     name="isTwoFactorEnabled"
                                     render={({ field }) => (
                                         <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
                                             <div className="space-y-0.5">
-                                                <FormLabel>Two Factor Authentication</FormLabel>
+                                                <FormLabel>Dviejų faktorių autentifikacija</FormLabel>
                                                 <FormDescription>
-                                                    Enable Two factor authentication for your account
+                                                    Įjungti dviejų faktorių autentifikaciją savo paskyrai
                                                 </FormDescription>
                                             </div>
                                             <FormControl>
-                                                <Switch 
+                                                <Switch
                                                     disabled={isPending}
                                                     checked={field.value}
                                                     onCheckedChange={field.onChange}
@@ -224,7 +222,7 @@ const SettingsPage =  () => {
                             disabled={isPending}
                             type="submit"
                         >
-                            Save
+                            Išsaugoti
                         </Button>
                     </form>
                 </Form>
@@ -232,5 +230,5 @@ const SettingsPage =  () => {
         </Card>
     );
 }
- 
+
 export default SettingsPage;

@@ -4,7 +4,7 @@ import * as z from "zod";
 
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod"
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { RegisterSchema } from "@/schemas";
 import { Input } from "@/components/ui/input";
@@ -17,13 +17,13 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 
-import { CardWrapper } from "@/components/auth/card-wrapper"
+import { CardWrapper } from "@/components/auth/card-wrapper";
 import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/form/form-error";
 import { FormSuccess } from "@/components/form/form-success";
 import { register } from "@/actions/register";
 
-export const RegisterForm = () =>{
+export const RegisterForm = () => {
     const [error, setError] = useState<string | undefined>("");
     const [success, setSuccess] = useState<string | undefined>("");
     const [isPending, startTransition] = useTransition();
@@ -37,10 +37,10 @@ export const RegisterForm = () =>{
         },
     });
 
-    const onSubmit = (values: z.infer<typeof RegisterSchema>) =>{
+    const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
         setError("");
         setSuccess("");
-        
+
         startTransition(() => {
             register(values)
                 .then((data) => {
@@ -52,15 +52,15 @@ export const RegisterForm = () =>{
 
     return (
         <CardWrapper
-            headerLabel="Create an account"
-            backButtonLabel="Already have an account?"
+            headerLabel="Sukurti paskyrą"
+            backButtonLabel="Jau turite paskyrą?"
             backButtonHref="/prisijungimas"
             showSocial
         >
             <Form {...form}>
-                <form 
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-6"
+                <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="space-y-6"
                 >
                     <div className="space-y-4">
                         <FormField
@@ -68,29 +68,30 @@ export const RegisterForm = () =>{
                             name="name"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Name</FormLabel>
+                                    <FormLabel>Vardas</FormLabel>
                                     <FormControl>
                                         <Input
                                             {...field}
                                             disabled={isPending}
-                                            placeholder="John Doe"
+                                            placeholder="Jonas Jonaitis"
                                         />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
+
                         <FormField
                             control={form.control}
                             name="email"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Email</FormLabel>
+                                    <FormLabel>El. paštas</FormLabel>
                                     <FormControl>
                                         <Input
                                             {...field}
                                             disabled={isPending}
-                                            placeholder="john.doe@example.com"
+                                            placeholder="vardas.pavarde@example.com"
                                             type="email"
                                         />
                                     </FormControl>
@@ -98,12 +99,13 @@ export const RegisterForm = () =>{
                                 </FormItem>
                             )}
                         />
+
                         <FormField
                             control={form.control}
                             name="password"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Password</FormLabel>
+                                    <FormLabel>Slaptažodis</FormLabel>
                                     <FormControl>
                                         <Input
                                             {...field}
@@ -117,14 +119,16 @@ export const RegisterForm = () =>{
                             )}
                         />
                     </div>
-                    <FormError message={error}/>
-                    <FormSuccess message={success}/>
+
+                    <FormError message={error} />
+                    <FormSuccess message={success} />
+
                     <Button
                         disabled={isPending}
                         type="submit"
                         className="w-full"
                     >
-                        Create an account
+                        Sukurti paskyrą
                     </Button>
                 </form>
             </Form>

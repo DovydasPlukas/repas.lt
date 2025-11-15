@@ -4,7 +4,7 @@ import * as z from "zod";
 
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod"
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { LoginSchema } from "@/schemas";
 import { Input } from "@/components/ui/input";
@@ -17,7 +17,7 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 
-import { CardWrapper } from "@/components/auth/card-wrapper"
+import { CardWrapper } from "@/components/auth/card-wrapper";
 import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/form/form-error";
 import { FormSuccess } from "@/components/form/form-success";
@@ -25,11 +25,13 @@ import { login } from "@/actions/login";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
-export const LoginForm = () =>{
+export const LoginForm = () => {
     const searchParams = useSearchParams();
-    const urlError = searchParams.get("error") === "OAuthAccountNotLinked"
-        ? "Email already in use with different provider!"
-        :"";
+    const callbackUrl = searchParams.get("callbackUrl");
+    const urlError =
+        searchParams.get("error") === "OAuthAccountNotLinked"
+            ? "Šis el. paštas jau naudojamas su kitu prisijungimo būdu!"
+            : "";
 
     const [showTwoFactor, setShowTwoFactor] = useState(false);
     const [error, setError] = useState<string | undefined>();
@@ -44,12 +46,12 @@ export const LoginForm = () =>{
         },
     });
 
-    const onSubmit = (values: z.infer<typeof LoginSchema>) =>{
+    const onSubmit = (values: z.infer<typeof LoginSchema>) => {
         setError("");
         setSuccess("");
-        
+
         startTransition(() => {
-            login(values)
+            login(values, callbackUrl)
                 .then((data) => {
                     if (data?.error) {
                         form.reset();
@@ -65,31 +67,30 @@ export const LoginForm = () =>{
                         setShowTwoFactor(true);
                     }
                 })
-                    .catch(() => setError("Something went wrong!"));
+                .catch(() => setError("Įvyko klaida. Bandykite dar kartą."));
         });
     };
 
     return (
         <CardWrapper
-            headerLabel="Welcome back"
-            backButtonLabel="Don't have an account?"
+            headerLabel="Sveiki sugrįžę"
+            backButtonLabel="Neturite paskyros?"
             backButtonHref="/registracija"
             showSocial
         >
             <Form {...form}>
-                <form 
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-6"
+                <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="space-y-6"
                 >
                     <div className="space-y-4">
-                    
-                    {showTwoFactor && (
-                        <FormField
+                        {showTwoFactor && (
+                            <FormField
                                 control={form.control}
                                 name="code"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Two Factor Code</FormLabel>
+                                        <FormLabel>Dviejų veiksnių kodas</FormLabel>
                                         <FormControl>
                                             <Input
                                                 {...field}
@@ -101,66 +102,72 @@ export const LoginForm = () =>{
                                     </FormItem>
                                 )}
                             />
-                    )}
-                    {!showTwoFactor && (
-                        <>
-                            <FormField
-                                control={form.control}
-                                name="email"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Email</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                {...field}
-                                                disabled={isPending}
-                                                placeholder="john.doe@example.com"
-                                                type="email"
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="password"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Password</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                {...field}
-                                                disabled={isPending}
-                                                placeholder="******"
-                                                type="password"
-                                            />
-                                        </FormControl>
-                                        <Button
-                                            size="sm"
-                                            variant="link"
-                                            asChild
-                                            className="px-0 font-normal"
-                                        >
-                                            <Link href="/reset">
-                                            Forgot password?
-                                            </Link>
-                                        </Button>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </>
-                    )}
+                        )}
+
+                        {!showTwoFactor && (
+                            <>
+                                <FormField
+                                    control={form.control}
+                                    name="email"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>El. paštas</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    {...field}
+                                                    disabled={isPending}
+                                                    placeholder="vardas.pavarde@example.com"
+                                                    type="email"
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="password"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Slaptažodis</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    {...field}
+                                                    disabled={isPending}
+                                                    placeholder="******"
+                                                    type="password"
+                                                />
+                                            </FormControl>
+
+                                            <Button
+                                                size="sm"
+                                                variant="link"
+                                                asChild
+                                                className="px-0 font-normal"
+                                            >
+                                                <Link href="/reset">
+                                                    Pamiršote slaptažodį?
+                                                </Link>
+                                            </Button>
+
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </>
+                        )}
                     </div>
-                    <FormError message={error || urlError}/>
-                    <FormSuccess message={success}/>
+
+                    <FormError message={error || urlError} />
+                    <FormSuccess message={success} />
+
                     <Button
                         disabled={isPending}
                         type="submit"
                         className="w-full"
                     >
-                        {showTwoFactor ? "Confirm" : "Login"}
+                        {showTwoFactor ? "Patvirtinti" : "Prisijungti"}
                     </Button>
                 </form>
             </Form>
