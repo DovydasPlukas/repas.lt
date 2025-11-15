@@ -1,4 +1,3 @@
-// bad extendedUser
 import { ExtendedUser } from "@/next-auth"
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
