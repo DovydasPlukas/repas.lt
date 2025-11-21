@@ -126,7 +126,7 @@ export const RegisterForm = () => {
                     <Button
                         disabled={isPending}
                         type="submit"
-                        className="w-full"
+                        className="w-full hover:bg-[--RepasBlue] transition-all duration-300 ease-in-out"
                     >
                         Sukurti paskyrą
                     </Button>

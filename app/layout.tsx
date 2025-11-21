@@ -3,6 +3,7 @@ import { Poppins } from'next/font/google';
 import "./globals.css";
 import SiteWrapper from "../components/SiteWrapper";
 import { Toaster } from "sonner";
+import { SessionProvider } from "next-auth/react";
 
 const FontPoppins = Poppins({
   subsets:['latin'],
@@ -18,12 +19,14 @@ export default function RootLayout({children,}: Readonly<{children: React.ReactN
   return (
     <html lang="lt">
       <body className={`${FontPoppins}  antialiased flex flex-col min-h-screen`}>
-        <Toaster />
-        <SiteWrapper isAdmin={true}> {/* Set isAdmin based on your auth logic */}
-          <main className="relative overflow-hidden bg-[--ContentBackground]">
-            {children}
-          </main>
-        </SiteWrapper>
+        <SessionProvider >
+          <Toaster />
+          <SiteWrapper>
+            <main className="relative overflow-hidden bg-[--ContentBackground]">
+              {children}
+            </main>
+          </SiteWrapper>
+        </SessionProvider>
       </body>
     </html>
   );

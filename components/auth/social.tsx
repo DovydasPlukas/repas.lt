@@ -21,11 +21,11 @@ export const Social = () => {
 
     return (
         <div className="flex items-center w-full gap-x-2">
-            <Button size="lg" className="w-full" variant="outline" onClick={() => onClick("google")}>
+            <Button size="lg" className="w-full transition-all duration-300 ease-in-out" variant="outline" onClick={() => onClick("google")}>
                 <FcGoogle className="h-5 w-5"/>
             </Button>
         {/* Facebook (not in use) */}
-            <Button size="lg" className="w-full hidden" variant="outline" onClick={() => {}}>
+            <Button size="lg" className="w-full transition-all duration-300 ease-in-out hidden" variant="outline" onClick={() => {}}>
                 <FaFacebook className="h-5 w-5 text-blue-600"/>
             </Button>
 

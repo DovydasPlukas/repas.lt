@@ -9,11 +9,10 @@ export const PASLAUGOS_LINKS = [
 // Virsutine navigacijos juosta
   export const USER_NAV_LINKS = {
     contact: { href: '/kontaktai', label: 'Kontaktai' },
-    logout: { href: '/logout', label: 'Logout' },
-    account: { href: '/paskyra', label: 'Account' },
-    order: { href: '/order', label: 'Order' },
-    login: { href: '/prisijungimas', label: 'Login' },
+    account: { href: '/settings', label: 'Paskyra' },
+    dashboard: { href: '/dashboard', label: 'Administratoriaus panelė' },
+    order: { href: '/order', label: 'Užsakymas' },
+    login: { href: '/prisijungimas', label: 'Prisijungti' },
     cart: { href: '/cart', label: 'Cart' },
     services: { href: '/paslaugos', label: 'Užsisakyti' },
   };
-  

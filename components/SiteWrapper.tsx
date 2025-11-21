@@ -2,6 +2,7 @@
 
 import React from "react";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import PageFill from "./PageFill";
@@ -9,20 +10,22 @@ import NotFound from "../app/not-found";
 
 interface Props {
   children: React.ReactNode;
-  isAdmin: boolean; // pass this prop from your auth/session
 }
 
-export default function SiteWrapper({ children, isAdmin }: Props) {
+export default function SiteWrapperClient({ children }: Props) {
+  const { data: session } = useSession();
   const pathname = usePathname();
 
-  const isDashboardRoute =
-    pathname === "/dashboard";
+  // Admin check using extended session type
+  const isAdmin = session?.user?.role === "ADMIN";
+
+  const isDashboardRoute = pathname === "/dashboard";
 
   if (isDashboardRoute) {
-    // Admin sees dashboard without wrapper
-    if (isAdmin) return <>{children}</>;
+    if (isAdmin) {
+      return <>{children}</>;
+    }
 
-    // Non-admin sees error page with layout
     return (
       <>
         <Navbar />
@@ -33,7 +36,6 @@ export default function SiteWrapper({ children, isAdmin }: Props) {
     );
   }
 
-  // All other pages
   return (
     <>
       <Navbar />
