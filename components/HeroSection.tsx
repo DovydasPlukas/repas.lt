@@ -5,13 +5,19 @@ import Image from 'next/image';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 
+import { useRouter } from 'next/navigation';
+
 export default function HeroSection() {
   const [zipCode, setZipCode] = useState('');
+  
+  const router = useRouter()
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('ZIP code submitted:', zipCode);
-  };
+    e.preventDefault()
+    if (zipCode.trim()) {
+      router.push(`/adresas?zip=${encodeURIComponent(zipCode)}`)
+    }
+  }
 
   return (
     <div className="relative w-full h-[500px] sm:h-[550px] md:h-[600px] lg:h-[650px] rounded-xl overflow-hidden bg-gradient-to-r from-[#D0E6F7]/10 via-[#E4F0FA]/50 to-[#D0E6F7]/40 animate-gradient-x">

@@ -102,7 +102,7 @@ export default function ApieMus() {
           </p>
           <a
             href="/kontaktai"
-            className="inline-flex items-center justify-center rounded-lg bg-[--RepasBlue] px-8 py-3 text-base font-medium text-white font-poppins transition-all duration-300 ease-in-out hover:bg-black/20 hover:text-[--RepasBlue]"
+            className="inline-flex items-center justify-center rounded-lg bg-[#494B8B] px-8 py-3 text-base font-medium text-white font-poppins transition-all duration-300 ease-in-out hover:bg-[#494B8B]/90"
           >
             Susisiekti
           </a>
