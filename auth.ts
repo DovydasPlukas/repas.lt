@@ -70,7 +70,6 @@ export const {
       }
 
       if (session.user) {
-        session.user.name = token.name ?? "";
         session.user.email = token.email ?? "";
         session.user.is0Auth = token.is0Auth as boolean;
       }
@@ -90,7 +89,6 @@ export const {
       );
 
       token.is0Auth = !!existingAccount;
-      token.name = existingUser.name;
       token.email = existingUser.email;
       token.role = existingUser.role;
       token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;

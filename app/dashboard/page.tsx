@@ -1,28 +1,24 @@
 "use client"
 
 import { useState } from "react"
-import Link from "next/link";
-import Image from "next/image";
-import { LayoutDashboard, ShoppingCart, Settings, FileEdit, Menu, X } from "lucide-react"
+import Link from "next/link"
+import Image from "next/image"
+import { LayoutDashboard, ShoppingCart, Settings, Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Overview from "@/components/dashboard/overview"
 import Orders from "@/components/dashboard/orders"
 import ChangeServices from "@/components/dashboard/change-services"
-import ChangePage from "@/components/dashboard/change-page"
 
-// TODO: add if user is admin check
-
-type TabType = "overview" | "orders" | "services" | "page"
+type TabType = "overview" | "orders" | "services"
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<TabType>("overview")
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const tabs = [
-    { id: "overview" as TabType, label: "Overview", icon: LayoutDashboard },
-    { id: "orders" as TabType, label: "Orders", icon: ShoppingCart },
-    { id: "services" as TabType, label: "Change Services", icon: Settings },
-    { id: "page" as TabType, label: "Change Page", icon: FileEdit },
+    { id: "overview" as TabType, label: "Apžvalga", icon: LayoutDashboard },
+    { id: "orders" as TabType, label: "Užsakymai", icon: ShoppingCart },
+    { id: "services" as TabType, label: "Keisti Paslaugas", icon: Settings },
   ]
 
   const renderContent = () => {
@@ -33,8 +29,6 @@ export default function AdminDashboard() {
         return <Orders />
       case "services":
         return <ChangeServices />
-      case "page":
-        return <ChangePage />
       default:
         return <Overview />
     }
@@ -62,14 +56,7 @@ export default function AdminDashboard() {
           {/* Logo/Header */}
           <div className="p-2 border-b border-sidebar-border bg-white flex justify-center">
             <Link href="/" aria-label="Pagrindinis puslapis" className="inline-block mb-3">
-              <Image
-                src="/repas_logo.svg"
-                alt="Repas"
-                width={150}
-                height={50}
-                className="object-contain"
-                priority
-              />
+              <Image src="/repas_logo.svg" alt="Repas" width={150} height={50} className="object-contain" priority />
             </Link>
           </div>
 
@@ -98,11 +85,10 @@ export default function AdminDashboard() {
             })}
           </nav>
 
-        {/* Footer */}
-        <div className="p-4 bg-white">
+          {/* Footer */}
+          <div className="p-4 bg-white">
             <h1 className="text-2xl font-bold text-sidebar-foreground">Administratoriaus panelė</h1>
-        </div>
-
+          </div>
         </div>
       </aside>
 

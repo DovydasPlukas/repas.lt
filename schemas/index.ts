@@ -19,9 +19,6 @@ export const RegisterSchema = z.object({
     password: z.string().min(6, {
         message: "Reikalingi mažiausiai 6 simboliai",
     }),
-    name: z.string().min(1, {
-        message: "Vardas yra privalomas",
-    }),
 });
 
 export const ResetSchema = z.object({
@@ -37,7 +34,6 @@ export const NewPasswordSchema = z.object({
 });
 
 export const SettingsSchema = z.object({
-    name: z.optional(z.string()),
     isTwoFactorEnabled: z.optional(z.boolean()),
     role: z.enum([UserRole.ADMIN, UserRole.USER]),
     email: z.optional(z.string().email()),

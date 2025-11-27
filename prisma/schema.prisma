@@ -1,37 +1,39 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+generator client {
+  provider = "prisma-client-js"
+}
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
-}
+//////////////////////////////////////////////////////
+// 1. USERS & AUTH
+//////////////////////////////////////////////////////
 
-enum UserRole{
+enum UserRole {
   ADMIN
   USER
 }
 
 model User {
-  id            String          @id @default(cuid())
-  name          String?
-  email         String          @unique
-  emailVerified DateTime?
-  image         String?
-  password      String?
-  role          UserRole        @default(USER)
-  accounts      Account[]
-  isTwoFactorEnabled Boolean    @default(false)
+  id                    String                  @id @default(cuid())
+  email                 String                  @unique
+  emailVerified         DateTime?
+  password              String?
+  role                  UserRole                @default(USER)
+  isTwoFactorEnabled    Boolean                 @default(false)
+
+  accounts              Account[]
   twoFactorConfirmation TwoFactorConfirmation?
+
+  contact               Contact?
+  address               Address?
+  orders                Order[]
 }
- 
+
 model Account {
-  id                String   @id @default(cuid())
+  id                String  @id @default(cuid())
   userId            String
   type              String
   provider          String
@@ -43,44 +45,157 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
- 
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@unique([provider, providerAccountId])
 }
 
 model VerificationToken {
-  id         String   @id @default(cuid())
-  email      String
-  token      String   @unique
-  expires    DateTime
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
 
   @@unique([email, token])
 }
 
 model PasswordResetToken {
-  id         String   @id @default(cuid())
-  email      String
-  token      String   @unique
-  expires    DateTime
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
 
   @@unique([email, token])
 }
 
 model TwoFactorToken {
-  id         String   @id @default(cuid())
-  email      String
-  token      String   @unique
-  expires    DateTime
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
 
   @@unique([email, token])
 }
 
 model TwoFactorConfirmation {
-  id String @id @default(cuid())
-  userId String
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
 
-  @@unique([userId])
+//////////////////////////////////////////////////////
+// 2. USER PROFILES
+//////////////////////////////////////////////////////
+
+model Contact {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  firstName   String
+  lastName    String
+  phoneNumber String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Address {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  zipCode     String
+  city        String
+  street      String
+  houseNumber String
+  notes       String?
+  latitude    Decimal? @db.Decimal(10, 7)
+  longitude   Decimal? @db.Decimal(10, 7)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+//////////////////////////////////////////////////////
+// 3. CATALOG (Services & Addons)
+//////////////////////////////////////////////////////
+
+model Service {
+  id        String         @id @default(cuid())
+  name      String         @unique
+  description String?
+  enabled   Boolean        @default(true)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  addons    ServiceAddon[]
+  orders    Order[]
+}
+
+enum AddonType {
+  PAPILDOMA_PASLAUGA
+  PRIEDAI
+}
+
+model ServiceAddon {
+  id        String    @id @default(cuid())
+  serviceId String
+  name      String
+  type      AddonType
+  price     Decimal
+  enabled   Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  orderAddons OrderAddon[]
+
+  @@index([serviceId])
+}
+
+//////////////////////////////////////////////////////
+// 4. COMMERCE (Orders)
+//////////////////////////////////////////////////////
+
+enum OrderStatus {
+  NEW
+  PENDING
+  COMPLETED
+  CANCELLED
+}
+
+model Order {
+  id                     String        @id @default(cuid())
+  orderNumber            String        @unique
+  userId                 String
+  serviceId              String
+  snapFirstName          String
+  snapLastName           String
+  snapPhone              String
+  snapCity               String
+  snapStreet             String
+  snapHouseNumber        String
+  snapZipCode            String?
+  snapNotes              String?
+  snapLatitude           Decimal?      @db.Decimal(10, 7)
+  snapLongitude          Decimal?      @db.Decimal(10, 7)
+  servicePriceAtPurchase Decimal?      @db.Decimal(10, 2)
+  status                 OrderStatus   @default(NEW)
+  createdAt              DateTime      @default(now())
+  updatedAt              DateTime      @updatedAt
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  service    Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  addons     OrderAddon[]
+}
+
+model OrderAddon {
+  id       String      @id @default(cuid())
+  orderId  String
+  addonId  String
+  snapPrice Decimal?   @db.Decimal(10, 2)
+  snapName String?
+
+  order        Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  serviceAddon ServiceAddon @relation(fields: [addonId], references: [id], onDelete: Cascade)
 }

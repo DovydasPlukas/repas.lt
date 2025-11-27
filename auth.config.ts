@@ -12,6 +12,14 @@ export default {
         Google({
             clientId: process.env.GOOGLE_CLIENT_ID!,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+             profile(profile) {
+        return {
+        id: profile.sub,
+        // send it as first name and last name if needed
+        // name: profile.name,
+        email: profile.email,
+        };
+    },
         }),
         Credentials({
             async authorize(credentials) {
