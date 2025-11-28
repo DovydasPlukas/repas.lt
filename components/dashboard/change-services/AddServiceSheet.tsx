@@ -1,39 +1,103 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet"
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet"
 import { Switch } from "@/components/ui/switch"
-import { Plus } from "lucide-react"
+import { Plus, Check } from "lucide-react"
+import { Service } from "@/components/dashboard/change-services/types"
+import { FormError } from "@/components/form/form-error"
 
 interface AddServiceSheetProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onServiceAdded: () => void
+  onServiceSaved: (updatedService?: Service) => void // pass updated service
+  serviceToEdit?: Service | null
+  resetServiceToEdit?: () => void // optional callback to reset parent state
 }
 
-export default function AddServiceSheet({ open, onOpenChange, onServiceAdded }: AddServiceSheetProps) {
-  const [form, setForm] = useState({ name: "", description: "", enabled: true })
+export default function AddServiceSheet({
+  open,
+  onOpenChange,
+  onServiceSaved,
+  serviceToEdit = null,
+  resetServiceToEdit,
+}: AddServiceSheetProps) {
+  const [form, setForm] = useState({
+    name: "",
+    description: "",
+    enabled: true,
+  })
 
-  const addService = async () => {
+  const [formError, setFormError] = useState<string | null>(null)
+  const [saving, setSaving] = useState(false)
+
+  // Prefill form if editing or reset if adding
+  useEffect(() => {
+    if (open) {
+      if (serviceToEdit) {
+        setForm({
+          name: serviceToEdit.name,
+          description: serviceToEdit.description || "",
+          enabled: serviceToEdit.enabled,
+        })
+      } else {
+        setForm({ name: "", description: "", enabled: true })
+        resetServiceToEdit?.() // ensure parent clears serviceToEdit
+      }
+      setFormError(null)
+    }
+  }, [serviceToEdit, open, resetServiceToEdit])
+
+  const saveService = async () => {
     if (!form.name || !form.description) {
-      alert("Prašome užpildyti visus laukus")
+      setFormError("Prašome užpildyti visus laukus")
       return
     }
 
+    setSaving(true)
+
     try {
-      await fetch("/api/dashboard/services", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      })
+      let savedService: Service | null = null
+
+      if (serviceToEdit) {
+        // EDIT
+        const res = await fetch(`/api/dashboard/services/${serviceToEdit.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(form),
+        })
+        savedService = await res.json()
+      } else {
+        // ADD NEW
+        const res = await fetch("/api/dashboard/services", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(form),
+        })
+        savedService = await res.json()
+      }
+
       setForm({ name: "", description: "", enabled: true })
+      setFormError(null)
       onOpenChange(false)
-      onServiceAdded()
+
+      if (savedService) {
+        onServiceSaved(savedService) // update parent instantly
+      }
     } catch (error) {
-      console.error("Error adding service:", error)
+      console.error("Error saving service:", error)
+      setFormError("Įvyko klaida saugant paslaugą")
+    } finally {
+      setSaving(false)
     }
   }
 
@@ -41,11 +105,19 @@ export default function AddServiceSheet({ open, onOpenChange, onServiceAdded }: 
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
         <SheetHeader>
-          <SheetTitle>Pridėti naują paslaugą</SheetTitle>
-          <SheetDescription>Sukurkite naują paslaugą</SheetDescription>
+          <SheetTitle>
+            {serviceToEdit ? "Redaguoti paslaugą" : "Pridėti naują paslaugą"}
+          </SheetTitle>
+          <SheetDescription>
+            {serviceToEdit
+              ? "Redaguokite esamą paslaugą"
+              : "Sukurkite naują paslaugą"}
+          </SheetDescription>
         </SheetHeader>
 
         <div className="space-y-4 mt-4">
+          {formError && <FormError message={formError} />}
+
           <div>
             <Label htmlFor="name">Pavadinimas</Label>
             <Input
@@ -74,8 +146,16 @@ export default function AddServiceSheet({ open, onOpenChange, onServiceAdded }: 
             <span>Įjungta</span>
           </div>
 
-          <Button onClick={addService} className="w-full">
-            <Plus className="h-4 w-4 mr-2" /> Sukurti paslaugą
+          <Button onClick={saveService} className="w-full" disabled={saving}>
+            {serviceToEdit ? (
+              <>
+                <Check className="h-4 w-4 mr-2" /> Išsaugoti pakeitimus
+              </>
+            ) : (
+              <>
+                <Plus className="h-4 w-4 mr-2" /> Sukurti paslaugą
+              </>
+            )}
           </Button>
         </div>
       </SheetContent>

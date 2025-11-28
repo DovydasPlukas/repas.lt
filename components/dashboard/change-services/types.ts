@@ -21,9 +21,3 @@ export interface Service {
   enabled: boolean
   addons: ServiceAddon[]
 }
-
-export interface NewAddon {
-  name: string
-  type: AddonType
-  price: number
-}

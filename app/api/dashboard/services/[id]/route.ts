@@ -1,19 +1,39 @@
-import { db } from "@/lib/db"
-import { NextResponse } from "next/server"
+import { db } from "@/lib/db";
+import { NextResponse } from "next/server";
 
-export async function PATCH(req, { params }) {
+export async function PATCH(req: Request, { params }: { params: { id: string } }) {
   try {
-    const { enabled } = await req.json()
+    const body = await req.json();
+    const { name, description, enabled } = body;
 
-    const service = await db.service.update({
+    const updatedService = await db.service.update({
       where: { id: params.id },
-      data: { enabled },
+      data: {
+        ...(name !== undefined ? { name } : {}),
+        ...(description !== undefined ? { description } : {}),
+        ...(enabled !== undefined ? { enabled } : {}),
+      },
       include: { addons: true },
-    })
+    });
 
-    return NextResponse.json(service)
+    return NextResponse.json(updatedService);
   } catch (error) {
-    console.error(error)
-    return NextResponse.json({ error: "Error updating service" }, { status: 500 })
+    console.error("Error updating service:", error);
+    return NextResponse.json({ error: "Error updating service" }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+  try {
+    // Delete all addons of the service first
+    await db.serviceAddon.deleteMany({ where: { serviceId: params.id } });
+
+    // Then delete the service itself
+    await db.service.delete({ where: { id: params.id } });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Error deleting service:", error);
+    return NextResponse.json({ error: "Error deleting service" }, { status: 500 });
   }
 }
