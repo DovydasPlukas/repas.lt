@@ -180,6 +180,7 @@ model Order {
   snapLatitude           Decimal?      @db.Decimal(10, 7)
   snapLongitude          Decimal?      @db.Decimal(10, 7)
   servicePriceAtPurchase Decimal?      @db.Decimal(10, 2)
+  specialRequirements    String?
   status                 OrderStatus   @default(NEW)
   createdAt              DateTime      @default(now())
   updatedAt              DateTime      @updatedAt
