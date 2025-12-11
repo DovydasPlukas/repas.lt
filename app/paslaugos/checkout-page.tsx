@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import ServiceSelection, { ServiceSelectionHandle } from '@/components/checkout/ServiceSelection';
 import PickupDeliveryTime from '@/components/checkout/PickupDeliveryTime';
 import AddressSelection from '@/components/checkout/AddressSelection';
@@ -26,6 +26,7 @@ const STEPS: CheckoutStep[] = [
 
 const CheckoutPage: React.FC = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const serviceSelectionRef = useRef<ServiceSelectionHandle>(null);
   const [currentStep, setCurrentStep] = useState(1);
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -49,19 +50,110 @@ const CheckoutPage: React.FC = () => {
     longitude: '',
   });
 
-  // Load from localStorage on mount
+  // Load from localStorage on mount and check for service from modal
   useEffect(() => {
-    try {
-      const savedCart = localStorage.getItem('checkout_cart');
-      const savedFormData = localStorage.getItem('checkout_formdata');
-      const savedStep = localStorage.getItem('checkout_step');
+    const loadCartData = () => {
+      try {
+        const savedCart = localStorage.getItem('checkout_cart');
+        const savedFormData = localStorage.getItem('checkout_formdata');
+        const savedStep = localStorage.getItem('checkout_step');
 
-      if (savedCart) setCart(JSON.parse(savedCart));
-      if (savedFormData) setFormData(JSON.parse(savedFormData));
-      if (savedStep) setCurrentStep(parseInt(savedStep));
-    } catch (error) {
-      console.error('Error loading from localStorage:', error);
+        console.log('Loading cart from localStorage:', savedCart);
+
+        let parsedCart: CartItem[] = [];
+        if (savedCart) {
+          parsedCart = JSON.parse(savedCart);
+        }
+
+        // Check if there's a newItem from URL params (fallback from modal redirect)
+        const newItemParam = searchParams.get('newItem');
+        if (newItemParam) {
+          try {
+            const newItem = JSON.parse(decodeURIComponent(newItemParam));
+            console.log('Found newItem from URL params:', newItem);
+            
+            // Add to the cart if not already there
+            if (newItem && newItem.serviceId) {
+              parsedCart.push(newItem);
+              console.log('Added newItem to cart, total items:', parsedCart.length);
+            }
+          } catch (error) {
+            console.error('Error parsing newItem from URL:', error);
+          }
+        }
+
+        setCart(parsedCart);
+
+        if (savedFormData) {
+          setFormData(JSON.parse(savedFormData));
+        }
+        if (savedStep) {
+          setCurrentStep(parseInt(savedStep));
+        }
+      } catch (error) {
+        console.error('Error loading from localStorage:', error);
+      }
+    };
+
+    loadCartData();
+  }, [searchParams]);
+
+  // Clean up URL parameters after cart is loaded and refresh page to ensure cart displays
+  useEffect(() => {
+    if (searchParams.get('newItem') && cart.length > 0) {
+      // Replace URL to remove the query parameter
+      router.replace('/paslaugos');
+      
+      // Note: Using a timeout to allow the services to be accessed after selecting service from modal (other pages)
+      // Refresh the page to ensure everything is properly rendered with the new cart
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
     }
+  }, [cart, searchParams, router]);
+
+  // Listen for cart updates from modal
+  useEffect(() => {
+    const handleCartUpdate = () => {
+      console.log('Cart updated event received');
+      try {
+        const savedCart = localStorage.getItem('checkout_cart');
+        console.log('Reading cart from localStorage:', savedCart);
+        if (savedCart) {
+          const parsedCart = JSON.parse(savedCart);
+          console.log('Cart parsed successfully:', parsedCart);
+          setCart(parsedCart);
+        }
+      } catch (error) {
+        console.error('Error reloading cart:', error);
+      }
+    };
+
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'checkout_cart') {
+        console.log('Storage event detected for checkout_cart, newValue:', e.newValue);
+        if (e.newValue) {
+          try {
+            const parsedCart = JSON.parse(e.newValue);
+            console.log('Cart updated via storage event:', parsedCart);
+            setCart(parsedCart);
+          } catch (error) {
+            console.error('Error parsing cart from storage event:', error);
+          }
+        }
+      }
+    };
+
+    // Listen for custom cartUpdated event
+    window.addEventListener('cartUpdated', handleCartUpdate);
+
+    // Also listen for storage changes from other tabs/contexts
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('cartUpdated', handleCartUpdate);
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   // Save to localStorage whenever data changes

@@ -1,20 +1,62 @@
 "use client"
+import React, { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
-import { PASLAUGOS_LINKS, USER_NAV_LINKS } from "../app/constants/constants"
-import { LogoutIcon, AccountIcon, OrderIcon, CartIcon, LoginIcon } from "./SvgIcons"
-import { LogoutButton } from "@/components/auth/logout-button"
 import { useSession } from "next-auth/react"
+import { USER_NAV_LINKS } from "@/app/constants/constants"
+import { LogoutIcon, AccountIcon, OrderIcon, LoginIcon } from "./SvgIcons"
+import { LogoutButton } from "@/components/auth/logout-button"
 import { MobileSidebar } from "./MobileSidebar"
+import { ServiceSelectionModal } from "@/components/checkout/ServiceSelectionModal"
+import type { Service } from "@/components/checkout/types"
 
 const Navbar = () => {
   const { data: session } = useSession()
   const pathname = usePathname()
+  const [services, setServices] = useState<Service[]>([])
+  const [loading, setLoading] = useState(true)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null)
 
-  // User is logged in if session exists
   const isUserLoggedIn = !!session
   const isAdmin = session?.user?.role === "ADMIN"
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await fetch('/api/services')
+        if (response.ok) {
+          const data = await response.json()
+          setServices(data)
+        }
+      } catch (error) {
+        console.error('Error fetching services:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchServices()
+  }, [])
+
+  const handleServiceClick = (service: Service) => {
+    setSelectedServiceId(service.id)
+    setModalOpen(true)
+  }
+
+  const handleModalClose = (isOpen: boolean) => {
+    setModalOpen(isOpen)
+    if (!isOpen) setSelectedServiceId(null)
+  }
+
+  // Inline pulsing loader component
+  const PulserLoader = ({ size = 16, className = "", ariaLabel = "Loading" }) => (
+    <div role="status" aria-live="polite" aria-label={ariaLabel} className={`flex items-center justify-center ${className}`}>
+      <span className="mr-4 rounded-full animate-pulse inline-block" style={{ width: size, height: size, background: "#e4ddd8" }} />
+      <span className="sr-only">{ariaLabel}…</span>
+    </div>
+  )
 
   return (
     <nav className="h-[99px] xl:h-[142px]">
@@ -24,13 +66,7 @@ const Navbar = () => {
             {/* Left links */}
             <div className="pl-10 max-xl:pl-0 my-auto">
               <Link href={USER_NAV_LINKS.contact.href}>
-                <span
-                  className={`font-poppins text-base font-normal leading-6 ${
-                    pathname === USER_NAV_LINKS.contact.href
-                      ? "webkit-text-stroke underline"
-                      : "xl:hover:webkit-text-stroke xl:hover:underline"
-                  }`}
-                >
+                <span className={`font-poppins text-base font-normal leading-6 ${pathname === USER_NAV_LINKS.contact.href ? "webkit-text-stroke underline" : "xl:hover:webkit-text-stroke xl:hover:underline"}`}>
                   {USER_NAV_LINKS.contact.label}
                 </span>
               </Link>
@@ -39,19 +75,14 @@ const Navbar = () => {
 
             {/* Logo */}
             <Link href="/" aria-label="Logo" className="hidden xl:block">
-              <Image
-                className="hidden xl:block mx-auto md:mx-0 object-contain xl:h-[50px] xl:w-[257px] transition-all duration-300 hover:scale-105"
-                src="/repas_logo.svg"
-                alt="Logo"
-                width={150}
-                height={50}
-                priority
-              />
+              <Image className="hidden xl:block mx-auto md:mx-0 object-contain xl:h-[50px] xl:w-[257px] transition-all duration-300 hover:scale-105" src="/repas_logo.svg" alt="Logo" width={150} height={50} priority />
             </Link>
 
-            {/* Right actions */}
+            {/* Right actions with loader */}
             <div className="pr-10 max-xl:pr-0 flex flex-row justify-end items-center xl:w-[341px]">
-              {isUserLoggedIn ? (
+              {loading ? (
+                <PulserLoader size={20} />
+              ) : isUserLoggedIn ? (
                 <>
                   <div className="hidden xl:block">
                     <LogoutButton>
@@ -61,11 +92,7 @@ const Navbar = () => {
                   <Link className="hidden xl:flex flex-col justify-center mx-4" href={USER_NAV_LINKS.account.href}>
                     <AccountIcon />
                   </Link>
-                  {/* Link based on role */}
-                  <Link
-                    className="hidden xl:flex flex-col justify-center mr-4"
-                    href={isAdmin ? USER_NAV_LINKS.dashboard.href : USER_NAV_LINKS.order.href}
-                  >
+                  <Link className="hidden xl:flex flex-col justify-center mr-4" href={isAdmin ? USER_NAV_LINKS.dashboard.href : USER_NAV_LINKS.order.href}>
                     <OrderIcon />
                   </Link>
                 </>
@@ -75,13 +102,6 @@ const Navbar = () => {
                 </Link>
               )}
 
-              <Link className="flex flex-col justify-center" href={USER_NAV_LINKS.cart.href}>
-                <div className="relative">
-                  <CartIcon />
-                  <div className="hidden">0</div>
-                </div>
-              </Link>
-              {isUserLoggedIn ? <div className="w-[16px]"></div> : <div></div>}
               <div className="w-[16px] hidden xl:block"></div>
               <Link href={USER_NAV_LINKS.services.href} aria-label="Užsisakyti" className="hidden xl:block">
                 <div className="hidden xl:block w-[152px] h-[44px] text-center px-4 py-[10px] rounded-lg bg-[#Ea5548] xl:hover:bg-[#D43C33] text-white font-bold leading-6 font-poppins text-base transition-all duration-300 ease-in-out">
@@ -99,14 +119,7 @@ const Navbar = () => {
 
             {/* Mobile logo */}
             <Link href="/" aria-label="Logo" className="xl:hidden">
-              <Image
-                className="xl:hidden mx-auto md:mx-0 object-contain xl:h-[50px] xl:w-[257px] transition-all duration-300 hover:scale-105 hover:drop-shadow-2xl drop-shadow-xl active:scale-95"
-                src="/repas_logo.svg"
-                alt="Logo"
-                width={70}
-                height={26}
-                priority
-              />
+              <Image className="xl:hidden mx-auto md:mx-0 object-contain xl:h-[50px] xl:w-[257px] transition-all duration-300 hover:scale-105 hover:drop-shadow-2xl drop-shadow-xl active:scale-95" src="/repas_logo.svg" alt="Logo" width={70} height={26} priority />
             </Link>
 
             {/* Mobile services button */}
@@ -118,23 +131,26 @@ const Navbar = () => {
 
             {/* Desktop services links */}
             <div className="hidden xl:flex w-full flex-row justify-center space-x-6 mt-[6px] overflow-hidden">
-              {PASLAUGOS_LINKS.map((link) => (
-                <Link key={link.href} href={link.href} className="flex-1 text-center">
-                  <div
-                    className={`font-normal text-RepasBlue ${
-                      pathname === link.href
-                        ? "underline webkit-text-stroke"
-                        : "xl:hover:underline xl:hover:webkit-text-stroke"
-                    }`}
-                  >
-                    {link.label}
+              {loading ? (
+                [...Array(5)].map((_, i) => (
+                  <div key={i} className="flex-1 flex justify-center items-center">
+                    <div className="h-4 w-24 bg-[#e4ddd8] rounded-md animate-pulse" />
                   </div>
-                </Link>
-              ))}
+                ))
+              ) : (
+                services.length > 0 && services.filter(service => service.addons && service.addons.length > 0).map((service) => (
+                  <button key={service.id} onClick={() => handleServiceClick(service)} className="flex-1 text-center font-normal text-RepasBlue transition-all xl:hover:underline xl:hover:webkit-text-stroke">
+                    {service.name}
+                  </button>
+                ))
+              )}
             </div>
           </div>
         </div>
       </div>
+
+      {/* Service Selection Modal */}
+      <ServiceSelectionModal open={modalOpen} onOpenChange={handleModalClose} selectedServiceId={selectedServiceId} />
     </nav>
   )
 }

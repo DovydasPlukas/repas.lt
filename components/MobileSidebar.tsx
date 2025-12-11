@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { PASLAUGOS_LINKS, USER_NAV_LINKS } from "../app/constants/constants"
+import { PASLAUGOS_LINKS, USER_NAV_LINKS } from "@/app/constants/constants"
 import {
   Sheet,
   SheetContent,
@@ -101,7 +101,7 @@ export function MobileSidebar() {
           </div>
 
           <Separator />
-
+          {/* Delete later */}
           {/* Services Section */}
           <div className="flex flex-col gap-4">
             <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">

@@ -14,6 +14,9 @@ export async function GET() {
           },
         },
       },
+      orderBy: {
+        position: 'asc',
+      },
     });
 
     // Transform data for frontend
@@ -21,6 +24,7 @@ export async function GET() {
       id: service.id,
       name: service.name,
       description: service.description,
+      position: service.position,
       addons: service.addons.map((addon) => ({
         id: addon.id,
         name: addon.name,

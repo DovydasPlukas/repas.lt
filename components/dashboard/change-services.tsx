@@ -21,6 +21,8 @@ import { Service, ServiceAddon, NewAddon } from "@/components/dashboard/change-s
 export default function ChangeServices() {
   const [services, setServices] = useState<Service[]>([])
   const [loading, setLoading] = useState(true)
+  const [draggedItem, setDraggedItem] = useState<string | null>(null)
+  const [isDragging, setIsDragging] = useState(false)
 
   // currently opened service (shown in right sheet)
   const [selectedService, setSelectedService] = useState<Service | null>(null)
@@ -51,8 +53,12 @@ export default function ChangeServices() {
     try {
       const res = await fetch("/api/dashboard/services")
       const data: Service[] = await res.json()
-      // keep alphabetical order (safe-guard if name missing)
-      const sorted = data.sort((a, b) => (a.name ?? "").localeCompare(b.name ?? ""))
+      // sort by position, then by name (safe-guard if position missing)
+      const sorted = data.sort((a, b) => {
+        const posA = a.position ?? 999
+        const posB = b.position ?? 999
+        return posA - posB
+      })
       setServices(sorted)
       return sorted
     } catch (error) {
@@ -195,6 +201,76 @@ export default function ChangeServices() {
 
   if (loading) return <div className="text-foreground">Kraunamos paslaugos...</div>
 
+  // --- Drag and drop handlers ---
+  const handleDragStart = (e: React.DragEvent, serviceId: string) => {
+    setDraggedItem(serviceId)
+    setIsDragging(true)
+    e.dataTransfer.effectAllowed = "move"
+  }
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = "move"
+  }
+
+  const handleDragEnd = () => {
+    setDraggedItem(null)
+    setIsDragging(false)
+  }
+
+  const handleDrop = async (e: React.DragEvent, targetServiceId: string) => {
+    e.preventDefault()
+    setIsDragging(false)
+
+    if (!draggedItem || draggedItem === targetServiceId) {
+      setDraggedItem(null)
+      return
+    }
+
+    // Find indices
+    const draggedIndex = services.findIndex((s) => s.id === draggedItem)
+    const targetIndex = services.findIndex((s) => s.id === targetServiceId)
+
+    if (draggedIndex === -1 || targetIndex === -1) {
+      setDraggedItem(null)
+      return
+    }
+
+    // Create new array with reordered items
+    const newServices = [...services]
+    const [draggedService] = newServices.splice(draggedIndex, 1)
+    newServices.splice(targetIndex, 0, draggedService)
+
+    // Assign new positions and update state
+    const updatedServices = newServices.map((service, index) => ({
+      ...service,
+      position: index,
+    }))
+
+    setServices(updatedServices)
+    setDraggedItem(null)
+
+    // Send position updates to server
+    try {
+      await fetch("/api/dashboard/services/positions", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          services: updatedServices.map((s) => ({ id: s.id, position: s.position })),
+        }),
+      })
+    } catch (error) {
+      console.error("Error updating service positions:", error)
+      // Refresh services on error
+      await fetchServices()
+    }
+
+    // Update selectedService if it's the one being dragged
+    if (selectedService?.id === draggedItem) {
+      setSelectedService(updatedServices.find((s) => s.id === draggedItem) ?? null)
+    }
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -218,23 +294,35 @@ export default function ChangeServices() {
         </div>
       </div>
 
-      {/* Services grid */}
+      {/* Services grid with drag and drop */}
       <div className="grid gap-4">
         {services.map((service) => (
-          <ServiceCard
+          <div
             key={service.id}
-            service={service}
-            onToggleService={toggleService}
-            onOpenService={(s) => {
-              setSelectedService(s)
-              setSheetOpen(true)
-            }}
-            onEdit={(s) => {
-              setServiceToEdit(s)
-              setAddServiceSheetOpen(true)
-            }}
-            onDelete={requestDeleteService}
-          />
+            draggable
+            onDragStart={(e) => handleDragStart(e, service.id)}
+            onDragOver={handleDragOver}
+            onDrop={(e) => handleDrop(e, service.id)}
+            onDragEnd={handleDragEnd}
+            className={`transition-opacity ${
+              draggedItem === service.id ? "opacity-50" : ""
+            } ${isDragging ? "cursor-move" : ""}`}
+          >
+            <ServiceCard
+              service={service}
+              isDragging={draggedItem === service.id}
+              onToggleService={toggleService}
+              onOpenService={(s) => {
+                setSelectedService(s)
+                setSheetOpen(true)
+              }}
+              onEdit={(s) => {
+                setServiceToEdit(s)
+                setAddServiceSheetOpen(true)
+              }}
+              onDelete={requestDeleteService}
+            />
+          </div>
         ))}
       </div>
 

@@ -18,6 +18,7 @@ export interface Service {
   id: string
   name: string
   description: string | null
+  position?: number
   enabled: boolean
   addons: ServiceAddon[]
 }

@@ -1,4 +1,4 @@
-// Paslaugos
+// Paslaugos (delete later)
 export const PASLAUGOS_LINKS = [
     { href: '/skalbimas', label: 'Skalbimas' },
     { href: '/kostiumu-valymas', label: 'Kostiumų valymas' },
@@ -13,6 +13,5 @@ export const PASLAUGOS_LINKS = [
     dashboard: { href: '/dashboard', label: 'Administratoriaus panelė' },
     order: { href: '/order', label: 'Užsakymas' },
     login: { href: '/prisijungimas', label: 'Prisijungti' },
-    cart: { href: '/cart', label: 'Cart' },
     services: { href: '/paslaugos', label: 'Užsisakyti' },
   };

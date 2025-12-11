@@ -2,7 +2,7 @@
 
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Switch } from "@/components/ui/switch"
-import { Pencil, Trash, ChevronRight } from "lucide-react"
+import { Pencil, Trash, ChevronRight, GripVertical } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Service, ServiceAddon } from "@/components/dashboard/change-services/types"
 
@@ -12,6 +12,7 @@ interface ServiceCardProps {
   onOpenService: (service: Service) => void
   onEdit: (service: Service) => void
   onDelete: (service: Service) => void
+  isDragging?: boolean
 }
 
 export default function ServiceCard({
@@ -20,6 +21,7 @@ export default function ServiceCard({
   onOpenService,
   onEdit,
   onDelete,
+  isDragging = false,
 }: ServiceCardProps) {
   const papildomosPaslaugos = (s: Service) =>
     s.addons.filter((addon: ServiceAddon) => addon.type === "PAPILDOMA_PASLAUGA")
@@ -28,9 +30,14 @@ export default function ServiceCard({
     s.addons.filter((addon: ServiceAddon) => addon.type === "PRIEDAI")
 
   return (
-    <Card className="hover:bg-muted/50 transition-colors cursor-pointer">
+    <Card className={`hover:bg-muted/50 transition-colors cursor-pointer ${isDragging ? "opacity-50 bg-muted" : ""}`}>
       <CardHeader onClick={() => onOpenService(service)}>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-4">
+          {/* Drag handle */}
+          <div className="flex-shrink-0 text-muted-foreground cursor-grab active:cursor-grabbing">
+            <GripVertical className="w-5 h-5" />
+          </div>
+
           {/* Service info */}
           <div className="flex-1">
             <CardTitle className="flex items-center gap-2">
@@ -53,7 +60,7 @@ export default function ServiceCard({
           </div>
 
           {/* Action buttons + switch */}
-          <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+          <div className="flex items-center gap-2 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
             {/* Edit button */}
             <button
               onClick={() => onEdit(service)}
