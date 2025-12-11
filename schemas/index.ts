@@ -60,3 +60,19 @@ export const SettingsSchema = z.object({
         message: "Dabartinis slaptažodis yra privalomas",
         path: ["password"]
     });
+
+export const PersonSchema = z.object({
+    firstName: z.string().min(1, {
+        message: "Vardas yra privalomas",
+    }),
+    lastName: z.string().min(1, {
+        message: "Pavardė yra privaloma",
+    }),
+    phoneNumber: z.string().min(8, {
+        message: "Telefonas turi turėti mažiausiai 8 skaičius",
+    }).max(8, {
+        message: "Telefonas negali viršyti 8 skaičių",
+    }).regex(/^\d+$/, {
+        message: "Telefonas turi turėti tik skaičius",
+    }),
+});

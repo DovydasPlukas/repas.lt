@@ -103,13 +103,12 @@ model Contact {
 model Address {
   id          String   @id @default(cuid())
   userId      String   @unique
-  zipCode     String
-  city        String
   street      String
-  houseNumber String
-  notes       String?
-  latitude    Decimal? @db.Decimal(10, 7)
-  longitude   Decimal? @db.Decimal(10, 7)
+  apartment   String?
+  floor       String?
+  comments    String?
+  latitude    Decimal  @db.Decimal(10, 7)
+  longitude   Decimal  @db.Decimal(10, 7)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

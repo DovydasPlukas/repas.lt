@@ -1,32 +1,75 @@
 'use client';
 
-import { useState } from 'react';
-import Image from 'next/image';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
+
+import { Button } from '@/components/ui/button';
 
 export default function HeroSection() {
-  const [zipCode, setZipCode] = useState('');
-  
-  const router = useRouter()
+  const router = useRouter();
+  // generate rising bubbles on client
+  const [bubbles, setBubbles] = useState<
+    { id: number; left: string; size: string; duration: string; delay: string }[]
+  >([]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (zipCode.trim()) {
-      router.push(`/adresas?zip=${encodeURIComponent(zipCode)}`)
-    }
-  }
+  useEffect(() => {
+    const newBubbles = Array.from({ length: 20 }).map((_, i) => ({
+      id: i,
+      left: `${Math.random() * 100}%`,
+      size: `${Math.random() * 60 + 20}px`, // 20px to 80px
+      duration: `${Math.random() * 5 + 5}s`, // 5s to 10s
+      delay: `${Math.random() * 1}s`,
+    }));
+    setBubbles(newBubbles);
+  }, []);
 
   return (
     <div className="relative w-full h-[500px] sm:h-[550px] md:h-[600px] lg:h-[650px] rounded-xl overflow-hidden bg-gradient-to-r from-[#D0E6F7]/10 via-[#E4F0FA]/50 to-[#D0E6F7]/40 animate-gradient-x">
-      {/* Bubble overlay */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute w-20 h-20 bg-blue-300 rounded-full blur-3xl animate-bubble top-10 left-10"></div>
-        <div className="absolute w-32 h-32 bg-blue-300 rounded-full blur-2xl animate-bubble delay-2000 bottom-12 left-1/4"></div>
-        <div className="absolute w-16 h-16 bg-blue-300 rounded-full blur-xl animate-bubble delay-1000 bottom-20 right-1/3"></div>
-        <div className="absolute w-24 h-24 bg-blue-300 rounded-full blur-2xl animate-bubble delay-1500 top-20 right-1/4"></div>
+      {/* --- BACKGROUND: dynamic rising bubbles --- */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        {bubbles.map((bubble) => (
+          <div
+            key={bubble.id}
+            className="absolute bottom-[-100px] rounded-full bg-white/30 border border-white/40 shadow-sm backdrop-blur-sm animate-rise"
+            style={{
+              left: bubble.left,
+              width: bubble.size,
+              height: bubble.size,
+              animationDuration: bubble.duration,
+              animationDelay: bubble.delay,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* --- BACKGROUND: animated waves at the bottom --- */}
+      <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] z-0 pointer-events-none">
+        <svg
+          className="relative block w-[200%] h-[100px] sm:h-[150px] animate-wave opacity-60"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 1200 120"
+          preserveAspectRatio="none"
+        >
+          <path
+            d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"
+            className="fill-[#494B8B]"
+            fillOpacity="0.08"
+          ></path>
+        </svg>
+        <svg
+          className="absolute bottom-0 left-0 w-[200%] h-[100px] sm:h-[150px] animate-wave-slow opacity-40"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 1200 120"
+          preserveAspectRatio="none"
+          style={{ animationDelay: '-2s' }}
+        >
+          <path
+            d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"
+            className="fill-[#4F508E]"
+            fillOpacity="0.16"
+          ></path>
+        </svg>
       </div>
 
       {/* Main Image Section */}
@@ -44,59 +87,154 @@ export default function HeroSection() {
       <div className="relative h-full container mx-auto px-4 sm:px-6 lg:px-8 z-10">
         {/* Title and Description */}
         <div className="absolute left-4 sm:left-6 lg:left-8 top-[15%] sm:top-[20%] w-full sm:w-[500px] lg:w-[600px]">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-[#4F508E] mb-3 sm:mb-4 lg:mb-6 drop-shadow-lg">
-            Repas
-          </h1>
+          {/* Two-layer water text: outline + animated fill */}
+          <div className="relative">
+            {/* outline (still selectable) */}
+            <h1
+              className="absolute inset-0 m-0 text-[5.2rem] sm:text-[6.2rem] md:text-[7.2rem] lg:text-[8rem] font-extrabold tracking-tight text-[#Ea5548]"
+              aria-hidden
+              style={{ WebkitTextStroke: '4px #494B8B' }}
+            >
+              Repas
+            </h1>
+
+            {/* animated fill (now unselectable) */}
+            <h1
+              className="m-0 text-[5.2rem] sm:text-[6.2rem] md:text-[7.2rem] lg:text-[8rem] font-extrabold tracking-tight text-[#494B8B] overflow-hidden select-none"
+              aria-label="Repas"
+            >
+              <span className="block relative water-fill select-none">Repas</span>
+            </h1>
+          </div>
+
           <p className="text-lg sm:text-xl lg:text-2xl text-[#4F508E]/80 lg:text-[#4F508E]/90 drop-shadow-md leading-relaxed mb-8 sm:mb-10 lg:mb-12 max-w-[90%]">
             Profesionalios skalbimo paslaugos jūsų patogumui. Kokybiškas drabužių priežiūros sprendimas.
           </p>
-        </div>
 
-        {/* ZIP Code Input Section */}
-        <div className="absolute left-4 sm:left-6 lg:left-8 bottom-8 sm:bottom-16 lg:bottom-20 w-[calc(100%-32px)] sm:w-[300px] lg:w-[450px] bg-white/90 backdrop-blur-sm p-3 sm:p-6 lg:p-8 rounded-lg shadow-lg">
-          <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:gap-4">
-            <Input
-              type="text"
-              placeholder="Įveskite pašto kodą"
-              value={zipCode}
-              onChange={(e) => setZipCode(e.target.value)}
-              className="border-[#4F508E] focus:ring-[#E9594B] text-base sm:text-lg h-10 sm:h-12"
-              pattern="[0-9]*"
-              maxLength={5}
-            />
-            <Button
-              type="submit"
-              className="w-full bg-[#E9594B] transition-all duration-300 ease-in-out hover:bg-[#E9594B]/90 text-white text-base sm:text-lg h-10 sm:h-12"
-            >
-              Pateikti
-            </Button>
-          </form>
+          {/* Button only */}
+          <Button
+            onClick={() => router.push('/paslaugos')}
+            className="bg-[#E9594B] hover:bg-[#E9594B]/90 text-white text-base sm:text-lg h-12 px-8 shadow-lg transition-all duration-300 hover:scale-105"
+          >
+            Peržiūrėti paslaugas
+          </Button>
         </div>
       </div>
 
-      {/* Tailwind Animations */}
+      {/* Tailwind + component-specific styles */}
       <style jsx>{`
-        @keyframes bubble {
-          0% { transform: translateY(0) scale(1); opacity: 0.6; }
-          50% { transform: translateY(-20px) scale(1.1); opacity: 0.8; }
-          100% { transform: translateY(0) scale(1); opacity: 0.6; }
+        /* Water text animation (clip-path waves) */
+        .water-fill {
+          display: inline-block;
+          animation: water 4s ease-in-out infinite;
         }
-        .animate-bubble { animation: bubble 6s infinite ease-in-out; }
-        .animate-bubble.delay-1000 { animation-delay: 1s; }
-        .animate-bubble.delay-1500 { animation-delay: 1.5s; }
-        .animate-bubble.delay-2000 { animation-delay: 2s; }
 
+        @keyframes water {
+          0%,
+          100% {
+            clip-path: polygon(
+              0% 45%,
+              16% 44%,
+              33% 50%,
+              54% 60%,
+              70% 61%,
+              84% 59%,
+              100% 52%,
+              100% 100%,
+              0% 100%
+            );
+          }
+
+          50% {
+            clip-path: polygon(
+              0% 60%,
+              15% 65%,
+              34% 66%,
+              51% 62%,
+              67% 50%,
+              84% 45%,
+              100% 46%,
+              100% 100%,
+              0% 100%
+            );
+          }
+        }
+
+        /* Rising bubbles animation */
+        @keyframes rise {
+          0% {
+            bottom: -100px;
+            transform: translateX(0);
+            opacity: 0;
+          }
+          20% {
+            opacity: 1;
+          }
+          50% {
+            transform: translateX(20px); /* Sway right */
+          }
+          70% {
+            opacity: 0.8;
+          }
+          100% {
+            bottom: 110%; /* Move above the container */
+            transform: translateX(-20px); /* Sway left */
+            opacity: 0;
+          }
+        }
+        .animate-rise {
+          animation-name: rise;
+          animation-timing-function: ease-in;
+          animation-iteration-count: infinite;
+        }
+
+        /* Wave Animations */
+        @keyframes wave {
+          0% {
+            transform: translateX(0);
+          }
+          50% {
+            transform: translateX(-25%);
+          }
+          100% {
+            transform: translateX(0);
+          }
+        }
+        .animate-wave {
+          animation: wave 15s linear infinite;
+        }
+        .animate-wave-slow {
+          animation: wave 20s ease-in-out infinite reverse;
+        }
+
+        /* gradient background animation */
         @keyframes gradient-x {
-          0%, 100% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
+          0%,
+          100% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
         }
-        .animate-gradient-x { background-size: 200% 200%; animation: gradient-x 15s ease infinite; }
+        .animate-gradient-x {
+          background-size: 200% 200%;
+          animation: gradient-x 15s ease infinite;
+        }
 
+        /* float for hero image */
         @keyframes float {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-10px); }
+          0%,
+          100% {
+            transform: translateY(0);
+          }
+          50% {
+            transform: translateY(-10px);
+          }
         }
-        .animate-float { animation: float 4s ease-in-out infinite; }
+        .animate-float {
+          animation: float 4s ease-in-out infinite;
+        }
       `}</style>
     </div>
   );

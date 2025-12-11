@@ -43,4 +43,4 @@ export const DEFAULT_LOGIN_REDIRECT = "/settings";
  * An array of route prefixes that should be considered protected.
  * Middleware will only redirect for paths that match one of these prefixes.
  */
-export const protectedPrefixes = ["/dashboard", "/settings"];
+export const protectedPrefixes = ["/dashboard", "/settings", "/adresas", "/asmuo", "/user-address"];

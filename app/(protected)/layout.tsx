@@ -12,7 +12,7 @@ export default async function RootLayout({
   return (
     <SessionProvider session={session}>
       <VantaBackground>
-        <div className="h-full w-full flex flex-col gap-y-10 items-center justify-center p-10">
+        <div className="h-full w-full flex flex-col gap-y-4 items-center justify-center p-10">
           <Navbar />
           {children}
         </div>
