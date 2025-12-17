@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import ServiceSelection, { ServiceSelectionHandle } from '@/components/checkout/ServiceSelection';
 import PickupDeliveryTime from '@/components/checkout/PickupDeliveryTime';
 import AddressSelection from '@/components/checkout/AddressSelection';
@@ -27,6 +28,7 @@ const STEPS: CheckoutStep[] = [
 const CheckoutPage: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { data: session } = useSession();
   const serviceSelectionRef = useRef<ServiceSelectionHandle>(null);
   const [currentStep, setCurrentStep] = useState(1);
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -37,11 +39,11 @@ const CheckoutPage: React.FC = () => {
     pickupTime: '',
     deliveryDate: '',
     deliveryTime: '',
-    zipCode: '',
-    city: '',
     street: '',
-    houseNumber: '',
+    apartment: '',
+    floor: '',
     notes: '',
+    email: '',
     firstName: '',
     lastName: '',
     phone: '',
@@ -176,6 +178,38 @@ const CheckoutPage: React.FC = () => {
     }
   }, [cart, currentStep]);
 
+  // Load user data if logged in
+  useEffect(() => {
+    if (session?.user?.email) {
+      const loadUserData = async () => {
+        try {
+          const response = await fetch('/api/user-contact');
+          const result = await response.json();
+
+          if (result.data) {
+            // Strip +370 prefix from phone number if present
+            let phoneNumber = result.data.phoneNumber || '';
+            if (phoneNumber.startsWith('+370')) {
+              phoneNumber = phoneNumber.substring(4);
+            }
+
+            setFormData((prev) => ({
+              ...prev,
+              email: session.user.email || prev.email,
+              firstName: result.data.firstName || prev.firstName,
+              lastName: result.data.lastName || prev.lastName,
+              phone: phoneNumber,
+            }));
+          }
+        } catch (error) {
+          console.error('Error loading user data:', error);
+        }
+      };
+
+      loadUserData();
+    }
+  }, [session?.user?.email]);
+
   // Calculate total price
   const totalPrice = cart.reduce((total, item) => {
     const itemTotal =
@@ -216,16 +250,12 @@ const CheckoutPage: React.FC = () => {
     setCart(cart.filter((_, i) => i !== cartIndex));
   };
 
-
-
   const handleFormDataChange = (field: string, value: string) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
-
-
 
   const canProceedToNextStep = () => {
     switch (currentStep) {
@@ -241,15 +271,13 @@ const CheckoutPage: React.FC = () => {
       case 3:
         return (
           formData.street &&
-          formData.houseNumber &&
-          formData.city &&
-          formData.zipCode &&
-          formData.zipCode.length === 5 &&
           formData.latitude &&
           formData.longitude
         );
       case 4:
         return (
+          formData.email &&
+          /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email) &&
           formData.firstName &&
           formData.lastName &&
           formData.phone &&
@@ -282,25 +310,33 @@ const CheckoutPage: React.FC = () => {
         },
         body: JSON.stringify({
           services: cart,
-          zipCode: formData.zipCode,
-          city: formData.city,
           street: formData.street,
-          houseNumber: formData.houseNumber,
+          apartment: formData.apartment,
+          floor: formData.floor,
+          latitude: formData.latitude,
+          longitude: formData.longitude,
           notes: formData.notes,
+          email: formData.email,
           firstName: formData.firstName,
           lastName: formData.lastName,
           phone: formData.phone,
+          paymentMethod: formData.paymentMethod,
+          pickupDate: formData.pickupDate,
+          pickupTime: formData.pickupTime,
+          deliveryDate: formData.deliveryDate,
+          deliveryTime: formData.deliveryTime,
         }),
       });
 
+      const data = await response.json().catch(() => null);
+
       if (response.ok) {
-        const data = await response.json();
         // Clear cart and form data after successful order
         clearAllData();
         // Redirect to order confirmation
-        router.push(`/order-confirmation/${data.orderId}`);
+        router.push(`/order-confirmation?order=${data.orderId}`);
       } else {
-        console.error('Failed to create order');
+        console.error('Failed to create order', data);
       }
     } catch (error) {
       console.error('Error creating order:', error);
@@ -316,11 +352,11 @@ const CheckoutPage: React.FC = () => {
       pickupTime: '',
       deliveryDate: '',
       deliveryTime: '',
-      zipCode: '',
-      city: '',
       street: '',
-      houseNumber: '',
+      apartment: '',
+      floor: '',
       notes: '',
+      email: '',
       firstName: '',
       lastName: '',
       phone: '',

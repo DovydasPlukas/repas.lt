@@ -6,7 +6,6 @@ import {
   XCircle,
   NotepadText,
   CreditCard,
-  Landmark,
   DollarSign,
 } from 'lucide-react';
 import {
@@ -122,12 +121,12 @@ const OrderOverview: React.FC<OrderOverviewProps> = ({
       'deliveryDate',
       'deliveryTime',
       'street',
-      'houseNumber',
-      'city',
-      'zipCode',
+      'latitude',
+      'longitude',
       'firstName',
       'lastName',
       'phone',
+      'email',
       'paymentMethod',
     ];
 
@@ -340,7 +339,7 @@ const OrderOverview: React.FC<OrderOverviewProps> = ({
           {/* Address (with notes preview + dialog trigger) */}
           <div className="rounded-lg border border-gray-200 p-4">
             <div className="mb-2 flex items-center gap-2">
-              {formData?.street && formData?.houseNumber && formData?.city && formData?.zipCode ? (
+              {formData?.street ? (
                 <Check className="h-5 w-5 text-green-500" />
               ) : (
                 <XCircle className="h-5 w-5 text-red-500" />
@@ -352,18 +351,18 @@ const OrderOverview: React.FC<OrderOverviewProps> = ({
                 <span className="text-xs text-gray-600">Gatvė</span>
                 <span className="font-medium text-gray-900">{formData?.street}</span>
               </div>
+              {formData?.apartment && (
               <div className="flex justify-between">
-                <span className="text-xs text-gray-600">Namo nr.</span>
-                <span className="font-medium text-gray-900">{formData?.houseNumber}</span>
+                <span className="text-xs text-gray-600">butas</span>
+                <span className="font-medium text-gray-900">{formData?.apartment}</span>
               </div>
+              )}
+              {formData?.floor && (
               <div className="flex justify-between">
-                <span className="text-xs text-gray-600">Miestas</span>
-                <span className="font-medium text-gray-900">{formData?.city}</span>
+                <span className="text-xs text-gray-600">Aukštas</span>
+                <span className="font-medium text-gray-900">{formData?.floor}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-xs text-gray-600">Pašt. kodas</span>
-                <span className="font-medium text-gray-900">{formData?.zipCode}</span>
-              </div>
+              )}
 
               {formData?.notes && (
                 <div className="mt-1 flex items-start gap-2">
@@ -407,6 +406,10 @@ const OrderOverview: React.FC<OrderOverviewProps> = ({
                 <span className="text-xs text-gray-600">Telefonas</span>
                 <span className="font-medium text-gray-900">{formData?.phone}</span>
               </div>
+              <div className="flex justify-between">
+                <span className="text-xs text-gray-600">El. paštas</span>
+                <span className="font-medium text-gray-900">{formData?.email}</span>
+              </div>
             </div>
           </div>
 
@@ -423,9 +426,8 @@ const OrderOverview: React.FC<OrderOverviewProps> = ({
 
             <div role="radiogroup" className="flex flex-col sm:flex-row gap-3">
               {[
-                { id: 'paysera', label: 'Paysera', Icon: CreditCard },
-                { id: 'bank_transfer', label: 'Banko pervedimas', Icon: Landmark },
-                { id: 'cash', label: 'Grynais pinigais', Icon: DollarSign },
+                { id: 'paysera', label: 'Paysera', Icon: CreditCard, disabled: true },
+                { id: 'cash', label: 'Grynais pinigais', Icon: DollarSign, disabled: false },
               ].map((m) => {
                 const selected = formData?.paymentMethod === m.id;
                 return (
@@ -433,17 +435,27 @@ const OrderOverview: React.FC<OrderOverviewProps> = ({
                     key={m.id}
                     role="radio"
                     aria-checked={selected}
-                    onClick={() => onFormDataChange?.('paymentMethod', m.id)}
+                    disabled={m.disabled}
+                    onClick={() => !m.disabled && onFormDataChange?.('paymentMethod', m.id)}
                     className={`flex items-center gap-3 px-3 py-2 rounded-lg border focus:outline-none ${
-                      selected
+                      m.disabled
+                        ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-50'
+                        : selected
                         ? 'bg-[--RepasBlue] text-white ring-2 ring-offset-2 ring-[--RepasBlue]'
                         : 'bg-white text-gray-900 border-gray-200'
                     }`}
                   >
                     <m.Icon
-                      className={`h-5 w-5 ${selected ? 'text-white' : 'text-[--RepasBlue]'}`}
+                      className={`h-5 w-5 ${
+                        m.disabled
+                          ? 'text-gray-400'
+                          : selected
+                          ? 'text-white'
+                          : 'text-[--RepasBlue]'
+                      }`}
                     />
                     <span className="text-sm font-medium">{m.label}</span>
+                    {m.disabled && <span className="text-xs font-medium">(Neprieinama)</span>}
                   </button>
                 );
               })}

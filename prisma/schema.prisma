@@ -17,19 +17,19 @@ enum UserRole {
 }
 
 model User {
-  id                    String                  @id @default(cuid())
-  email                 String                  @unique
-  emailVerified         DateTime?
-  password              String?
-  role                  UserRole                @default(USER)
-  isTwoFactorEnabled    Boolean                 @default(false)
+  id                 String    @id @default(cuid())
+  email              String    @unique
+  emailVerified      DateTime?
+  password           String?
+  role               UserRole  @default(USER)
+  isTwoFactorEnabled Boolean   @default(false)
 
   accounts              Account[]
   twoFactorConfirmation TwoFactorConfirmation?
 
-  contact               Contact?
-  address               Address?
-  orders                Order[]
+  contact Contact?
+  address Address?
+  orders  Order[]
 }
 
 model Account {
@@ -101,16 +101,16 @@ model Contact {
 }
 
 model Address {
-  id          String   @id @default(cuid())
-  userId      String   @unique
-  street      String
-  apartment   String?
-  floor       String?
-  comments    String?
-  latitude    Decimal  @db.Decimal(10, 7)
-  longitude   Decimal  @db.Decimal(10, 7)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  street    String
+  apartment String?
+  floor     String?
+  comments  String?
+  latitude  Decimal  @db.Decimal(10, 7)
+  longitude Decimal  @db.Decimal(10, 7)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -120,16 +120,17 @@ model Address {
 //////////////////////////////////////////////////////
 
 model Service {
-  id        String         @id @default(cuid())
-  name      String         @unique
+  id          String   @id @default(cuid())
+  name        String   @unique
   description String?
-  position  Int            @default(0)
-  enabled   Boolean        @default(true)
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
+  position    Int      @default(0)
+  enabled     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  addons    ServiceAddon[]
-  orders    Order[]
+  addons        ServiceAddon[]
+  orders        Order[] // orders that reference this service (via OrderService)
+  orderServices OrderService[]
 }
 
 enum AddonType {
@@ -142,12 +143,12 @@ model ServiceAddon {
   serviceId String
   name      String
   type      AddonType
-  price     Decimal
+  price     Decimal   @db.Decimal(10, 2)
   enabled   Boolean   @default(true)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
-  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  service     Service      @relation(fields: [serviceId], references: [id], onDelete: Cascade)
   orderAddons OrderAddon[]
 
   @@index([serviceId])
@@ -165,38 +166,78 @@ enum OrderStatus {
 }
 
 model Order {
-  id                     String        @id @default(cuid())
-  orderNumber            String        @unique
-  userId                 String
-  serviceId              String
-  snapFirstName          String
-  snapLastName           String
-  snapPhone              String
-  snapCity               String
-  snapStreet             String
-  snapHouseNumber        String
-  snapZipCode            String?
-  snapNotes              String?
-  snapLatitude           Decimal?      @db.Decimal(10, 7)
-  snapLongitude          Decimal?      @db.Decimal(10, 7)
-  servicePriceAtPurchase Decimal?      @db.Decimal(10, 2)
-  specialRequirements    String?
-  status                 OrderStatus   @default(NEW)
-  createdAt              DateTime      @default(now())
-  updatedAt              DateTime      @updatedAt
+  id          String @id @default(cuid())
+  orderNumber String @unique
+  userId      String
 
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  service    Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-  addons     OrderAddon[]
+  // Contact snapshot
+  snapFirstName String
+  snapLastName  String
+  snapPhone     String
+  snapEmail     String
+
+  // Address snapshot
+  snapStreet    String
+  snapApartment String?
+  snapFloor     String?
+  snapLatitude  Decimal @db.Decimal(10, 7)
+  snapLongitude Decimal @db.Decimal(10, 7)
+  snapNotes     String?
+
+  // Pickup & Delivery times
+  pickupDateTime   DateTime
+  deliveryDateTime DateTime
+
+  // global order status & timestamps
+  status    OrderStatus @default(NEW)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  // relations
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orderServices OrderService[]
+  addons        OrderAddon[]
+  Service       Service?       @relation(fields: [serviceId], references: [id])
+  serviceId     String?
+}
+
+model OrderService {
+  id String @id @default(cuid())
+
+  orderId   String
+  serviceId String
+
+  // price snapshot for this selected service
+  servicePriceAtPurchase Decimal @db.Decimal(10, 2)
+
+  // per-service special requirements
+  specialRequirements String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  order       Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  service     Service      @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  orderAddons OrderAddon[]
+
+  @@index([orderId])
+  @@index([serviceId])
 }
 
 model OrderAddon {
-  id       String      @id @default(cuid())
-  orderId  String
-  addonId  String
-  snapPrice Decimal?   @db.Decimal(10, 2)
-  snapName String?
+  id String @id @default(cuid())
 
-  order        Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderServiceId String
+  addonId        String
+
+  snapPrice Decimal? @db.Decimal(10, 2)
+  snapName  String?
+
+  orderService OrderService @relation(fields: [orderServiceId], references: [id], onDelete: Cascade)
   serviceAddon ServiceAddon @relation(fields: [addonId], references: [id], onDelete: Cascade)
+  Order        Order?       @relation(fields: [orderId], references: [id])
+  orderId      String?
+
+  @@index([orderServiceId])
+  @@index([addonId])
 }

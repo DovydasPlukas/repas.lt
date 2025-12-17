@@ -52,11 +52,11 @@ export interface FormData {
   pickupTime: string;
   deliveryDate: string;
   deliveryTime: string;
-  zipCode: string;
-  city: string;
   street: string;
-  houseNumber: string;
+  apartment: string;
+  floor: string;
   notes: string;
+  email: string;
   firstName: string;
   lastName: string;
   phone: string;
@@ -77,10 +77,9 @@ export interface PickupDeliveryTimeProps {
 
 export interface AddressSelectionProps {
   formData: {
-    zipCode: string;
-    city: string;
     street: string;
-    houseNumber: string;
+    apartment: string;
+    floor: string;
     notes: string;
     latitude: string;
     longitude: string;
@@ -90,6 +89,7 @@ export interface AddressSelectionProps {
 
 export interface ContactsInfoProps {
   formData: {
+    email: string;
     firstName: string;
     lastName: string;
     phone: string;
@@ -105,10 +105,10 @@ export interface OrderOverviewProps {
     deliveryDate: string;
     deliveryTime: string;
     street: string;
-    houseNumber: string;
-    city: string;
-    zipCode: string;
+    apartment: string;
+    floor: string;
     notes: string;
+    email: string;
     firstName: string;
     lastName: string;
     phone: string;
@@ -127,12 +127,12 @@ export interface OrderSummaryProps {
     deliveryDate: string;
     deliveryTime: string;
     street: string;
-    houseNumber: string;
-    city: string;
-    zipCode: string;
+    apartment: string;
+    floor: string;
     firstName: string;
     lastName: string;
     phone: string;
+    email: string;
   };
   onEditService?: (cartIndex: number) => void;
   onRemoveService?: (cartIndex: number) => void;

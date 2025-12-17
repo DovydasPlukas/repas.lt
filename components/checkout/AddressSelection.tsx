@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import MapComponent from '@/components/map/map-component';
+import AddressAutocomplete from '@/components/map/address-autocomplete';
 import type { AddressSelectionProps } from '@/components/checkout/types';
 
 interface Location {
@@ -9,67 +10,68 @@ interface Location {
   lng: number;
 }
 
+interface AddressSuggestion {
+  name: string;
+  latitude: number;
+  longitude: number;
+}
+
 const AddressSelection: React.FC<AddressSelectionProps> = ({
   formData,
   onFormDataChange,
 }) => {
   const [location, setLocation] = useState<Location | null>(null);
-  const [searchLoading, setSearchLoading] = useState(false);
-  const [searchError, setSearchError] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
-  const handleSearchZipCode = async () => {
-    if (!formData.zipCode) return;
+  // Prevent double fetch in React Strict Mode
+  const hasFetched = useRef(false);
 
-    setSearchLoading(true);
-    setSearchError('');
+  // Load existing address ONCE
+  useEffect(() => {
+    if (hasFetched.current) return;
+    hasFetched.current = true;
 
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?postalcode=${encodeURIComponent(
-          formData.zipCode
-        )}&country=lithuania&format=json&limit=1`
-      );
+    const loadAddress = async () => {
+      try {
+        const response = await fetch('/api/user-address', {
+          method: 'GET',
+        });
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch location');
+        const result = await response.json();
+
+        if (result?.data) {
+          onFormDataChange('street', result.data.street || '');
+          onFormDataChange('apartment', result.data.apartment || '');
+          onFormDataChange('floor', result.data.floor || '');
+          onFormDataChange('latitude', result.data.latitude || '');
+          onFormDataChange('longitude', result.data.longitude || '');
+
+          if (result.data.latitude && result.data.longitude) {
+            setLocation({
+              lat: parseFloat(result.data.latitude),
+              lng: parseFloat(result.data.longitude),
+            });
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load address:', err);
+      } finally {
+        setIsLoading(false);
       }
+    };
 
-      const data = await response.json();
+    loadAddress();
+  }, [onFormDataChange]);
 
-      if (data.length === 0) {
-        setSearchError('ZIP kodas nerastas. Bandykite kitą.');
-        setLocation(null);
-        return;
-      }
+  const handleAddressSelect = (suggestion: AddressSuggestion) => {
+    setLocation({
+      lat: suggestion.latitude,
+      lng: suggestion.longitude,
+    });
 
-      const result = data[0];
-      setLocation({
-        lat: Number.parseFloat(result.lat),
-        lng: Number.parseFloat(result.lon),
-      });
-      onFormDataChange('latitude', result.lat);
-      onFormDataChange('longitude', result.lon);
-
-      const addressData = result.address || {};
-      const displayName = result.display_name || '';
-
-      const cityName =
-        addressData.city ||
-        addressData.town ||
-        addressData.village ||
-        addressData.municipality ||
-        displayName
-          .split(', ')
-          .find((part: string) => !part.match(/\d{5}/) && part.length > 2)
-        || 'Šiauliai';
-
-      onFormDataChange('city', cityName);
-    } catch (err) {
-      setSearchError('Klaida gaunant vietovę. Bandykite dar kartą.');
-      console.error(err);
-    } finally {
-      setSearchLoading(false);
-    }
+    onFormDataChange('street', suggestion.name);
+    onFormDataChange('latitude', suggestion.latitude.toString());
+    onFormDataChange('longitude', suggestion.longitude.toString());
   };
 
   const handleMapClick = (lat: number, lng: number) => {
@@ -77,6 +79,22 @@ const AddressSelection: React.FC<AddressSelectionProps> = ({
     onFormDataChange('latitude', lat.toString());
     onFormDataChange('longitude', lng.toString());
   };
+
+  if (isLoading) {
+    return (
+      <div>
+        <h2 className="mb-6 text-2xl font-bold text-gray-900">
+          Nurodykite adresą
+        </h2>
+
+        <div className="rounded-lg border border-gray-200 p-6">
+          <p className="text-center text-gray-600">
+            Kraunami adreso duomenys...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -88,92 +106,58 @@ const AddressSelection: React.FC<AddressSelectionProps> = ({
         {/* Form Section */}
         <div className="rounded-lg border border-gray-200 p-6">
           <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Pašto kodas * 
-              </label>
-              <div className="mt-2 flex gap-2">
-                <input
-                  type="text"
-                  value={formData.zipCode}
-                  onChange={(e) => {
-                    const value = e.target.value.replace(/\D/g, '').slice(0, 5);
-                    onFormDataChange('zipCode', value);
-                  }}
-                  maxLength={5}
-                  placeholder="01000"
-                  className="flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:border-[--RepasBlue] focus:outline-none"
-                />
-                <button
-                  onClick={handleSearchZipCode}
-                  disabled={searchLoading || !formData.zipCode}
-                  className="rounded-lg bg-[--RepasBlue] px-4 py-2 font-medium text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {searchLoading ? 'Ieškoma...' : 'Rasti'}
-                </button>
-              </div>
-              {searchError && (
-                <p className="mt-2 text-sm text-red-600">{searchError}</p>
-              )}
-            </div>
+            <h3 className="text-lg font-semibold text-gray-900">
+              Adreso informacija
+            </h3>
 
+            {/* Address Autocomplete */}
+            <AddressAutocomplete
+              value={formData.street}
+              onChange={(value) => onFormDataChange('street', value)}
+              onSelect={handleAddressSelect}
+            />
+
+            {/* Apartment */}
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Gatvė *
+              <label className="mb-2 block text-sm font-medium text-gray-700">
+                Buto numeris
               </label>
               <input
                 type="text"
-                value={formData.street}
+                value={formData.apartment}
                 onChange={(e) =>
-                  onFormDataChange('street', e.target.value)
+                  onFormDataChange('apartment', e.target.value)
                 }
-                placeholder="pvz. Gedimino pr."
-                className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-[--RepasBlue] focus:outline-none"
+                placeholder="pvz. 5"
+                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-[--RepasBlue] focus:outline-none"
               />
             </div>
 
+            {/* Floor */}
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Namo numeris *
+              <label className="mb-2 block text-sm font-medium text-gray-700">
+                Aukštas
               </label>
               <input
                 type="text"
-                value={formData.houseNumber}
-                onChange={(e) =>
-                  onFormDataChange('houseNumber', e.target.value)
-                }
-                placeholder="pvz. 9"
-                className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-[--RepasBlue] focus:outline-none"
+                value={formData.floor}
+                onChange={(e) => onFormDataChange('floor', e.target.value)}
+                placeholder="pvz. 2"
+                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-[--RepasBlue] focus:outline-none"
               />
             </div>
 
+            {/* Notes */}
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Miestas *
-              </label>
-              <input
-                type="text"
-                value={formData.city}
-                onChange={(e) =>
-                  onFormDataChange('city', e.target.value)
-                }
-                placeholder="pvz. Vilnius"
-                className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-[--RepasBlue] focus:outline-none"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="mb-2 block text-sm font-medium text-gray-700">
                 Pastabos (neprivaloma)
               </label>
               <textarea
                 value={formData.notes}
-                onChange={(e) =>
-                  onFormDataChange('notes', e.target.value)
-                }
+                onChange={(e) => onFormDataChange('notes', e.target.value)}
                 placeholder="pvz. Namų durys šiaurinėje pusėje"
                 rows={4}
-                className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-[--RepasBlue] focus:outline-none"
+                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-[--RepasBlue] focus:outline-none"
               />
             </div>
           </div>
@@ -181,35 +165,43 @@ const AddressSelection: React.FC<AddressSelectionProps> = ({
 
         {/* Map Section */}
         <div className="rounded-lg border border-gray-200 p-6">
-          <h3 className="mb-4 text-lg font-semibold text-gray-900">Žemėlapis</h3>
-          <div className="rounded-lg border border-gray-200 overflow-hidden">
+          <h3 className="mb-4 text-lg font-semibold text-gray-900">
+            Žemėlapis
+          </h3>
+
+          <div className="mb-4 overflow-hidden rounded-lg border border-gray-200">
             <MapComponent location={location} onMapClick={handleMapClick} />
           </div>
+
           {location ? (
-            <div className="mt-4 grid grid-cols-2 gap-4 rounded-lg bg-gray-50 p-4">
-              <div>
-                <p className="text-xs text-gray-600">Platuma</p>
-                <p className="text-sm font-mono font-semibold text-gray-900">
-                  {location.lat.toFixed(6)}
-                </p>
+            <>
+              <p className="mb-4 text-center text-sm text-gray-600">
+                Spauskite žemėlapį arba vilkite žymeklį, kad pakeistumėte vietą
+              </p>
+
+              <div className="grid grid-cols-2 gap-4 rounded-lg bg-gray-50 p-4">
+                <div>
+                  <p className="mb-1 text-xs text-gray-600">Platuma</p>
+                  <p className="font-mono text-sm font-semibold text-gray-900">
+                    {location.lat.toFixed(6)}
+                  </p>
+                </div>
+                <div>
+                  <p className="mb-1 text-xs text-gray-600">Ilguma</p>
+                  <p className="font-mono text-sm font-semibold text-gray-900">
+                    {location.lng.toFixed(6)}
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="text-xs text-gray-600">Ilguma</p>
-                <p className="text-sm font-mono font-semibold text-gray-900">
-                  {location.lng.toFixed(6)}
-                </p>
-              </div>
-            </div>
+            </>
           ) : (
-            <div className="mt-4 rounded-lg bg-red-50 border border-red-200 p-4">
-              <p className="text-sm text-red-700 font-medium">
-                Prašome nustatyti vietą žemėlapyje arba pasirinkti pašto kodą norėdami gauti koordinates.
+            <div className="rounded-lg border border-orange-200 bg-orange-50 p-4">
+              <p className="text-sm font-medium text-orange-700">
+                Pradėkite rašyti adresą, kad pamatytumėte pasiūlymus ir vietą
+                žemėlapyje
               </p>
             </div>
           )}
-          <p className="mt-4 text-xs text-gray-600">
-            Spauskite žemėlapį arba vilkite žymeklį, kad pakeistumėte vietą
-          </p>
         </div>
       </div>
     </div>

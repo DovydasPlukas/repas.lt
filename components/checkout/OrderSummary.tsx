@@ -128,9 +128,9 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
                     Adresas
                   </p>
                   <p className="text-sm text-gray-900">
-                    {formData.street} {formData.houseNumber}
+                    {formData.street} 
                     <br />
-                    {formData.zipCode} {formData.city}
+                    {formData.apartment} {formData.floor} 
                   </p>
                 </div>
               )}
@@ -145,6 +145,8 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
                     {formData.firstName} {formData.lastName}
                     <br />
                     +370{formData.phone}
+                    <br />
+                    {formData.email}
                   </p>
                 </div>
               )}

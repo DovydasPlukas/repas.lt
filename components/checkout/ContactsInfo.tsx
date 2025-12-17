@@ -16,6 +16,7 @@ const ContactsInfo: React.FC<ContactsInfoProps> = ({
   };
 
   const isValidPhoneNumber = formData.phone.length === 8;
+  const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email || '');
 
   return (
     <div>
@@ -25,6 +26,31 @@ const ContactsInfo: React.FC<ContactsInfoProps> = ({
 
       <div className="rounded-lg border border-gray-200 p-6">
         <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              El. paštas *
+            </label>
+            <input
+              type="email"
+              value={formData.email || ''}
+              onChange={(e) =>
+                onFormDataChange('email', e.target.value)
+              }
+              placeholder="pvz. jonas@example.com"
+              className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-[--RepasBlue] focus:outline-none"
+            />
+            {formData.email && !isValidEmail && (
+              <p className="mt-2 text-sm text-red-600">
+                Neteisingas el. pašto formatas
+              </p>
+            )}
+            {formData.email && isValidEmail && (
+              <p className="mt-2 text-sm text-green-600">
+                ✓ {formData.email}
+              </p>
+            )}
+          </div>
+
           <div className="grid gap-4 md:grid-cols-2">
             <div>
               <label className="block text-sm font-medium text-gray-700">
