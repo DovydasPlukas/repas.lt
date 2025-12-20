@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
-import { Trash2, Pencil, Plus } from "lucide-react"
+import { Trash, Pencil, Plus } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -182,7 +182,7 @@ export default function ServiceSheet({
                           </p>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Button variant="ghost" size="icon" onClick={() => handleStartEdit(addon)}>
+                          <Button variant="ghost" className="p-2 hover:bg-muted rounded-full transition" size="icon" onClick={() => handleStartEdit(addon)}>
                             <Pencil className="h-4 w-4" />
                           </Button>
                           <Switch
@@ -191,10 +191,11 @@ export default function ServiceSheet({
                           />
                           <Button
                             variant="ghost"
+                            className="p-2 hover:bg-destructive/20 rounded-full transition"
                             size="icon"
                             onClick={() => handleDeleteClick(addon)}
                           >
-                            <Trash2 className="h-4 w-4 text-destructive" />
+                            <Trash className="h-4 w-4 text-destructive" />
                           </Button>
                         </div>
                       </CardContent>
@@ -223,7 +224,7 @@ export default function ServiceSheet({
                           </p>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Button variant="ghost" size="icon" onClick={() => handleStartEdit(addon)}>
+                          <Button variant="ghost" className="p-2 hover:bg-muted rounded-full transition" size="icon" onClick={() => handleStartEdit(addon)}>
                             <Pencil className="h-4 w-4" />
                           </Button>
                           <Switch
@@ -232,10 +233,11 @@ export default function ServiceSheet({
                           />
                           <Button
                             variant="ghost"
+                            className="p-2 hover:bg-destructive/20 rounded-full transition"
                             size="icon"
                             onClick={() => handleDeleteClick(addon)}
                           >
-                            <Trash2 className="h-4 w-4 text-destructive" />
+                            <Trash className="h-4 w-4 text-destructive" />
                           </Button>
                         </div>
                       </CardContent>

@@ -188,6 +188,9 @@ model Order {
   pickupDateTime   DateTime
   deliveryDateTime DateTime
 
+  isPickedUp  Boolean @default(false)
+  isDelivered Boolean @default(false)
+
   // global order status & timestamps
   status    OrderStatus @default(NEW)
   createdAt DateTime    @default(now())

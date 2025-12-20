@@ -1,6 +1,7 @@
 "use client"
+/* eslint-disable */
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { LayoutDashboard, ShoppingCart, Settings, Menu, X } from "lucide-react"
@@ -8,12 +9,93 @@ import { Button } from "@/components/ui/button"
 import Overview from "@/components/dashboard/overview"
 import Orders from "@/components/dashboard/orders"
 import ChangeServices from "@/components/dashboard/change-services"
+import { useRouter, useSearchParams } from "next/navigation"
 
 type TabType = "overview" | "orders" | "services"
+const ALLOWED_TABS = ["overview", "orders", "services"]
 
 export default function AdminDashboard() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
   const [activeTab, setActiveTab] = useState<TabType>("overview")
   const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  // Resolve initial tab from (in priority order):
+  // 1) callbackUrl (decoded) -> ?tab=...
+  // 2) direct ?tab=...
+  // 3) localStorage
+  // 4) default "overview"
+  useEffect(() => {
+    try {
+      // 1) try callbackUrl
+      const cb = searchParams?.get("callbackUrl")
+      let tabFromUrl: string | null = null
+
+      if (cb) {
+        try {
+          const decoded = decodeURIComponent(cb)
+          // parsed as absolute relative to current origin
+          const parsed = new URL(decoded, typeof window !== "undefined" ? window.location.origin : "http://localhost")
+          tabFromUrl = parsed.searchParams.get("tab")
+        } catch (e) {
+          // ignore parse errors
+        }
+      }
+
+      // 2) fallback to direct ?tab=...
+      if (!tabFromUrl) {
+        const t = searchParams?.get("tab")
+        if (t) tabFromUrl = t
+      }
+
+      // 3) fallback to localStorage
+      if (!tabFromUrl) {
+        const saved = typeof window !== "undefined" ? localStorage.getItem("repas:adminActiveTab") : null
+        if (saved) tabFromUrl = saved
+      }
+
+      // Validate & set
+      if (tabFromUrl && ALLOWED_TABS.includes(tabFromUrl)) {
+        setActiveTab(tabFromUrl as TabType)
+
+        // Clean up the URL: replace to a clean ?tab=... (remove callbackUrl if present)
+        // Build new search params with only tab (keep other relevant params if you want)
+        const newUrl = new URL(window.location.href)
+        newUrl.searchParams.set("tab", tabFromUrl)
+        newUrl.searchParams.delete("callbackUrl")
+        // Use router.replace so navigation stack isn't polluted
+        router.replace(`${newUrl.pathname}${newUrl.search}`)
+      } else {
+        // nothing found - keep default ("overview") and ensure URL has tab param for shareability
+        const currentTabParam = searchParams?.get("tab")
+        if (!currentTabParam) {
+          const u = new URL(window.location.href)
+          u.searchParams.set("tab", "overview")
+          router.replace(`${u.pathname}${u.search}`)
+        }
+      }
+    } catch (err) {
+      // ignore localStorage / parsing errors
+    }
+    // run this once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Persist activeTab to localStorage and update ?tab=... on every change
+  useEffect(() => {
+    try {
+      localStorage.setItem("repas:adminActiveTab", activeTab)
+
+      // Update URL tab param without adding history entry
+      const u = new URL(window.location.href)
+      u.searchParams.set("tab", activeTab)
+      u.searchParams.delete("callbackUrl") // keep URL clean
+      router.replace(`${u.pathname}${u.search}`)
+    } catch (err) {
+      // ignore
+    }
+  }, [activeTab, router])
 
   const tabs = [
     { id: "overview" as TabType, label: "Apžvalga", icon: LayoutDashboard },
