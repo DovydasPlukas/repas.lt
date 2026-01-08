@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { PASLAUGOS_LINKS, USER_NAV_LINKS } from "@/app/constants/constants"
+import { USER_NAV_LINKS } from "@/app/constants/constants"
 import {
   Sheet,
   SheetContent,
@@ -101,26 +101,26 @@ export function MobileSidebar() {
           </div>
 
           <Separator />
-          {/* Delete later */}
-          {/* Services Section */}
-          <div className="flex flex-col gap-4">
-            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-              Paslaugos
-            </h3>
-            {PASLAUGOS_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`px-3 py-2 rounded-lg transition-colors font-poppins ${
-                  pathname === link.href ? "bg-(--RepasBlue)/10 text-(--RepasBlue) font-semibold" : "hover:bg-muted"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
 
-          <Separator />
+            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+              Susisiekti
+            </h3>
+
+          {/* Kontaktai */}
+            <Link
+              href={USER_NAV_LINKS.contact.href}
+              className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                pathname === USER_NAV_LINKS.contact.href
+                  ? "bg-(--RepasBlue)/10 text-(--RepasBlue) font-semibold"
+                  : "hover:bg-muted"
+              }`}
+            >
+              <span className="font-poppins">
+                {USER_NAV_LINKS.contact.label}
+              </span>
+            </Link>
+
+            <Separator />
 
           {/* Call to Action */}
           <Link href={USER_NAV_LINKS.services.href} className="mt-auto">

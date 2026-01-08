@@ -26,14 +26,14 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { name, description, enabled } = body;
+    const { name, description, enabled, image } = body;
 
     if (!name || typeof enabled !== "boolean") {
       return NextResponse.json({ error: "Name and enabled are required" }, { status: 400 });
     }
 
     const newService = await db.service.create({
-      data: { name, description, enabled },
+      data: { name, description, enabled, image },
     });
 
     return NextResponse.json(newService);

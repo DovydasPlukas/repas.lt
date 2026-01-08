@@ -123,6 +123,7 @@ model Service {
   id          String   @id @default(cuid())
   name        String   @unique
   description String?
+  image       String?  // path to image or default icon key (e.g., "icon_1", "icon_2")
   position    Int      @default(0)
   enabled     Boolean  @default(true)
   createdAt   DateTime @default(now())

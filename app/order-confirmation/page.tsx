@@ -6,6 +6,18 @@ import { useSearchParams } from 'next/navigation';
 import { Check, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
+const statusOptions = [
+  { value: 'NEW', label: 'Naujas' },
+  { value: 'PENDING', label: 'Laukiantis' },
+  { value: 'COMPLETED', label: 'Užbaigtas' },
+  { value: 'CANCELLED', label: 'Atšauktas' },
+];
+
+const getStatusLabel = (status: string) => {
+  const option = statusOptions.find((opt) => opt.value === status);
+  return option?.label || status;
+};
+
 type OrderAddon = {
   id: string;
   addonId: string;
@@ -427,7 +439,7 @@ export default function OrderConfirmationPage() {
                 <p className="text-xs text-gray-600">Užsakymo statusas</p>
                 <div className="mt-2 inline-flex px-3 py-1 rounded-full bg-blue-100">
                   <span className="text-sm font-medium text-blue-700">
-                    {order.status === 'NEW' ? 'Naujas' : order.status}
+                    {getStatusLabel(order.status)}
                   </span>
                 </div>
               </div>
@@ -476,7 +488,7 @@ export default function OrderConfirmationPage() {
           {/* Action Buttons */}
           <div className="flex flex-col gap-3">
             <Link
-              href="/dashboard"
+              href="/order"
               className="flex items-center justify-center gap-2 px-6 py-3 bg-[--RepasBlue] text-white rounded-lg hover:opacity-90 font-medium transition-all"
             >
               Peržiūrėti mano užsakymus

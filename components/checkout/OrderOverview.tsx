@@ -6,7 +6,7 @@ import {
   XCircle,
   NotepadText,
   CreditCard,
-  DollarSign,
+  Euro,
 } from 'lucide-react';
 import {
   Dialog,
@@ -427,7 +427,7 @@ const OrderOverview: React.FC<OrderOverviewProps> = ({
             <div role="radiogroup" className="flex flex-col sm:flex-row gap-3">
               {[
                 { id: 'paysera', label: 'Paysera', Icon: CreditCard, disabled: true },
-                { id: 'cash', label: 'Grynais pinigais', Icon: DollarSign, disabled: false },
+                { id: 'cash', label: 'Grynais pinigais', Icon: Euro, disabled: false },
               ].map((m) => {
                 const selected = formData?.paymentMethod === m.id;
                 return (

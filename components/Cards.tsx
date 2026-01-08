@@ -1,26 +1,103 @@
-import React from "react";
-import Card_1 from "./Cards/Card_1";
-import Card_2 from "./Cards/Card_2";
-import Card_3 from "./Cards/Card_3";
-import Card_4 from "./Cards/Card_4";
-import Card_5 from "./Cards/Card_5";
-import Card_6 from "./Cards/Card_6";
+"use client"
 
+import React, { useEffect, useState } from "react"
+import ServiceCard from "@/components/Cards/ServiceCard"
+import ContactCard from "@/components/Cards/card-contact"
+import { ServiceSelectionModal } from "@/components/checkout/ServiceSelectionModal"
 
-{/*Split cards and put it in this component*/}
+interface Service {
+  id: string
+  name: string
+  description: string | null
+  image?: string | null
+  enabled: boolean
+}
+
 const Cards = () => {
+  const [services, setServices] = useState<Service[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        setLoading(true)
+        const response = await fetch("/api/dashboard/services")
+        if (!response.ok) throw new Error("Failed to fetch services")
+        const data = await response.json()
+        
+        // Filter enabled services
+        const enabledServices = data
+          .filter((service: Service) => service.enabled)
+        
+        setServices(enabledServices)
+        setError(null)
+      } catch (err) {
+        console.error("Error fetching services:", err)
+        setError("Nepavyko įkelti paslaugų")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchServices()
+  }, [])
+
+  const handleOrderClick = (serviceId: string) => {
+    setSelectedServiceId(serviceId)
+    setModalOpen(true)
+  }
+
+  const handleModalClose = (isOpen: boolean) => {
+    setModalOpen(isOpen)
+    if (!isOpen) setSelectedServiceId(null)
+  }
+
+  if (loading) {
+    return (
+      <div className="grid grid-cols-1 gap-3 md:gap-6 xs:grid-cols-2 lg:grid-cols-3 md:grid-cols-2">
+        {[...Array(6)].map((_, i) => (
+          <div
+            key={i}
+            className="h-[360px] bg-gray-200 rounded-[10px] animate-pulse"
+          />
+        ))}
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-8 text-red-600">
+        {error}
+      </div>
+    )
+  }
+
   return (
     <div>
-      <div className=" grid grid-cols-1 gap-3 md:gap-6 xs:grid-cols-2 lg:grid-cols-4">
-        <Card_1/>
-        <Card_2/>
-        <Card_3/>
-        <Card_4/>
-        <Card_5/>
-        <Card_6/>
+      <div className="grid grid-cols-1 gap-3 md:gap-6 xs:grid-cols-2 lg:grid-cols-3 md:grid-cols-2">
+        {services.map((service) => (
+          <ServiceCard
+            key={service.id}
+            id={service.id}
+            name={service.name}
+            description={service.description}
+            image={service.image}
+            onOrderClick={() => handleOrderClick(service.id)}
+          />
+        ))}
+        <ContactCard />
       </div>
+      <ServiceSelectionModal 
+        open={modalOpen} 
+        onOpenChange={handleModalClose} 
+        selectedServiceId={selectedServiceId} 
+      />
     </div>
-  );
-};
+  )
+}
 
-export default Cards;
+export default Cards

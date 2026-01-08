@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
   try {
     const body = await req.json();
-    const { name, description, enabled } = body;
+    const { name, description, enabled, image } = body;
 
     const updatedService = await db.service.update({
       where: { id: params.id },
@@ -12,6 +12,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
         ...(name !== undefined ? { name } : {}),
         ...(description !== undefined ? { description } : {}),
         ...(enabled !== undefined ? { enabled } : {}),
+        ...(image !== undefined ? { image } : {}),
       },
       include: { addons: true },
     });

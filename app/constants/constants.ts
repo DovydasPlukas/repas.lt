@@ -1,11 +1,3 @@
-// Paslaugos (delete later)
-export const PASLAUGOS_LINKS = [
-    { href: '/skalbimas', label: 'Skalbimas' },
-    { href: '/kostiumu-valymas', label: 'Kostiumų valymas' },
-    { href: '/lyginimas', label: 'Lyginimas' },
-    { href: '/patalines-valymas', label: 'Patalinės valymas' },
-    { href: '/skalbimo-masinu-tvarkymas', label: 'Skalbimo mašinų tvarkymas' },
-  ];
 // Virsutine navigacijos juosta
   export const USER_NAV_LINKS = {
     contact: { href: '/kontaktai', label: 'Kontaktai' },
