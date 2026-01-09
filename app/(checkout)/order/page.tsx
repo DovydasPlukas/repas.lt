@@ -3,6 +3,7 @@
 /* eslint-disable */
 
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { ArrowRight, X } from 'lucide-react';
@@ -65,6 +66,7 @@ type OrderDetails = {
 
 const Order: React.FC = () => {
   const { data: session, status } = useSession();
+  const router = useRouter();
   const [orders, setOrders] = useState<OrderDetails[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -73,8 +75,7 @@ const Order: React.FC = () => {
 
   useEffect(() => {
     if (status === 'unauthenticated') {
-      setError('Jūs turite būti prisijungę');
-      setLoading(false);
+      router.replace('/prisijungimas');
       return;
     }
 
@@ -101,7 +102,7 @@ const Order: React.FC = () => {
     };
 
     fetchOrders();
-  }, [status]);
+  }, [status, router]);
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return '-';

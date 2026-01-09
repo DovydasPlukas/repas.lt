@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
 
-// components/footer.tsx
 const Footer = () => {
   return (
         <footer>

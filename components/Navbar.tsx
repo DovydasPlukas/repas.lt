@@ -2,11 +2,12 @@
 import React, { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { usePathname } from "next/navigation"
-import { useSession } from "next-auth/react"
+import { usePathname, useRouter } from "next/navigation"
+import { useSession, signOut } from "next-auth/react"
+import { toast } from "sonner"
+
 import { USER_NAV_LINKS } from "@/app/constants/constants"
 import { LogoutIcon, AccountIcon, OrderIcon, LoginIcon } from "./SvgIcons"
-import { LogoutButton } from "@/components/auth/logout-button"
 import { MobileSidebar } from "./MobileSidebar"
 import { ServiceSelectionModal } from "@/components/checkout/ServiceSelectionModal"
 import type { Service } from "@/components/checkout/types"
@@ -21,6 +22,8 @@ import {
 const Navbar = () => {
   const { data: session } = useSession()
   const pathname = usePathname()
+  const router = useRouter()
+
   const [services, setServices] = useState<Service[]>([])
   const [loading, setLoading] = useState(true)
   const [modalOpen, setModalOpen] = useState(false)
@@ -58,17 +61,29 @@ const Navbar = () => {
   }
 
   // Inline pulsing loader component
-  const PulserLoader = ({ size = 16, className = "", ariaLabel = "Loading" }) => (
+  const PulserLoader = ({ size = 16, className = "", ariaLabel = "Loading" }: { size?: number; className?: string; ariaLabel?: string }) => (
     <div role="status" aria-live="polite" aria-label={ariaLabel} className={`flex items-center justify-center ${className}`}>
       <span className="mr-4 rounded-full animate-pulse inline-block" style={{ width: size, height: size, background: "#e4ddd8" }} />
       <span className="sr-only">{ariaLabel}…</span>
     </div>
   )
 
+  // logout handler: sign out without redirect, show toast and refresh
+  const handleLogout = async () => {
+    try {
+      await signOut({ redirect: false })
+      toast.success("Atsijungta")
+      router.refresh()
+    } catch (err) {
+      console.error("Logout failed", err)
+      toast.error("Atsijungti nepavyko")
+    }
+  }
+
   return (
     <TooltipProvider delayDuration={600}>
 
-      <nav className="xl:h-[142px]">
+      <nav className="h-[56px] xl:h-[142px]">
         <div className="bg-white w-full px-4 fixed md:px-[28px] xl:px-[145px] 2xl:px-[0px] z-30">
           <div className="sm:max-w-[688px] md:max-w-[968px] lg:max-w-[1150px] xl:max-w-[1550px] mx-auto">
             <div className="hidden xl:flex flex-row justify-between pt-3 pb-2 md:py-3 xl:pt-6 border-b border-(--RepasBlue)">
@@ -101,9 +116,10 @@ const Navbar = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div className="hover:bg-red-100 rounded-full p-1 duration-300 cursor-pointer inline-flex">
-                            <LogoutButton>
+                            {/* visually identical - now calls handleLogout */}
+                            <button onClick={handleLogout} aria-label="Atsijungti" className="inline-flex items-center">
                               <LogoutIcon />
-                            </LogoutButton>
+                            </button>
                           </div>
                         </TooltipTrigger>
                         <TooltipContent side="bottom" className="text-xs">

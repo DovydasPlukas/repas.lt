@@ -4,7 +4,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { LayoutDashboard, ShoppingCart, Settings, Menu, X } from "lucide-react"
+import { LayoutDashboard, ShoppingCart, Settings, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Overview from "@/components/dashboard/overview"
 import Orders from "@/components/dashboard/orders"
@@ -119,14 +119,16 @@ export default function AdminDashboard() {
   return (
     <div className="flex h-screen bg-background">
       {/* Mobile menu button */}
-      <Button
-        variant="ghost"
-        size="icon"
-        className="fixed top-4 right-4 z-50 lg:hidden shadow-lg"
-        onClick={() => setSidebarOpen(!sidebarOpen)}
-      >
-        {sidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-      </Button>
+      {!sidebarOpen && (
+        <Button
+          variant="ghost"
+          size="icon"
+          className="fixed top-4 right-4 z-50 lg:hidden shadow-lg bg-white"
+          onClick={() => setSidebarOpen(true)}
+        >
+          <Menu className="h-6 w-6" />
+        </Button>
+      )}
 
       {/* Sidebar */}
       <aside
