@@ -1,13 +1,14 @@
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     const body = await req.json();
     const { name, description, enabled, image } = body;
 
     const updatedService = await db.service.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         ...(name !== undefined ? { name } : {}),
         ...(description !== undefined ? { description } : {}),
@@ -24,13 +25,14 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   }
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     // Delete all addons of the service first
-    await db.serviceAddon.deleteMany({ where: { serviceId: params.id } });
+    await db.serviceAddon.deleteMany({ where: { serviceId: id } });
 
     // Then delete the service itself
-    await db.service.delete({ where: { id: params.id } });
+    await db.service.delete({ where: { id } });
 
     return NextResponse.json({ success: true });
   } catch (error) {

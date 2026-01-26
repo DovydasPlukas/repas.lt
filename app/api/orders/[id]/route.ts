@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // const user = await currentUser();
@@ -20,7 +20,8 @@ export async function GET(
     }
 
     */
-    const orderId = params.id;
+    const { id } = await params;
+    const orderId = id;
 
     const order = await db.order.findUnique({
       where: { id: orderId },

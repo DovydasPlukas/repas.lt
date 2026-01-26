@@ -1,11 +1,12 @@
+import { AuthSuspenseBoundary } from "@/components/auth/suspense-boundary";
 import { NewPasswordForm } from "@/components/auth/new-password-form";
 
-const NewPasswrodPage = () => {
+const NewPasswordPage = () => {
     return ( 
-        <div>
+        <AuthSuspenseBoundary>
             <NewPasswordForm />
-        </div>
+        </AuthSuspenseBoundary>
      );
 }
  
-export default NewPasswrodPage;
+export default NewPasswordPage;

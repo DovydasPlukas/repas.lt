@@ -25,7 +25,8 @@ export const authRoutes = [
     "/registracija",
     "/error",
     "/reset",
-    "/new-password"
+    "/new-password",
+    "/new-verification"
 ]
 
 /**

@@ -13,10 +13,13 @@ export const {
     signIn,
     signOut,
 } = NextAuth({
+  ...authConfig,
   pages:{
     signIn: "/prisijungimas",
     error: "/error",
   },
+  trustHost: true,
+  basePath: "/api/auth",
   events: {
     async linkAccount({ user}) {
       await db.user.update({

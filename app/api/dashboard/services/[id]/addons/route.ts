@@ -1,17 +1,18 @@
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { name, type, price } = await req.json();
+    const { id } = await params;
 
-    if (!params?.id) {
+    if (!id) {
       return NextResponse.json({ error: "service id missing" }, { status: 400 });
     }
 
     const addon = await db.serviceAddon.create({
       data: {
-        serviceId: params.id,
+        serviceId: id,
         name,
         type,
         price: Number(price),

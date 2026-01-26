@@ -1,9 +1,12 @@
+import { AuthSuspenseBoundary } from "@/components/auth/suspense-boundary";
 import { RegisterForm } from "@/components/auth/register-form";
 
 const RegisterPage = () => {
   return (
-    <RegisterForm />
-    );
+    <AuthSuspenseBoundary>
+      <RegisterForm />
+    </AuthSuspenseBoundary>
+  );
 }
  
 export default RegisterPage;

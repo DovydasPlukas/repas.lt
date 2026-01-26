@@ -7,7 +7,11 @@ import {
     protectedPrefixes,
 } from "@/routes";
 
-const { auth } = NextAuth(authConfig);
+const { auth } = NextAuth({
+  ...authConfig,
+  trustHost: true,
+  basePath: "/api/auth",
+});
  
 export default auth((req) => {
     const { nextUrl} = req;

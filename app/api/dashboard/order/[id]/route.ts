@@ -66,10 +66,11 @@ function mapOrderDetailed(o: any) {
   };
 }
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     const order = await db.order.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         orderServices: {
           include: {
@@ -93,8 +94,9 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     const body = await request.json();
     const status = body?.status;
     if (!status) {
@@ -102,7 +104,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     }
 
     const order = await db.order.update({
-      where: { id: params.id },
+      where: { id },
       data: { status },
       include: {
         orderServices: {
@@ -123,9 +125,10 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    await db.order.delete({ where: { id: params.id } });
+    const { id } = await params;
+    await db.order.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error deleting order:", error);

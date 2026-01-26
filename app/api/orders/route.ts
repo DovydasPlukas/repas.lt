@@ -271,15 +271,15 @@ export async function POST(request: NextRequest) {
           await db.contact.upsert({
             where: { userId: existing.id },
             update: {
-              firstName: firstName ?? null,
-              lastName: lastName ?? null,
-              phoneNumber: normalizedPhone ?? null,
+              firstName: firstName || undefined,
+              lastName: lastName || undefined,
+              phoneNumber: normalizedPhone || undefined,
             },
             create: {
               userId: existing.id,
-              firstName: firstName ?? null,
-              lastName: lastName ?? null,
-              phoneNumber: normalizedPhone ?? null,
+              firstName: firstName || '',
+              lastName: lastName || '',
+              phoneNumber: normalizedPhone || '',
             },
           });
         } catch (e) {
@@ -322,9 +322,9 @@ export async function POST(request: NextRequest) {
             role: 'USER',
             contact: {
               create: {
-                firstName: firstName ?? null,
-                lastName: lastName ?? null,
-                phoneNumber: normalizedPhone ?? null,
+                firstName: firstName || '',
+                lastName: lastName || '',
+                phoneNumber: normalizedPhone || '',
               },
             },
           },
