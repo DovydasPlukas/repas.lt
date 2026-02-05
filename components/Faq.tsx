@@ -12,12 +12,12 @@ const faqs = [
   {
     question: "Per kiek laiko atvykstate atsiimti skalbinių po užsakymo pateikimo?",
     answer:
-      "Paprastai skalbinius atsiimame per 2–4 valandas po užsakymo pateikimo, priklausomai nuo užimtumo ir jūsų vietovės.",
+      "Pasirenkate laiką, o mes atvykstame tuo laikotarpiu. Jei vėluojame – pranešame.",
   },
   {
     question: "Kiek laiko trunka užsakymo įvykdymas?",
     answer:
-      "Standartiškai užsakymas įvykdomas per 24–48 valandas nuo atsiėmimo, priklausomai nuo paslaugos tipo.",
+      "Dažniausiai užsakymas įvykdomas per 24–48 valandas nuo atsiėmimo, priklausomai nuo paslaugos tipo ir pristatymo laiko.",
   },
   {
     question: "Kaip apskaičiuojama paslaugų kaina?",
@@ -27,12 +27,12 @@ const faqs = [
   {
     question: "Kokius mokėjimo būdus priimate?",
     answer:
-      "Priimame mokėjimus kortele, bankiniu pavedimu ir grynaisiais pristatymo metu.",
+      "Priimame mokėjimus kortele, bankiniu pavedimu ir grynaisiais drabužių paėmimo metu.",
   },
   {
-    question: "Kas yra bekontaktis aptarnavimas?",
+    question: "Ar galiu pakeisti arba atšaukti užsakymą?",
     answer:
-      "Bekontaktis aptarnavimas leidžia palikti ir atsiimti skalbinius be tiesioginio kontakto su kurjeriu – saugiai, patogiai ir greitai.",
+      "Taip, susisiekite su mumis kuo anksčiau telefonu arba per kontaktų puslapį.",
   },
 ];
 

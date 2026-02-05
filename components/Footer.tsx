@@ -53,13 +53,15 @@ const Footer = () => {
                           Privatumo politika
                         </Link>
                       </div>
-                        <div className="text-center md:mt-4 text-xs xl:text-sm text-[--RepasRed] font-poppins leading-[18px] xl:leading-6  lg:w-[220px] xl:w-[267px] lg:text-left">
-                          © 2025 Repas</div>
-                        </div>
-                        </div>
-                        </div>
-                        <div className="xl:hidden h-[25px]"></div>
-                        </footer>
+                      <div className="text-center md:mt-4 text-xs xl:text-sm text-[--RepasRed] font-poppins leading-[18px] xl:leading-6 lg:w-[220px] xl:w-[267px] lg:text-left">
+                        © {new Date().getFullYear()} Repas
+                      </div>
+
+                </div>
+              </div>
+            </div>
+            <div className="xl:hidden h-[25px]"></div>
+        </footer>
   );
 };
 

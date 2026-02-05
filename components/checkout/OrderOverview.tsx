@@ -404,7 +404,7 @@ const OrderOverview: React.FC<OrderOverviewProps> = ({
               </div>
               <div className="flex justify-between">
                 <span className="text-xs text-gray-600">Telefonas</span>
-                <span className="font-medium text-gray-900">{formData?.phone}</span>
+                <span className="font-medium text-gray-900">+370 {formData?.phone}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-xs text-gray-600">El. paštas</span>

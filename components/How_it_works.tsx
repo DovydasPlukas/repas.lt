@@ -8,24 +8,21 @@ export default function HowItWorks() {
       <div className="h-[2px] bg-[#494B8B] w-[45px] mx-auto my-4 xl:w-[60px] xl:my-6"></div>
 
       <div className="text-center break-words text-sm text-[var(--text-dark-grey)] leading-[22px] xl:text-base xl:leading-[24px] max-w-[1150px] mx-auto">
-        Mūsų profesionali skalbimo paslauga padaro drabužių skalbimą tokį pat
-        greitą ir patogų kaip apsipirkimą internetu. Mūsų patogi naudoti sąsaja leidžia pritaikyti užsakymo pagal
-        Jūsų pageidavimus.
+        Užsakote paslaugą, mes atvykstame paimti skalbinių, juos išvalome ir pristatome atgal.
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 md:gap-10 mb-6 xl:mb-10 xl:mt-4 mx-auto lg:max-w-[724px] xl:max-w-[924px] 2xl:max-w-none">
         {/* Step 1 */}
         <div className="mt-6 flex flex-row-reverse md:flex-col-reverse">
           <div className="w-full">
-            <h3 className="text-left sm:text-center text-xl font-semibold">Pasirinkite ir pritaikykite</h3>
+            <h3 className="text-left sm:text-center text-xl font-semibold">Pasirinkite</h3>
             <div className="text-xs font-normal text-[var(--text-dark-grey)] leading-[18px] xl:text-sm xl:leading-[22px] mt-2 sm:text-center md:h-[110px]">
-              Pasirinkę mūsų siūlomas paslaugas, galite pritaikyti savo užsakymą
-              su papildomomis paslaugomis ir priedais patraukliomis kainomis.
+              Pasirinkite, ką skalbti ir paslaugas. Viskas aišku ir paprasta.
             </div>
           </div>
           <div className="w-7 h-7"></div>
           <Image
-            alt="Asmuo galvojantis apie skalbimo paslaugas (Iliustracija)"
+            alt="Asmuo galvojantis apie skalbimo paslaugas (iliustracija)"
             className="object-cover w-[136px] h-[136px] md:w-[245px] md:h-[245px] m-auto rounded-full"
             src="/Thinking.png"
             width={245}
@@ -38,13 +35,12 @@ export default function HowItWorks() {
           <div className="w-full">
             <h3 className="text-left sm:text-center text-xl font-semibold">Aiškios kainos</h3>
             <div className="text-xs font-normal text-[var(--text-dark-grey)] leading-[18px] xl:text-sm xl:leading-[22px] mt-2 sm:text-center md:h-[110px]">
-                Visos mūsų kainos yra visiškai įtrauktos.
-                Mokame už daiktų skaičių, o ne už svorį, ir visos kainos aiškiai nurodytos.
+              Matote kainą iš anksto. Mokate už daiktų skaičių — be paslėptų mokesčių.
             </div>
           </div>
           <div className="w-7 h-7"></div>
           <Image
-            alt="Kainų skaičiuoklė (Iliustracija)"
+            alt="Kainų skaičiuoklė (iliustracija)"
             className="object-cover w-[136px] h-[136px] md:w-[245px] md:h-[245px] m-auto rounded-full"
             src="/Money.png"
             width={245}
@@ -55,15 +51,14 @@ export default function HowItWorks() {
         {/* Step 3 */}
         <div className="mt-6 flex flex-row-reverse md:flex-col-reverse">
           <div className="w-full">
-            <h3 className="text-left sm:text-center text-xl font-semibold">Greitas paėmimas</h3>
+            <h3 className="text-left sm:text-center text-xl font-semibold">Mes pasiimame</h3>
             <div className="text-xs font-normal text-[var(--text-dark-grey)] leading-[18px] xl:text-sm xl:leading-[22px] mt-2 sm:text-center md:h-[110px]">
-              Užsakykite iki 21:00 valandos ir mes pasiimame jūsų drabužius kitą dieną jums patogiu laiku. Mūsų patikimi
-              vairuotojai atvyks į jūsų duris nustatytu laiku.
+              Repas atvyks pasiimti jūsų skalbinių. Jei reikės, skambinsime jūsų nurodytu telefonu.
             </div>
           </div>
           <div className="w-7 h-7"></div>
           <Image
-            alt="Pristatymo automobilis (Iliustracija)"
+            alt="Pristatymo automobilis (iliustracija)"
             className="object-cover w-[136px] h-[136px] md:w-[245px] md:h-[245px] m-auto rounded-full"
             src="/delivery-van.png"
             width={245}
@@ -74,15 +69,14 @@ export default function HowItWorks() {
         {/* Step 4 */}
         <div className="mt-6 flex flex-row md:flex-col-reverse">
           <div className="w-full">
-            <h3 className="text-left sm:text-center text-xl font-semibold">Grąžinimas kitą dieną</h3>
+            <h3 className="text-left sm:text-center text-xl font-semibold">Grąžiname</h3>
             <div className="text-xs font-normal text-[var(--text-dark-grey)] leading-[18px] xl:text-sm xl:leading-[22px] mt-2 sm:text-center md:h-[110px]">
-              Jūsų drabužiai bus profesionaliai išvalyti ir grąžinti jums kitą dieną švarūs, švieži ir paruošti dėvėti.
-              Garantuojame kokybę ir greitą aptarnavimą.
+              Išvalysime ir grąžinsime — švaru, tvarkinga ir paruošta dėvėti.
             </div>
           </div>
           <div className="w-7 h-7"></div>
           <Image
-            alt="Švarūs drabužiai (Iliustracija)"
+            alt="Švarūs drabužiai (iliustracija)"
             className="object-cover w-[136px] h-[136px] md:w-[245px] md:h-[245px] m-auto rounded-full"
             src="/clean-folded-clothes.jpg"
             width={245}

@@ -395,15 +395,51 @@ const CheckoutPage: React.FC = () => {
   return (
     <main className="min-h-screen bg-gray-50">
 
-      {/* Stepper */}
-      <section className="border-b border-gray-200 bg-white px-6 py-8">
+      {/* Stepper - Mobile */}
+      <section className="border-b border-gray-200 bg-white px-4 py-4 sm:hidden">
+        <div className="mx-auto max-w-6xl">
+          {/* Current step label */}
+          <div className="mb-3 flex items-center justify-between">
+            <span className="text-sm font-semibold text-gray-900">
+              {STEPS[currentStep - 1].label}
+            </span>
+            <span className="text-xs font-medium text-gray-500">
+              {currentStep} / {STEPS.length}
+            </span>
+          </div>
+          {/* Progress bar */}
+          <div className="flex gap-1.5">
+            {STEPS.map((step) => (
+              <button
+                key={step.id}
+                onClick={() => {
+                  if (step.id <= currentStep) {
+                    setCurrentStep(step.id);
+                  }
+                }}
+                disabled={step.id > currentStep}
+                className={`h-1.5 flex-1 rounded-full transition-all ${
+                  step.id === currentStep
+                    ? 'bg-[--RepasBlue]'
+                    : step.id < currentStep
+                      ? 'bg-green-500 cursor-pointer'
+                      : 'bg-gray-200 cursor-not-allowed'
+                }`}
+                aria-label={`${step.label} - ${step.id < currentStep ? 'baigta' : step.id === currentStep ? 'dabartinis' : 'laukia'}`}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Stepper - Desktop */}
+      <section className="hidden border-b border-gray-200 bg-white px-6 py-8 sm:block">
         <div className="mx-auto max-w-6xl">
           <div className="flex items-center justify-between">
             {STEPS.map((step, index) => (
               <div key={step.id} className="flex items-center">
                 <button
                   onClick={() => {
-                    // Only allow going back to completed steps or current step
                     if (step.id <= currentStep) {
                       setCurrentStep(step.id);
                     }
@@ -497,15 +533,15 @@ const CheckoutPage: React.FC = () => {
                 />
               )}
 
-              {/* Navigation Buttons */}
-              <div className="mt-8 flex justify-between gap-4">
+              {/* Navigation Buttons - Desktop */}
+              <div className="mt-8 hidden gap-4 sm:flex sm:justify-between">
                 <div className="flex gap-2">
                   {currentStep > 1 && (
                     <button
                       onClick={handlePrev}
                       className="rounded-lg border border-gray-300 px-6 py-3 font-medium text-gray-700 hover:bg-gray-100"
                     >
-                      ← Atgal
+                      Atgal
                     </button>
                   )}
                 </div>
@@ -524,10 +560,13 @@ const CheckoutPage: React.FC = () => {
                     disabled={!canProceedToNextStep()}
                     className="rounded-lg bg-[--RepasBlue] px-8 py-3 font-medium text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Toliau →
+                    Toliau
                   </button>
                 )}
               </div>
+
+              {/* Spacer so content doesn't hide behind fixed mobile nav */}
+              <div className="h-24 sm:hidden" />
             </div>
 
             {/* Summary Section */}
@@ -549,6 +588,38 @@ const CheckoutPage: React.FC = () => {
           </div>
         </div>
       </section>
+      {/* Fixed Mobile Navigation Bar */}
+      <div className="fixed inset-x-0 bottom-0 z-50 border-t border-gray-200 bg-white px-4 pb-[env(safe-area-inset-bottom,8px)] pt-3 shadow-[0_-4px_12px_rgba(0,0,0,0.08)] sm:hidden">
+        <div className="mx-auto max-w-md flex gap-3 mb-3">
+          {currentStep > 1 && (
+            <button
+              onClick={handlePrev}
+              className="flex min-h-[48px] flex-1 items-center justify-center rounded-xl border border-gray-300 text-base font-medium text-gray-700 active:bg-gray-100"
+            >
+              Atgal
+            </button>
+          )}
+          {currentStep === STEPS.length ? (
+            <button
+              onClick={handleSubmit}
+              disabled={isProcessing || !canProceedToNextStep()}
+              className="flex min-h-[48px] flex-[2] items-center justify-center rounded-xl bg-[--RepasBlue] text-base font-semibold text-white active:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isProcessing ? 'Apdorojimas...' : 'Baigti užsakymą'}
+            </button>
+          ) : (
+            <button
+              onClick={handleNext}
+              disabled={!canProceedToNextStep()}
+              className={`flex min-h-[48px] items-center justify-center rounded-xl bg-[--RepasBlue] text-base font-semibold text-white active:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed ${
+                currentStep > 1 ? 'flex-[2]' : 'flex-1 w-full'
+              }`}
+            >
+              Toliau
+            </button>
+          )}
+        </div>
+      </div>
     </main>
   );
 };
