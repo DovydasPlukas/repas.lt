@@ -78,8 +78,8 @@ export default function ServiceCard({
       {/* Wave Effect Background */}
       <CardWaveEffect />
       
-      {/* Card Content - positioned above wave effect */}
-      <div className="relative" style={{ zIndex: 1 }}>
+      {/* Card Content */}
+      <div className="relative flex flex-col h-full" style={{ zIndex: 1 }}>
         {/* Icon/Image Section */}
         <div className="h-[74px] md:hidden flex flex-col justify-center items-center mx-auto">
           {isCustomImage && image ? (
@@ -115,7 +115,7 @@ export default function ServiceCard({
         </div>
 
         {/* Service Description */}
-        <div className={`font-poppins text-sm md:text-base font-normal text-white leading-[22px] md:leading-6 text-center break-words`}>
+        <div className={`font-poppins text-sm md:text-base font-normal text-white leading-[22px] md:leading-6 text-center break-words line-clamp-3`}>
           {description}
         </div>
 
