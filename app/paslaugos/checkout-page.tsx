@@ -52,6 +52,31 @@ const CheckoutPage: React.FC = () => {
     longitude: '',
   });
 
+  // Helper function to check if a cart item already exists (duplicate check)
+  const isItemDuplicate = (newItem: CartItem, cart: CartItem[]): boolean => {
+    return cart.some((existingItem) => {
+      // Same service ID
+      if (existingItem.serviceId !== newItem.serviceId) return false;
+
+      // Same addons (check if addon IDs match)
+      if (existingItem.addons.length !== newItem.addons.length) return false;
+
+      const existingAddonIds = new Set(existingItem.addons.map((a) => a.addonId));
+      const newAddonIds = new Set(newItem.addons.map((a) => a.addonId));
+
+      // Check if both have same addon IDs
+      if (existingAddonIds.size !== newAddonIds.size) return false;
+      for (const id of existingAddonIds) {
+        if (!newAddonIds.has(id)) return false;
+      }
+
+      // Same special requirements
+      if (existingItem.specialRequirements !== newItem.specialRequirements) return false;
+
+      return true;
+    });
+  };
+
   // Load from localStorage on mount and check for service from modal
   useEffect(() => {
     const loadCartData = () => {
@@ -74,10 +99,12 @@ const CheckoutPage: React.FC = () => {
             const newItem = JSON.parse(decodeURIComponent(newItemParam));
             console.log('Found newItem from URL params:', newItem);
             
-            // Add to the cart if not already there
-            if (newItem && newItem.serviceId) {
+            // Add to the cart only if it's not a duplicate
+            if (newItem && newItem.serviceId && !isItemDuplicate(newItem, parsedCart)) {
               parsedCart.push(newItem);
               console.log('Added newItem to cart, total items:', parsedCart.length);
+            } else if (newItem && isItemDuplicate(newItem, parsedCart)) {
+              console.log('Item already exists in cart, skipping duplicate');
             }
           } catch (error) {
             console.error('Error parsing newItem from URL:', error);
@@ -102,16 +129,11 @@ const CheckoutPage: React.FC = () => {
 
   // Clean up URL parameters after cart is loaded and refresh page to ensure cart displays
   useEffect(() => {
-    if (searchParams.get('newItem') && cart.length > 0) {
+    if (searchParams.get('newItem') && cart.length > 0) 
+      {
       // Replace URL to remove the query parameter
       router.replace('/paslaugos');
-      
-      // Note: Using a timeout to allow the services to be accessed after selecting service from modal (other pages)
-      // Refresh the page to ensure everything is properly rendered with the new cart
-      setTimeout(() => {
-        window.location.reload();
-      }, 100);
-    }
+      }
   }, [cart, searchParams, router]);
 
   // Listen for cart updates from modal

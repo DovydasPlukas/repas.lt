@@ -12,7 +12,7 @@ const seed = new PrismaClient();
 
 async function main() {
     // Change the path to your SQL file as needed
-  const sqlPath = path.join(__dirname, '../scripts/seed_database_2.sql');
+  const sqlPath = path.join(__dirname, '../scripts/seed_database_3.sql');
 
   const sql = fs.readFileSync(sqlPath, 'utf-8');
 

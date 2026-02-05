@@ -117,10 +117,18 @@ export const ServiceSelectionModal: React.FC<ServiceSelectionModalProps> = ({
         // Also pass the newly added item via URL as backup
         const encodedItem = encodeURIComponent(JSON.stringify(cartItem));
         
-        // Redirect to paslaugos with the new item as query param
-        router.push(`/paslaugos?newItem=${encodedItem}`);
+        // Close modal and reset state before redirecting
+        onOpenChange(false);
+        setSelectedService(null);
+        setTempAddons([]);
+        setTempRequirements('');
         
-        // Keep processing state until component unmounts
+        // Redirect to paslaugos with the new item as query param
+        setTimeout(() => {
+          router.push(`/paslaugos?newItem=${encodedItem}`);
+          setIsProcessing(false);
+        }, 50);
+        
         return;
       } else {
         // If already on paslaugos, trigger a refresh of cart data
