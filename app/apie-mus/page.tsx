@@ -2,6 +2,9 @@ import React from 'react'
 import { Card } from "@/components/ui/card"
 import { Users, Target, Lightbulb, Award } from "lucide-react"
 
+import { getPageMetadata } from "@/app/metadata";
+export const metadata = getPageMetadata("/apie-mus");
+
 export default function ApieMus() {
   return (
     <div className="min-h-screen bg-background">

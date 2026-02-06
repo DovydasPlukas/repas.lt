@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import { useSession, signOut } from "next-auth/react"
+import { useSession, signOut, getSession } from "next-auth/react"
 import { toast } from "sonner"
 
 import { USER_NAV_LINKS } from "@/app/constants/constants"
@@ -77,6 +77,32 @@ const Navbar = () => {
     } catch (err) {
       console.error("Logout failed", err)
       toast.error("Atsijungti nepavyko")
+    }
+  }
+
+  /**
+   * Clicking the login icon:
+   * - If the session is already present (but the UI didn't update), re-check session via getSession().
+   *   If getSession() returns a session, redirect to /settings.
+   * - If no session, navigate to the custom login page (/prisijungimas).
+   *
+   * This prevents the case where the user is logged in (cookie/session present) but the UI still shows
+   * the "login" icon. The check is synchronous-ish from the user's POV (single click -> redirect).
+   */
+  const handleLoginClick = async (e?: React.MouseEvent) => {
+    e?.preventDefault()
+    try {
+      const current = await getSession()
+      if (current) {
+        // user is logged in according to the session endpoint — send them to settings
+        router.push(USER_NAV_LINKS.account?.href ?? "/settings")
+      } else {
+        // not logged in, go to the login page
+        router.push(USER_NAV_LINKS.login.href ?? "/prisijungimas")
+      }
+    } catch (err) {
+      console.error("Error checking session on login click:", err)
+      router.push(USER_NAV_LINKS.login.href ?? "/prisijungimas")
     }
   }
 
@@ -161,9 +187,13 @@ const Navbar = () => {
                   <div className="hidden xl:block">
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <Link href={USER_NAV_LINKS.login.href} className="hover:bg-blue-100 rounded-full p-2 pr-0 duration-300 inline-flex items-center">
+                        <button
+                          onClick={handleLoginClick}
+                          aria-label="Prisijungti"
+                          className="hover:bg-blue-100 rounded-full p-2 pr-0 duration-300 inline-flex items-center"
+                        >
                           <LoginIcon />
-                        </Link>
+                        </button>
                       </TooltipTrigger>
                       <TooltipContent side="bottom" className="text-xs">
                         Prisijungti

@@ -2,6 +2,9 @@ import React from 'react';
 import { ContactInfo } from "@/components/contact-info"
 import { Mail, MapPin, Phone, Store } from "lucide-react"
 
+import { getPageMetadata } from "@/app/metadata";
+export const metadata = getPageMetadata("/kontaktai");
+
 const Kontaktai: React.FC = () => {
   return (
 

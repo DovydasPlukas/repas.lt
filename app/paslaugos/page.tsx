@@ -1,10 +1,8 @@
 import { Suspense } from 'react';
 import CheckoutPage from '@/app/paslaugos/checkout-page';
 
-export const metadata = {
-  title: "Paslaugos",
-  description: "Paslaugos puslapis",
-};
+import { getPageMetadata } from "@/app/metadata";
+export const metadata = getPageMetadata("/paslaugos");
 
 const PaslaugosPage = () => {
   return (
