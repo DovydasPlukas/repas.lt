@@ -25,8 +25,16 @@ export interface CartItem {
 }
 
 export interface ServiceSelectionProps {
-  onAddService: (service: Service, addons: Array<{ addonId: string; addonName: string; addonPrice: number }>, requirements: string) => void;
-  onEditService: (cartIndex: number, addons: Array<{ addonId: string; addonName: string; addonPrice: number }>, requirements: string) => void;
+  onAddService: (
+    service: Service,
+    addons: Array<{ addonId: string; addonName: string; addonPrice: number }>,
+    requirements: string
+  ) => void;
+  onEditService: (
+    cartIndex: number,
+    addons: Array<{ addonId: string; addonName: string; addonPrice: number }>,
+    requirements: string
+  ) => void;
   onRemoveService: (cartIndex: number) => void;
   cart: CartItem[];
 }

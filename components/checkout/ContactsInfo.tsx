@@ -8,9 +8,8 @@ const ContactsInfo: React.FC<ContactsInfoProps> = ({
   onFormDataChange,
 }) => {
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const digits = e.target.value.replace(/\D/g, '');
-    const limitedDigits = digits.slice(0, 8);
-    onFormDataChange('phone', limitedDigits);
+    const digits = e.target.value.replace(/\D/g, '').slice(0, 8);
+    onFormDataChange('phone', digits);
   };
 
   const isValidPhoneNumber = formData.phone.length === 8;
@@ -24,6 +23,7 @@ const ContactsInfo: React.FC<ContactsInfoProps> = ({
 
       <div className="rounded-lg border border-gray-200 p-6">
         <div className="space-y-4">
+          {/* Email */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
               El. paštas *
@@ -41,10 +41,13 @@ const ContactsInfo: React.FC<ContactsInfoProps> = ({
               </p>
             )}
             {formData.email && isValidEmail && (
-              <p className="mt-2 text-sm text-green-600">✓ {formData.email}</p>
+              <p className="mt-2 text-sm text-green-600">
+                ✓ {formData.email}
+              </p>
             )}
           </div>
 
+          {/* First & Last name */}
           <div className="grid gap-4 md:grid-cols-2">
             <div>
               <label className="block text-sm font-medium text-gray-700">
@@ -74,12 +77,15 @@ const ContactsInfo: React.FC<ContactsInfoProps> = ({
             </div>
           </div>
 
+          {/* Phone */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Telefonas *
             </label>
             <div className="mt-2 flex items-center rounded-lg border border-gray-300 bg-white min-w-0 overflow-hidden">
-              <span className="px-4 py-2 font-medium text-gray-700 shrink-0">+370</span>
+              <span className="px-4 py-2 font-medium text-gray-700 shrink-0">
+                +370
+              </span>
               <input
                 type="tel"
                 inputMode="numeric"
@@ -96,7 +102,9 @@ const ContactsInfo: React.FC<ContactsInfoProps> = ({
               </p>
             )}
             {formData.phone && isValidPhoneNumber && (
-              <p className="mt-2 text-sm text-green-600">✓ +370{formData.phone}</p>
+              <p className="mt-2 text-sm text-green-600">
+                ✓ +370{formData.phone}
+              </p>
             )}
           </div>
         </div>

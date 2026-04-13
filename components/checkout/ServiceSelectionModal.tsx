@@ -28,7 +28,9 @@ export const ServiceSelectionModal: React.FC<ServiceSelectionModalProps> = ({
   const [loading, setLoading] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
-  const [tempAddons, setTempAddons] = useState<Array<{ addonId: string; addonName: string; addonPrice: number }>>([]);
+  const [tempAddons, setTempAddons] = useState<
+    Array<{ addonId: string; addonName: string; addonPrice: number }>
+  >([]);
   const [tempRequirements, setTempRequirements] = useState('');
 
   useEffect(() => {
@@ -39,8 +41,6 @@ export const ServiceSelectionModal: React.FC<ServiceSelectionModalProps> = ({
           const response = await fetch('/api/services');
           if (response.ok) {
             const data = await response.json();
-
-            // Find and set the selected service
             const service = data.find((s: Service) => s.id === selectedServiceId);
             if (service) {
               setSelectedService(service);
@@ -54,7 +54,6 @@ export const ServiceSelectionModal: React.FC<ServiceSelectionModalProps> = ({
           setLoading(false);
         }
       };
-
       fetchServices();
     }
   }, [open, selectedServiceId]);
@@ -66,22 +65,22 @@ export const ServiceSelectionModal: React.FC<ServiceSelectionModalProps> = ({
     } else {
       setTempAddons([
         ...tempAddons,
-        {
-          addonId: addon.id,
-          addonName: addon.name,
-          addonPrice: addon.price,
-        },
+        { addonId: addon.id, addonName: addon.name, addonPrice: addon.price },
       ]);
     }
   };
 
+  const resetState = () => {
+    setSelectedService(null);
+    setTempAddons([]);
+    setTempRequirements('');
+  };
+
   const handleAddService = async () => {
     if (!selectedService || tempAddons.length === 0) return;
-
     setIsProcessing(true);
 
     try {
-      // Create the cart item
       const cartItem = {
         serviceId: selectedService.id,
         serviceName: selectedService.name,
@@ -89,60 +88,29 @@ export const ServiceSelectionModal: React.FC<ServiceSelectionModalProps> = ({
         specialRequirements: tempRequirements,
       };
 
-      // Get current cart from localStorage
       let cart = [];
       try {
-        const savedCart = localStorage.getItem('checkout_cart');
-        if (savedCart) {
-          cart = JSON.parse(savedCart);
-        }
+        const saved = localStorage.getItem('checkout_cart');
+        if (saved) cart = JSON.parse(saved);
       } catch (error) {
         console.error('Error reading cart:', error);
       }
 
-      // Add new service to cart
       cart.push(cartItem);
+      localStorage.setItem('checkout_cart', JSON.stringify(cart));
 
-      // Save updated cart to localStorage
-      const cartJson = JSON.stringify(cart);
-      localStorage.setItem('checkout_cart', cartJson);
-      console.log('Cart saved to localStorage:', cartJson);
-
-      // If not already on paslaugos page, redirect with cart data in URL
       const isOnPaslaugos = pathname.includes('/paslaugos');
-      
+      onOpenChange(false);
+      resetState();
+
       if (!isOnPaslaugos) {
-        console.log('Not on paslaugos, redirecting...');
-        
-        // Also pass the newly added item via URL as backup
         const encodedItem = encodeURIComponent(JSON.stringify(cartItem));
-        
-        // Close modal and reset state before redirecting
-        onOpenChange(false);
-        setSelectedService(null);
-        setTempAddons([]);
-        setTempRequirements('');
-        
-        // Redirect to paslaugos with the new item as query param
         setTimeout(() => {
           router.push(`/paslaugos?newItem=${encodedItem}`);
           setIsProcessing(false);
         }, 50);
-        
-        return;
       } else {
-        // If already on paslaugos, trigger a refresh of cart data
-        console.log('Already on paslaugos, will dispatch cartUpdated event');
-        
-        // Close modal immediately
-        onOpenChange(false);
-        setSelectedService(null);
-        setTempAddons([]);
-        setTempRequirements('');
-        
-        // Dispatch event after a brief delay to ensure localStorage is synced
         setTimeout(() => {
-          console.log('Dispatching cartUpdated event');
           window.dispatchEvent(new Event('cartUpdated'));
           setIsProcessing(false);
         }, 50);
@@ -156,13 +124,10 @@ export const ServiceSelectionModal: React.FC<ServiceSelectionModalProps> = ({
   const handleModalClose = () => {
     if (!isProcessing) {
       onOpenChange(false);
-      setSelectedService(null);
-      setTempAddons([]);
-      setTempRequirements('');
+      resetState();
     }
   };
 
-  // Show loading dialog while fetching service
   if (loading) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
@@ -183,9 +148,7 @@ export const ServiceSelectionModal: React.FC<ServiceSelectionModalProps> = ({
     <ServiceConfigDialog
       open={open && !isProcessing}
       onOpenChange={(isOpen) => {
-        if (!isOpen) {
-          handleModalClose();
-        }
+        if (!isOpen) handleModalClose();
       }}
       selectedService={selectedService}
       tempAddons={tempAddons}

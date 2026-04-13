@@ -1,21 +1,15 @@
 'use client';
 
 import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
-import {Loader2} from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import ServiceConfigDialog from '@/components/checkout/ServiceConfigDialog';
+import ServiceCard from '@/components/checkout/ServiceSelection/ServiceCard';
 import type { Service, Addon, ServiceSelectionProps, ServiceSelectionHandle } from '@/components/checkout/types';
 
 export type { ServiceSelectionHandle };
 
 const ServiceSelection = forwardRef<ServiceSelectionHandle, ServiceSelectionProps>(
-  (
-    {
-      onAddService,
-      onEditService,
-      cart,
-    },
-    ref
-  ) => {
+  ({ onAddService, onEditService, cart }, ref) => {
     const [services, setServices] = useState<Service[]>([]);
     const [loading, setLoading] = useState(true);
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -52,7 +46,6 @@ const ServiceSelection = forwardRef<ServiceSelectionHandle, ServiceSelectionProp
           setLoading(false);
         }
       };
-
       fetchServices();
     }, []);
 
@@ -71,26 +64,18 @@ const ServiceSelection = forwardRef<ServiceSelectionHandle, ServiceSelectionProp
       } else {
         setTempAddons([
           ...tempAddons,
-          {
-            addonId: addon.id,
-            addonName: addon.name,
-            addonPrice: addon.price,
-          },
+          { addonId: addon.id, addonName: addon.name, addonPrice: addon.price },
         ]);
       }
     };
 
-    const handleAddService = () => {
+    const handleConfirm = () => {
       if (!selectedService || tempAddons.length === 0) return;
-
       if (editingCartIndex !== null) {
-        // Update existing service
         onEditService(editingCartIndex, tempAddons, tempRequirements);
       } else {
-        // Add new service
         onAddService(selectedService, tempAddons, tempRequirements);
       }
-
       setDialogOpen(false);
       setSelectedService(null);
       setEditingCartIndex(null);
@@ -112,29 +97,20 @@ const ServiceSelection = forwardRef<ServiceSelectionHandle, ServiceSelectionProp
           Pasirinkite paslaugas
         </h2>
 
-        {/* Available Services*/}
         <div className="mb-8">
           <h3 className="mb-4 text-lg font-semibold text-gray-900">
             Prieinamos paslaugos
           </h3>
           <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
-            {services.filter(service => service.addons.length > 0).map((service) => (
-              <button
-                key={service.id}
-                onClick={() => openAddServiceDialog(service)}
-                className="rounded-lg border-2 border-gray-200 p-4 text-left transition-all hover:border-[--RepasBlue] hover:bg-blue-50"
-              >
-                <h4 className="font-semibold text-gray-900">{service.name}</h4>
-                {service.description && (
-                  <p className="text-xs text-gray-600 mt-1">{service.description}</p>
-                )}
-                {service.addons.length > 0 && (
-                  <p className="text-xs text-gray-500 mt-2">
-                    {service.addons.length} priedai
-                  </p>
-                )}
-              </button>
-            ))}
+            {services
+              .filter((s) => s.addons.length > 0)
+              .map((service) => (
+                <ServiceCard
+                  key={service.id}
+                  service={service}
+                  onClick={openAddServiceDialog}
+                />
+              ))}
           </div>
         </div>
 
@@ -147,7 +123,7 @@ const ServiceSelection = forwardRef<ServiceSelectionHandle, ServiceSelectionProp
           editingCartIndex={editingCartIndex}
           onAddonToggle={handleAddonToggle}
           onRequirementsChange={setTempRequirements}
-          onConfirm={handleAddService}
+          onConfirm={handleConfirm}
         />
       </div>
     );
@@ -155,5 +131,4 @@ const ServiceSelection = forwardRef<ServiceSelectionHandle, ServiceSelectionProp
 );
 
 ServiceSelection.displayName = 'ServiceSelection';
-
 export default ServiceSelection;

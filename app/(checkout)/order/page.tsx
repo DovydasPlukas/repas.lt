@@ -1,12 +1,11 @@
 'use client';
 
-/* eslint-disable */
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { ArrowRight, X } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import {
   Dialog,
   DialogContent,

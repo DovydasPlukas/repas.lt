@@ -22,30 +22,23 @@ const AddressSelection: React.FC<AddressSelectionProps> = ({
 }) => {
   const [location, setLocation] = useState<Location | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-
-  // Prevent double fetch in React Strict Mode
   const hasFetched = useRef(false);
 
-  // Load existing address ONCE
+  // Load existing address once (guard against React Strict Mode double-fire)
   useEffect(() => {
     if (hasFetched.current) return;
     hasFetched.current = true;
 
     const loadAddress = async () => {
       try {
-        const response = await fetch('/api/user-address', {
-          method: 'GET',
-        });
-
+        const response = await fetch('/api/user-address', { method: 'GET' });
         const result = await response.json();
-
         if (result?.data) {
           onFormDataChange('street', result.data.street || '');
           onFormDataChange('apartment', result.data.apartment || '');
           onFormDataChange('floor', result.data.floor || '');
           onFormDataChange('latitude', result.data.latitude || '');
           onFormDataChange('longitude', result.data.longitude || '');
-
           if (result.data.latitude && result.data.longitude) {
             setLocation({
               lat: parseFloat(result.data.latitude),
@@ -64,11 +57,7 @@ const AddressSelection: React.FC<AddressSelectionProps> = ({
   }, [onFormDataChange]);
 
   const handleAddressSelect = (suggestion: AddressSuggestion) => {
-    setLocation({
-      lat: suggestion.latitude,
-      lng: suggestion.longitude,
-    });
-
+    setLocation({ lat: suggestion.latitude, lng: suggestion.longitude });
     onFormDataChange('street', suggestion.name);
     onFormDataChange('latitude', suggestion.latitude.toString());
     onFormDataChange('longitude', suggestion.longitude.toString());
@@ -86,7 +75,6 @@ const AddressSelection: React.FC<AddressSelectionProps> = ({
         <h2 className="mb-6 text-2xl font-bold text-gray-900">
           Nurodykite adresą
         </h2>
-
         <div className="rounded-lg border border-gray-200 p-6">
           <p className="text-center text-gray-600">
             Kraunami adreso duomenys...
@@ -103,21 +91,19 @@ const AddressSelection: React.FC<AddressSelectionProps> = ({
       </h2>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Form Section */}
+        {/* Form */}
         <div className="rounded-lg border border-gray-200 p-6">
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-900">
               Adreso informacija
             </h3>
 
-            {/* Address Autocomplete */}
             <AddressAutocomplete
               value={formData.street}
               onChange={(value) => onFormDataChange('street', value)}
               onSelect={handleAddressSelect}
             />
 
-            {/* Apartment */}
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-700">
                 Buto numeris
@@ -125,15 +111,12 @@ const AddressSelection: React.FC<AddressSelectionProps> = ({
               <input
                 type="text"
                 value={formData.apartment}
-                onChange={(e) =>
-                  onFormDataChange('apartment', e.target.value)
-                }
+                onChange={(e) => onFormDataChange('apartment', e.target.value)}
                 placeholder="pvz. 5"
                 className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-[--RepasBlue] focus:outline-none"
               />
             </div>
 
-            {/* Floor */}
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-700">
                 Aukštas
@@ -147,7 +130,6 @@ const AddressSelection: React.FC<AddressSelectionProps> = ({
               />
             </div>
 
-            {/* Notes */}
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-700">
                 Pastabos (neprivaloma)
@@ -163,22 +145,19 @@ const AddressSelection: React.FC<AddressSelectionProps> = ({
           </div>
         </div>
 
-        {/* Map Section */}
+        {/* Map */}
         <div className="rounded-lg border border-gray-200 p-6">
           <h3 className="mb-4 text-lg font-semibold text-gray-900">
             Žemėlapis
           </h3>
-
           <div className="mb-4 overflow-hidden rounded-lg border border-gray-200">
             <MapComponent location={location} onMapClick={handleMapClick} />
           </div>
-
           {location ? (
             <>
               <p className="mb-4 text-center text-sm text-gray-600">
                 Spauskite žemėlapį arba vilkite žymeklį, kad pakeistumėte vietą
               </p>
-
               <div className="grid grid-cols-2 gap-4 rounded-lg bg-gray-50 p-4">
                 <div>
                   <p className="mb-1 text-xs text-gray-600">Platuma</p>

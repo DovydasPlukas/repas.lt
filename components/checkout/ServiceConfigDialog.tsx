@@ -8,6 +8,8 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
+import AddonTypeGroup from '@/components/checkout/ServiceConfigDialog/AddonTypeGroup';
+import RequirementsInput from '@/components/checkout/ServiceConfigDialog/RequirementsInput';
 import type { ServiceConfigDialogProps } from '@/components/checkout/types';
 
 const ServiceConfigDialog: React.FC<ServiceConfigDialogProps> = ({
@@ -21,16 +23,11 @@ const ServiceConfigDialog: React.FC<ServiceConfigDialogProps> = ({
   onRequirementsChange,
   onConfirm,
 }) => {
-  // Map addon type codes to display names
-  const addonTypeLabels: Record<string, string> = {
-    'PAPILDOMA_PASLAUGA': 'Papildomos paslaugos',
-    'PRIEDAI': 'Priedai',
-  };
-
-  // Group addons by type
   const groupedAddons = selectedService
     ? Object.groupBy(selectedService.addons, (addon) => addon.type)
     : {};
+
+  const selectedAddonIds = tempAddons.map((a) => a.addonId);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -40,60 +37,28 @@ const ServiceConfigDialog: React.FC<ServiceConfigDialogProps> = ({
         </DialogHeader>
 
         <div className="space-y-6 py-4">
-          {/* Addons grouped by type */}
           {selectedService?.addons.length === 0 ? (
-            <p className="text-sm text-gray-600">Šios paslaugos neturi priedų</p>
+            <p className="text-sm text-gray-600">
+              Šios paslaugos neturi priedų
+            </p>
           ) : (
-            Object.entries(groupedAddons).map(([addonType, addons]) => (
-              <div key={addonType}>
-                <h3 className="mb-3 font-semibold text-gray-900">
-                  {addonTypeLabels[addonType] || addonType}
-                </h3>
-                <div className="space-y-2 ml-2">
-                  {addons?.map((addon) => {
-                    const isSelected = tempAddons.some(
-                      (a) => a.addonId === addon.id
-                    );
-                    return (
-                      <label
-                        key={addon.id}
-                        className="flex items-center gap-3 rounded p-3 border border-gray-200 cursor-pointer hover:bg-blue-50"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={isSelected}
-                          onChange={() => onAddonToggle(addon)}
-                          className="h-4 w-4 rounded border-gray-300 text-[--RepasBlue]"
-                        />
-                        <div className="flex-1">
-                          <p className="text-sm font-medium text-gray-900">
-                            {addon.name}
-                          </p>
-                        </div>
-                        <span className="text-sm font-semibold text-gray-900">
-                          €{addon.price.toFixed(2)}
-                        </span>
-                      </label>
-                    );
-                  })}
-                </div>
-              </div>
-            ))
+            Object.entries(groupedAddons).map(([addonType, addons]) =>
+              addons ? (
+                <AddonTypeGroup
+                  key={addonType}
+                  addonType={addonType}
+                  addons={addons}
+                  selectedAddonIds={selectedAddonIds}
+                  onAddonToggle={onAddonToggle}
+                />
+              ) : null
+            )
           )}
 
-          {/* Special Requirements Textarea */}
-          <div className="border-t border-gray-200 pt-6">
-            <label className="block text-sm font-semibold text-gray-900 mb-3">
-              Specialūs reikalavimai
-            </label>
-            <textarea
-              value={tempRequirements}
-              onChange={(e) => onRequirementsChange(e.target.value)}
-              placeholder="Įveskite specialius reikalavimus šiai paslaugai..."
-              rows={3}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-[--RepasBlue] focus:outline-none"
-            />
-          </div>
+          <RequirementsInput
+            value={tempRequirements}
+            onChange={onRequirementsChange}
+          />
         </div>
 
         <DialogFooter>

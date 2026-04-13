@@ -4,6 +4,15 @@ import React from 'react';
 import { Trash2, Edit2 } from 'lucide-react';
 import type { OrderSummaryProps } from '@/components/checkout/types';
 
+const formatDate = (dateString: string): string => {
+  if (!dateString) return '';
+  return new Intl.DateTimeFormat('lt-LT', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date(dateString));
+};
+
 const OrderSummary: React.FC<OrderSummaryProps> = ({
   cart,
   totalPrice,
@@ -11,15 +20,6 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
   onEditService,
   onRemoveService,
 }) => {
-  const formatDate = (dateString: string) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('lt-LT', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-    }).format(date);
-  };
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-6 sticky top-6">
       <h3 className="mb-4 text-lg font-bold text-gray-900">
@@ -32,7 +32,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
         </div>
       ) : (
         <>
-          {/* Services and Addons */}
+          {/* Services */}
           <div className="mb-6 space-y-3 border-b border-gray-200 pb-4">
             {cart.map((item, index) => (
               <div
@@ -78,7 +78,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             ))}
           </div>
 
-          {/* Total Price */}
+          {/* Pricing */}
           <div className="mb-6 space-y-2">
             <div className="flex justify-between text-sm text-gray-600">
               <span>Priedai:</span>
@@ -94,10 +94,9 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             </div>
           </div>
 
-          {/* Tracking Information */}
+          {/* Tracking info */}
           {formData && (
             <div className="space-y-4 border-t border-gray-200 pt-6">
-              {/* Pickup Info */}
               {formData.pickupDate && (
                 <div>
                   <p className="text-xs font-semibold text-gray-600 uppercase mb-1">
@@ -108,8 +107,6 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
                   </p>
                 </div>
               )}
-
-              {/* Delivery Info */}
               {formData.deliveryDate && (
                 <div>
                   <p className="text-xs font-semibold text-gray-600 uppercase mb-1">
@@ -120,22 +117,18 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
                   </p>
                 </div>
               )}
-
-              {/* Address Info */}
               {formData.street && (
                 <div>
                   <p className="text-xs font-semibold text-gray-600 uppercase mb-1">
                     Adresas
                   </p>
                   <p className="text-sm text-gray-900">
-                    {formData.street} 
+                    {formData.street}
                     <br />
-                    {formData.apartment} {formData.floor} 
+                    {formData.apartment} {formData.floor}
                   </p>
                 </div>
               )}
-
-              {/* Contact Info */}
               {formData.firstName && (
                 <div>
                   <p className="text-xs font-semibold text-gray-600 uppercase mb-1">
