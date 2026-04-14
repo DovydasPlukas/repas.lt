@@ -9,7 +9,7 @@ interface PaymentCardProps {
 }
 
 const PAYMENT_METHODS = [
-  { id: 'stripe', label: 'Stripe', Icon: CreditCard, disabled: true },
+  { id: 'stripe', label: 'Stripe', Icon: CreditCard, disabled: false },
   { id: 'cash', label: 'Grynais pinigais', Icon: Euro, disabled: false },
 ] as const;
 

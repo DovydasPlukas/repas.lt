@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useRef, useState } from 'react';
 import ServiceSelection, { ServiceSelectionHandle } from '@/components/checkout/ServiceSelection';
 import PickupDeliveryTime from '@/components/checkout/PickupDeliveryTime';
 import AddressSelection from '@/components/checkout/AddressSelection';
@@ -14,6 +13,7 @@ import { CheckoutNavigation } from '@/app/paslaugos/checkout/CheckoutNavigation'
 import { useCheckoutCart } from '@/app/paslaugos/checkout/useCheckoutCart';
 import { useCheckoutForm } from '@/app/paslaugos/checkout/useCheckoutForm';
 import { canProceedToNextStep } from '@/app/paslaugos/checkout/checkoutValidation';
+import { useCheckoutSubmit } from '@/app/paslaugos/checkout/useCheckoutSubmit';
 
 const STEPS = [
   { id: 1, label: 'Paslaugos' },
@@ -24,11 +24,12 @@ const STEPS = [
 ];
 
 const CheckoutPage: React.FC = () => {
-  const router = useRouter();
   const serviceSelectionRef = useRef<ServiceSelectionHandle>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const { cart, currentStep, setCurrentStep, addService, editService, removeService, clearCart } = useCheckoutCart();
   const { formData, handleFormDataChange, clearForm, isProcessing, setIsProcessing } = useCheckoutForm();
+  const { handleSubmit: executeCheckout } = useCheckoutSubmit();
 
   const totalPrice = cart.reduce(
     (sum, item) => sum + item.addons.reduce((s, a) => s + a.addonPrice, 0), 0
@@ -39,26 +40,23 @@ const CheckoutPage: React.FC = () => {
   const handlePrev = () => setCurrentStep((s) => Math.max(s - 1, 1));
 
   const handleSubmit = async () => {
-    setIsProcessing(true);
-    try {
-      const res = await fetch('/api/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ services: cart, ...formData }),
-      });
-      const data = await res.json().catch(() => null);
-      if (res.ok) {
-        clearCart();
-        clearForm();
-        router.push(`/order-confirmation?order=${data.orderId}`);
-      } else {
-        console.error('Failed to create order', data);
+    setSubmitError(null);
+    await executeCheckout(
+      {
+        services: cart,
+        ...formData,
+      },
+      {
+        onProcessing: setIsProcessing,
+        onSuccess: () => {
+          clearCart();
+          clearForm();
+        },
+        onError: (error) => {
+          setSubmitError(error);
+        },
       }
-    } catch (err) {
-      console.error('Error creating order:', err);
-    } finally {
-      setIsProcessing(false);
-    }
+    );
   };
 
   // ServiceSelection stays mounted on every step so the edit dialog ref is always reachable
@@ -80,6 +78,16 @@ const CheckoutPage: React.FC = () => {
 
             {/* Form area */}
             <div className="lg:col-span-2">
+              {/* Error message block */}
+              {submitError && (
+                <div className="mb-6 rounded-lg bg-red-50 border border-red-200 p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="text-red-600 font-medium">Klaida:</div>
+                    <div className="text-red-700 text-sm">{submitError}</div>
+                  </div>
+                </div>
+              )}
+
               {/* Always mounted; hidden on other steps so the edit-dialog ref stays alive */}
               <div className={currentStep !== 1 ? 'hidden' : ''}>
                 <ServiceSelection {...serviceSelectionProps} />

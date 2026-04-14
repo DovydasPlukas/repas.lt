@@ -185,11 +185,3 @@ import { generateTimeRanges } from './time-utils';
 2. Update `types.ts` if interfaces change
 3. Test component in isolation first
 4. Update this STRUCTURE.md document
-
-## **TODO**
-
-- PickupDeliveryTime check if available time before payment.
-- Stripe payment.
-- ContactsInfo.tsx (fizinis ar juridinis asmuo).
-- Updates to database (fizinis ar juridinis asmuo)
-- Stepper going to already filled forms.
