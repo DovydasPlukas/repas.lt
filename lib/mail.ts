@@ -3,6 +3,8 @@ import { Resend } from "resend";
 const resend = new Resend(process.env.RESEND_API_KEY!);
 const domain = process.env.NEXT_PUBLIC_APP_URL;
 
+const fromEmail = process.env.RESEND_EMAIL_FROM || "onboarding@resend.dev";
+
 const emailLayout = (content: string) => `
 <div style="font-family: Arial, sans-serif; padding: 20px; background: #e4ddd8; line-height: 1.6;">
     <div style="max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 10px;">
@@ -23,7 +25,7 @@ export const sendVerificationEmail = async (email: string, token: string) => {
     const confirmLink = `${domain}/new-verification?token=${token}`;
 
     await resend.emails.send({
-        from: "onboarding@resend.dev",
+        from: fromEmail,
         to: email,
         subject: "Patvirtinkite savo el. paštą",
         html: emailLayout(`
@@ -52,7 +54,7 @@ export const sendPasswordRestEmail = async (email: string, token: string) => {
     const resetLink = `${domain}/new-password?token=${token}`;
 
     await resend.emails.send({
-        from: "onboarding@resend.dev",
+        from: fromEmail,
         to: email,
         subject: "Atkurkite savo slaptažodį",
         html: emailLayout(`
@@ -79,7 +81,7 @@ export const sendPasswordRestEmail = async (email: string, token: string) => {
 ---------------------------------------------- */
 export const sendTwoFactorTokenEmail = async (email: string, token: string) => {
     await resend.emails.send({
-        from: "onboarding@resend.dev",
+        from: fromEmail,
         to: email,
         subject: "Jūsų 2FA kodas",
         html: emailLayout(`
