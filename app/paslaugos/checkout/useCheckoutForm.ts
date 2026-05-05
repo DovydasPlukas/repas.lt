@@ -67,6 +67,33 @@ export const useCheckoutForm = () => {
     prefillUserData();
   }, [session?.user?.email]);
 
+  // Pre-fill address fields when logged in
+  useEffect(() => {
+    if (!session?.user?.email) return;
+
+    const prefillAddressData = async () => {
+      try {
+        const res = await fetch('/api/user-address');
+        const { data } = await res.json();
+        if (!data) return;
+
+        setFormData((prev) => ({
+          ...prev,
+          street: data.street || prev.street,
+          apartment: data.apartment || prev.apartment,
+          floor: data.floor || prev.floor,
+          notes: data.comments || prev.notes,
+          latitude: data.latitude || prev.latitude,
+          longitude: data.longitude || prev.longitude,
+        }));
+      } catch {
+        // silently ignore — user can fill manually
+      }
+    };
+
+    prefillAddressData();
+  }, [session?.user?.email]);
+
   // Persist on every change
   useEffect(() => {
     localStorage.setItem('checkout_formdata', JSON.stringify(formData));

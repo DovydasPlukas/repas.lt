@@ -1,12 +1,24 @@
 ## **TODO**
 
-- <del>  Stripe payment. </del> (somewhat);
-- Payment status (database update);
-- Payment method (database update);
+- <del>  Stripe payment.</del> (still in sandbox);
+
+- ```Payment status, payed/unpaid (database update);```
+- ```Payment method, stripe or cash (database update);```
+- ```Service price (database update);```
+- Change how service modal works (adding service without addons, after database update)
 
 - PickupDeliveryTime check if available time before payment;
-- ContactsInfo.tsx (fizinis ar juridinis asmuo);
-- Updates to database (fizinis ar juridinis asmuo);
-- Stepper going to already filled forms;
 
-- Not logged in user, can't order (needs to be fixed).
+- Not logged in user, can't order (needs to be fixed, session error);
+
+- problems with session. For example, navbar update needs a page refresh to show logged in functions and grab session data;
+
+- mail.ts updates (order email);
+
+- Update user order page (changes like search, filter, pay for service button);
+
+- Update admin panel after updating database (right data showing, payment method filter);
+
+- Rename page names to lithuanian, example "/order" to "/uzsakymas" ```(not urgent or needed)```;
+
+- Remove admin role select in **`app/(protected)/settings/page.tsx`** (left it for now for testing user/admin interfaces).

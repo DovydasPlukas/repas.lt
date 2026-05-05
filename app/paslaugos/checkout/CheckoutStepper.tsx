@@ -20,7 +20,7 @@ export const CheckoutStepper: React.FC<CheckoutStepperProps> = ({ steps, current
   return (
     <>
       {/* Mobile: label + segmented progress bar */}
-      <section className="border-b border-gray-200 bg-white px-4 py-4 sm:hidden">
+      <section className="border-b border-gray-200 bg-white px-4 py-4 xl:hidden">
         <div className="mx-auto max-w-6xl">
           <div className="mb-3 flex items-center justify-between">
             <span className="text-sm font-semibold text-gray-900">{steps[currentStep - 1].label}</span>
@@ -45,7 +45,7 @@ export const CheckoutStepper: React.FC<CheckoutStepperProps> = ({ steps, current
       </section>
 
       {/* Desktop: numbered circle steps with connectors */}
-      <section className="hidden border-b border-gray-200 bg-white px-6 py-8 sm:block">
+      <section className="hidden border-b border-gray-200 bg-white px-6 py-8 xl:block">
         <div className="mx-auto max-w-6xl">
           <div className="flex items-center justify-between">
             {steps.map((step, index) => (

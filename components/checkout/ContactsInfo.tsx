@@ -2,6 +2,7 @@
 
 import React from 'react';
 import type { ContactsInfoProps } from '@/components/checkout/types';
+import RequiredFieldLabel from '@/components/checkout/RequiredFieldLabel';
 
 const ContactsInfo: React.FC<ContactsInfoProps> = ({
   formData,
@@ -26,7 +27,7 @@ const ContactsInfo: React.FC<ContactsInfoProps> = ({
           {/* Email */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              El. paštas *
+              <RequiredFieldLabel>El. paštas</RequiredFieldLabel>
             </label>
             <input
               type="email"
@@ -51,7 +52,7 @@ const ContactsInfo: React.FC<ContactsInfoProps> = ({
           <div className="grid gap-4 md:grid-cols-2">
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                Vardas *
+                <RequiredFieldLabel>Vardas</RequiredFieldLabel>
               </label>
               <input
                 type="text"
@@ -64,7 +65,7 @@ const ContactsInfo: React.FC<ContactsInfoProps> = ({
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                Pavardė *
+                <RequiredFieldLabel>Pavardė</RequiredFieldLabel>
               </label>
               <input
                 type="text"
@@ -80,7 +81,7 @@ const ContactsInfo: React.FC<ContactsInfoProps> = ({
           {/* Phone */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Telefonas *
+              <RequiredFieldLabel>Telefonas</RequiredFieldLabel>
             </label>
             <div className="mt-2 flex items-center rounded-lg border border-gray-300 bg-white min-w-0 overflow-hidden">
               <span className="px-4 py-2 font-medium text-gray-700 shrink-0">

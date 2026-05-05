@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Loader2 } from "lucide-react"
+import RequiredFieldLabel from "@/components/checkout/RequiredFieldLabel"
 
 interface AddressSuggestion {
   name: string
@@ -40,7 +41,7 @@ export default function AddressAutocomplete({
   onChange,
   onSelect,
   placeholder = "Aušros al. 40 Šiauliai",
-  label = "Gatvė, namo numeris, miestas *",
+  label = "Gatvė, namo numeris, miestas",
 }: AddressAutocompleteProps) {
   const [suggestions, setSuggestions] = useState<AddressSuggestion[]>([])
   const [loading, setLoading] = useState(false)
@@ -129,7 +130,9 @@ export default function AddressAutocomplete({
 
   return (
     <div ref={wrapperRef} className="relative">
-      <Label htmlFor="address-input">{label}</Label>
+      <Label htmlFor="address-input">
+        <RequiredFieldLabel>{label}</RequiredFieldLabel>
+      </Label>
       <div className="relative mt-2">
         <Input
           id="address-input"

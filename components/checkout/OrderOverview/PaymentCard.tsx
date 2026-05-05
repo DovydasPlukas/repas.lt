@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Check, XCircle, CreditCard, Euro } from 'lucide-react';
+import RequiredFieldLabel from '@/components/checkout/RequiredFieldLabel';
 
 interface PaymentCardProps {
   paymentMethod?: string;
@@ -25,7 +26,9 @@ const PaymentCard: React.FC<PaymentCardProps> = ({
         ) : (
           <XCircle className="h-5 w-5 text-red-500" />
         )}
-        <h3 className="text-sm font-medium text-gray-900">Mokėjimo būdas *</h3>
+        <h3 className="text-sm font-medium text-gray-900">
+          <RequiredFieldLabel>Mokėjimo būdas</RequiredFieldLabel>
+        </h3>
       </div>
 
       <div role="radiogroup" className="flex flex-col sm:flex-row gap-3">

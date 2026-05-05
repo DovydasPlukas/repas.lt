@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import RequiredFieldLabel from '@/components/checkout/RequiredFieldLabel';
 
 interface TimeSlotSelectProps {
   label: string;
@@ -36,7 +37,7 @@ const TimeSlotSelect: React.FC<TimeSlotSelectProps> = ({
         {/* Date */}
         <div>
           <label className="block text-sm font-medium text-gray-700">
-            Data *
+            <RequiredFieldLabel>Data</RequiredFieldLabel>
           </label>
           <input
             type="date"
@@ -51,7 +52,7 @@ const TimeSlotSelect: React.FC<TimeSlotSelectProps> = ({
         {/* Time */}
         <div>
           <label className="block text-sm font-medium text-gray-700">
-            Laikas *
+            <RequiredFieldLabel>Laikas</RequiredFieldLabel>
           </label>
           <select
             value={time}

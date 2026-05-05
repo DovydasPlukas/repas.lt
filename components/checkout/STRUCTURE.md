@@ -10,6 +10,8 @@ components/
     ├── types.ts                          # Shared TypeScript interfaces & types
     ├── STRUCTURE.md                      # This file
     │
+    ├── RequiredFieldLabel.tsx            # Display required field asterisks with hover tooltips using shadcn hover-card.
+    │
     ├── AddressSelection.tsx              # Address input with map integration
     ├── ContactsInfo.tsx                  # Contact information form
     ├── OrderSummary.tsx                  # Sticky summary sidebar
