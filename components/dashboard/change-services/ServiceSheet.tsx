@@ -90,6 +90,7 @@ export default function ServiceSheet({
     addNewAddon()
   }
 
+  const pasirinkimas = addons.filter((a) => a.type === "OPTION")
   const papildomosPaslaugos = addons.filter((a) => a.type === "PAPILDOMA_PASLAUGA")
   const priedai = addons.filter((a) => a.type === "PRIEDAI")
 
@@ -127,6 +128,14 @@ export default function ServiceSheet({
                   <Label htmlFor="addon-type">Tipas</Label>
                   <div className="flex gap-2">
                     <Button
+                      variant={newAddon.type === "OPTION" ? "default" : "outline"}
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => setNewAddon({ ...newAddon, type: "OPTION" })}
+                    >
+                      Pasirinkimas
+                    </Button>
+                    <Button
                       variant={newAddon.type === "PAPILDOMA_PASLAUGA" ? "default" : "outline"}
                       size="sm"
                       className="flex-1"
@@ -162,6 +171,50 @@ export default function ServiceSheet({
                 </Button>
               </CardContent>
             </Card>
+
+            {/* Pasirinkimas */}
+            <div>
+              <h3 className="text-sm font-semibold text-foreground mb-3">Pasirinkimas</h3>
+              {pasirinkimas.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  Pasirinkimų nėra
+                </p>
+              ) : (
+                <div className="space-y-2">
+                  {pasirinkimas.map((addon) => (
+                    <Card key={addon.id}>
+                      <CardContent className="flex items-center justify-between p-4">
+                        <div className="flex-1">
+                          <p className="text-sm font-medium">{addon.name}</p>
+                          <p className="text-sm text-muted-foreground">
+                            €{Number(addon.price).toFixed(2)}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button variant="ghost" className="p-2 hover:bg-muted rounded-full transition" size="icon" onClick={() => handleStartEdit(addon)}>
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Switch
+                            checked={Boolean(addon.enabled)}
+                            onCheckedChange={() => toggleAddon(addon.id, addon.enabled)}
+                          />
+                          <Button
+                            variant="ghost"
+                            className="p-2 hover:bg-destructive/20 rounded-full transition"
+                            size="icon"
+                            onClick={() => handleDeleteClick(addon)}
+                          >
+                            <Trash className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="h-1" />
 
             {/* Papildomos Paslaugos */}
             <div>

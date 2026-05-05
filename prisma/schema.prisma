@@ -135,6 +135,7 @@ model Service {
 }
 
 enum AddonType {
+  OPTION
   PAPILDOMA_PASLAUGA
   PRIEDAI
 }

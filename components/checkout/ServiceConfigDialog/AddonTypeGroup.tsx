@@ -4,6 +4,7 @@ import React from 'react';
 import type { Addon } from '@/components/checkout/types';
 
 const ADDON_TYPE_LABELS: Record<string, string> = {
+  OPTION: 'Pasirinkimas',
   PAPILDOMA_PASLAUGA: 'Papildomos paslaugos',
   PRIEDAI: 'Priedai',
 };

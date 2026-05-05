@@ -1,4 +1,4 @@
-export type AddonType = "PAPILDOMA_PASLAUGA" | "PRIEDAI"
+export type AddonType = "OPTION" | "PAPILDOMA_PASLAUGA" | "PRIEDAI"
 
 export interface ServiceAddon {
   id: string

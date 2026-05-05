@@ -12,6 +12,12 @@ import AddonTypeGroup from '@/components/checkout/ServiceConfigDialog/AddonTypeG
 import RequirementsInput from '@/components/checkout/ServiceConfigDialog/RequirementsInput';
 import type { ServiceConfigDialogProps } from '@/components/checkout/types';
 
+const ADDON_TYPE_ORDER = [
+  'OPTION',
+  'PAPILDOMA_PASLAUGA',
+  'PRIEDAI',
+];
+
 const ServiceConfigDialog: React.FC<ServiceConfigDialogProps> = ({
   open,
   onOpenChange,
@@ -29,6 +35,16 @@ const ServiceConfigDialog: React.FC<ServiceConfigDialogProps> = ({
 
   const selectedAddonIds = tempAddons.map((a) => a.addonId);
 
+  // Convert + sort groups in required order
+  const sortedAddonGroups = Object.entries(groupedAddons).sort(
+    ([typeA], [typeB]) => {
+      return (
+        ADDON_TYPE_ORDER.indexOf(typeA) -
+        ADDON_TYPE_ORDER.indexOf(typeB)
+      );
+    }
+  );
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-full max-w-2xl max-h-[80vh] overflow-y-auto">
@@ -42,7 +58,7 @@ const ServiceConfigDialog: React.FC<ServiceConfigDialogProps> = ({
               Šios paslaugos neturi priedų
             </p>
           ) : (
-            Object.entries(groupedAddons).map(([addonType, addons]) =>
+            sortedAddonGroups.map(([addonType, addons]) =>
               addons ? (
                 <AddonTypeGroup
                   key={addonType}

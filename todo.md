@@ -2,9 +2,7 @@
 
 - <del>  Stripe payment.</del> (still in sandbox);
 
-- ```Payment status, payed/unpaid (database update);```
 - ```Payment method, stripe or cash (database update);```
-- ```Service price (database update);```
 - Change how service modal works (adding service without addons, after database update)
 
 - PickupDeliveryTime check if available time before payment;
@@ -15,7 +13,7 @@
 
 - mail.ts updates (order email);
 
-- Update user order page (changes like search, filter, pay for service button);
+- Update user order page (changes like search, filter);
 
 - Update admin panel after updating database (right data showing, payment method filter);
 
