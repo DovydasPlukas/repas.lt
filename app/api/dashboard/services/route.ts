@@ -4,7 +4,11 @@ import { NextResponse } from "next/server";
 export async function GET() {
   try {
     const services = await db.service.findMany({
-      include: { addons: true },
+      include: {
+        addons: {
+          include: { ranges: true },
+        },
+      },
       orderBy: [{ position: "asc" }, { name: "asc" }],
     });
 
@@ -13,6 +17,10 @@ export async function GET() {
       addons: service.addons.map((addon) => ({
         ...addon,
         price: Number(addon.price),
+        ranges: (addon.ranges || []).map((r) => ({
+          ...r,
+          price: Number(r.price),
+        })),
       })),
     }));
 

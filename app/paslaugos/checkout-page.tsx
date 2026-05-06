@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
-import ServiceSelection, { ServiceSelectionHandle } from '@/components/checkout/ServiceSelection';
+import ServiceSelection from '@/components/checkout/ServiceSelection';
+import type { ServiceSelectionHandle } from '@/components/checkout/types';
 import PickupDeliveryTime from '@/components/checkout/PickupDeliveryTime';
 import AddressSelection from '@/components/checkout/AddressSelection';
 import ContactsInfo from '@/components/checkout/ContactsInfo';

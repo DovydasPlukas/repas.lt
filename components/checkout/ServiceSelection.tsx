@@ -5,8 +5,7 @@ import { Loader2 } from 'lucide-react';
 import ServiceConfigDialog from '@/components/checkout/ServiceConfigDialog';
 import ServiceCard from '@/components/checkout/ServiceSelection/ServiceCard';
 import type { Service, Addon, ServiceSelectionProps, ServiceSelectionHandle } from '@/components/checkout/types';
-
-export type { ServiceSelectionHandle };
+import { toast } from 'sonner';
 
 const ServiceSelection = forwardRef<ServiceSelectionHandle, ServiceSelectionProps>(
   ({ onAddService, onEditService, cart }, ref) => {
@@ -49,69 +48,71 @@ const ServiceSelection = forwardRef<ServiceSelectionHandle, ServiceSelectionProp
       fetchServices();
     }, []);
 
-    const openAddServiceDialog = (service: Service) => {
-      setSelectedService(service);
-      setEditingCartIndex(null);
-      setTempAddons([]);
-      setTempRequirements('');
-      setDialogOpen(true);
+    const handleAddonToggle = (addon: Addon, action: 'toggle' | 'update' | 'remove' = 'toggle', qty?: number, unit?: string) => {
+      setTempAddons((prev) => {
+        if (action === 'remove') {
+          return prev.filter((a) => a.addonId !== addon.id);
+        }
+
+        if (action === 'update') {
+          const exists = prev.some((a) => a.addonId === addon.id);
+          if (exists) {
+            return prev.map((a) =>
+              a.addonId === addon.id
+                ? { ...a, addonPrice: addon.price, addonQty: qty, addonUnit: unit }
+                : a
+            );
+          }
+          return [...prev, { addonId: addon.id, addonName: addon.name, addonPrice: addon.price, addonQty: qty, addonUnit: unit }];
+        }
+        const isSelected = prev.some((a) => a.addonId === addon.id);
+        if (isSelected) {
+          return prev.filter((a) => a.addonId !== addon.id);
+        }
+        return [...prev, { addonId: addon.id, addonName: addon.name, addonPrice: addon.price }];
+      });
     };
 
-    const handleAddonToggle = (addon: Addon) => {
-      const isSelected = tempAddons.some((a) => a.addonId === addon.id);
-      if (isSelected) {
-        setTempAddons(tempAddons.filter((a) => a.addonId !== addon.id));
-      } else {
-        setTempAddons([
-          ...tempAddons,
-          { addonId: addon.id, addonName: addon.name, addonPrice: addon.price },
-        ]);
-      }
-    };
+const handleConfirm = () => {
+  if (!selectedService) return;
 
-    const handleConfirm = () => {
-      if (!selectedService || tempAddons.length === 0) return;
-      if (editingCartIndex !== null) {
-        onEditService(editingCartIndex, tempAddons, tempRequirements);
-      } else {
-        onAddService(selectedService, tempAddons, tempRequirements);
-      }
-      setDialogOpen(false);
-      setSelectedService(null);
-      setEditingCartIndex(null);
-      setTempAddons([]);
-      setTempRequirements('');
-    };
+  const optionAddonIds = selectedService.addons
+    .filter((addon) => addon.type === 'OPTION')
+    .map((addon) => addon.id);
 
-    if (loading) {
-      return (
-        <div className="flex justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-[--RepasBlue]" />
-        </div>
-      );
-    }
+  const hasOptionSelected = tempAddons.some((a) =>
+    optionAddonIds.includes(a.addonId)
+  );
+
+  if (optionAddonIds.length > 0 && !hasOptionSelected) {
+    toast.error('Pasirinkite bent vieną pasirinkimą');
+  return;
+  }
+
+  if (editingCartIndex !== null) {
+    onEditService(editingCartIndex, tempAddons, tempRequirements);
+  } else {
+    onAddService(selectedService, tempAddons, tempRequirements);
+  }
+
+  setDialogOpen(false);
+};
+
+    if (loading) return <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-[--RepasBlue]" /></div>;
 
     return (
       <div>
-        <h2 className="mb-6 text-2xl font-bold text-gray-900">
-          Pasirinkite paslaugas
-        </h2>
-
-        <div className="mb-8">
-          <h3 className="mb-4 text-lg font-semibold text-gray-900">
-            Prieinamos paslaugos
-          </h3>
-          <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
-            {services
-              .filter((s) => s.addons.length > 0)
-              .map((service) => (
-                <ServiceCard
-                  key={service.id}
-                  service={service}
-                  onClick={openAddServiceDialog}
-                />
-              ))}
-          </div>
+        <h2 className="mb-6 text-2xl font-bold text-gray-900">Pasirinkite paslaugas</h2>
+        <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
+          {services.filter((s) => s.addons.length > 0).map((service) => (
+            <ServiceCard key={service.id} service={service} onClick={(s) => {
+              setSelectedService(s);
+              setEditingCartIndex(null);
+              setTempAddons([]);
+              setTempRequirements('');
+              setDialogOpen(true);
+            }} />
+          ))}
         </div>
 
         <ServiceConfigDialog

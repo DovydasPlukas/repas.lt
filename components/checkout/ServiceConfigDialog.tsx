@@ -29,13 +29,18 @@ const ServiceConfigDialog: React.FC<ServiceConfigDialogProps> = ({
   onRequirementsChange,
   onConfirm,
 }) => {
+  // Replaced Object.groupBy with standard .reduce for browser compatibility
   const groupedAddons = selectedService
-    ? Object.groupBy(selectedService.addons, (addon) => addon.type)
+    ? selectedService.addons.reduce((acc, addon) => {
+        const type = addon.type;
+        if (!acc[type]) acc[type] = [];
+        acc[type].push(addon);
+        return acc;
+      }, {} as Record<string, typeof selectedService.addons>)
     : {};
 
   const selectedAddonIds = tempAddons.map((a) => a.addonId);
 
-  // Convert + sort groups in required order
   const sortedAddonGroups = Object.entries(groupedAddons).sort(
     ([typeA], [typeB]) => {
       return (
@@ -65,6 +70,7 @@ const ServiceConfigDialog: React.FC<ServiceConfigDialogProps> = ({
                   addonType={addonType}
                   addons={addons}
                   selectedAddonIds={selectedAddonIds}
+                  selectedAddonData={tempAddons}
                   onAddonToggle={onAddonToggle}
                 />
               ) : null
@@ -86,8 +92,7 @@ const ServiceConfigDialog: React.FC<ServiceConfigDialogProps> = ({
           </button>
           <button
             onClick={onConfirm}
-            disabled={tempAddons.length === 0}
-            className="px-4 py-2 bg-[--RepasBlue] text-white rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 bg-[--RepasBlue] text-white rounded-lg hover:opacity-90"
           >
             {editingCartIndex !== null ? 'Atnaujinti' : 'Pridėti'}
           </button>

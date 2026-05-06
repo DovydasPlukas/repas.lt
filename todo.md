@@ -3,7 +3,6 @@
 - <del>  Stripe payment.</del> (still in sandbox);
 
 - ```Payment method, stripe or cash (database update);```
-- Change how service modal works (adding service without addons, after database update)
 
 - PickupDeliveryTime check if available time before payment;
 
@@ -15,7 +14,7 @@
 
 - Update user order page (changes like search, filter);
 
-- Update admin panel after updating database (right data showing, payment method filter);
+- Update admin panel after updating database (payment method filter);
 
 - Rename page names to lithuanian, example "/order" to "/uzsakymas" ```(not urgent or needed)```;
 

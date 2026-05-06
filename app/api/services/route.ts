@@ -12,6 +12,9 @@ export async function GET() {
           where: {
             enabled: true,
           },
+          include: {
+            ranges: true,
+          },
         },
       },
       orderBy: {
@@ -30,6 +33,13 @@ export async function GET() {
         name: addon.name,
         price: Number(addon.price),
         type: addon.type,
+        optionPricingType: addon.optionPricingType,
+        ranges: (addon.ranges || []).map((r) => ({
+          id: r.id,
+          minQty: r.minQty,
+          maxQty: r.maxQty,
+          price: Number(r.price),
+        })),
       })),
     }));
 

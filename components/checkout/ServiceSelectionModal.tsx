@@ -11,6 +11,7 @@ import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { Loader2 } from 'lucide-react';
 import ServiceConfigDialog from '@/components/checkout/ServiceConfigDialog';
 import type { Service, Addon } from '@/components/checkout/types';
+import { toast } from 'sonner';
 
 interface ServiceSelectionModalProps {
   open: boolean;
@@ -58,16 +59,56 @@ export const ServiceSelectionModal: React.FC<ServiceSelectionModalProps> = ({
     }
   }, [open, selectedServiceId]);
 
-  const handleAddonToggle = (addon: Addon) => {
-    const isSelected = tempAddons.some((a) => a.addonId === addon.id);
-    if (isSelected) {
-      setTempAddons(tempAddons.filter((a) => a.addonId !== addon.id));
-    } else {
-      setTempAddons([
-        ...tempAddons,
-        { addonId: addon.id, addonName: addon.name, addonPrice: addon.price },
-      ]);
-    }
+  const handleAddonToggle = (
+    addon: Addon,
+    action: 'toggle' | 'update' | 'remove' = 'toggle',
+    qty?: number,
+    unit?: string
+  ) => {
+    setTempAddons((prev) => {
+      if (action === 'remove') {
+        return prev.filter((a) => a.addonId !== addon.id);
+      }
+      if (action === 'update') {
+        const exists = prev.some((a) => a.addonId === addon.id);
+
+        if (exists) {
+          return prev.map((a) =>
+            a.addonId === addon.id
+              ? {
+                  ...a,
+                  addonPrice: addon.price,
+                  addonQty: qty,
+                  addonUnit: unit,
+                }
+              : a
+          );
+        }
+
+        return [
+          ...prev,
+          {
+            addonId: addon.id,
+            addonName: addon.name,
+            addonPrice: addon.price,
+            addonQty: qty,
+            addonUnit: unit,
+          },
+        ];
+      }
+      const isSelected = prev.some((a) => a.addonId === addon.id);
+      if (isSelected) {
+        return prev.filter((a) => a.addonId !== addon.id);
+      }
+      return [
+        ...prev,
+        {
+          addonId: addon.id,
+          addonName: addon.name,
+          addonPrice: addon.price,
+        },
+      ];
+    });
   };
 
   const resetState = () => {
@@ -77,7 +118,26 @@ export const ServiceSelectionModal: React.FC<ServiceSelectionModalProps> = ({
   };
 
   const handleAddService = async () => {
-    if (!selectedService || tempAddons.length === 0) return;
+
+    // Validation: if service has OPTION addons, ensure at least one is selected
+    if (!selectedService) return;
+    const optionAddons = selectedService.addons.filter(
+      (addon) => addon.type === 'OPTION'
+    );
+    // Only enforce rule if OPTION addons exist
+    if (optionAddons.length > 0) {
+      const hasOptionSelected = tempAddons.some((a) => {
+        const match = optionAddons.find((opt) => opt.id === a.addonId);
+        if (!match) return false;
+        return true;
+      });
+
+      if (!hasOptionSelected) {
+        toast.error('Pasirinkite bent vieną pasirinkimą');
+        return;
+      }
+    }
+
     setIsProcessing(true);
 
     try {
