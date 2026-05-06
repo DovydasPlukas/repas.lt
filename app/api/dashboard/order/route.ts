@@ -51,6 +51,7 @@ function mapOrderForList(o: any) {
     items,
     totalAmount,
     status: o.status,
+    paymentMethod: o.paymentMethod,
     createdAt: o.createdAt,
     pickupDateTime: o.pickupDateTime,
     deliveryDateTime: o.deliveryDateTime,
@@ -89,13 +90,39 @@ export async function GET(request: NextRequest) {
     }
 
     if (search) {
+    const normalized = search.toLowerCase()
+
+      let mappedPayment: "PAID" | "UNPAID" | undefined
+      // Lithuanian
+      if (normalized.includes("ne")) mappedPayment = "UNPAID"
+      else if (normalized.includes("su") || normalized.includes("moket")) mappedPayment = "PAID"
+      // English
+      else if (normalized.includes("unpaid")) mappedPayment = "UNPAID"
+      else if (normalized.includes("paid")) mappedPayment = "PAID"
+
+
       where.OR = [
         { snapFirstName: { contains: search, mode: "insensitive" } },
         { snapLastName: { contains: search, mode: "insensitive" } },
         { snapEmail: { contains: search, mode: "insensitive" } },
         { orderNumber: { contains: search, mode: "insensitive" } },
         { snapPhone: { contains: search, mode: "insensitive" } },
+        {
+          orderServices: {
+            some: {
+              service: {
+                name: { contains: search, mode: "insensitive" },
+              },
+            },
+          },
+        },
       ]
+
+      if (mappedPayment) {
+        where.OR.push({
+          paymentMethod: { equals: mappedPayment },
+        })
+      }
     }
 
     // Date filters

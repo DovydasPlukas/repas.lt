@@ -1,7 +1,5 @@
 'use client';
 
-/* eslint-disable */
-
 import React, { useState } from 'react';
 import type { Addon } from '@/components/checkout/types';
 

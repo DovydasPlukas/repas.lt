@@ -395,6 +395,9 @@ export async function POST(request: NextRequest) {
 
     const orderNumber = `ORD-${Date.now()}-${uuidv4().slice(0, 8)}`;
 
+    // Map paymentMethod string to PaymentMethod enum
+    const mappedPaymentMethod = paymentMethod === 'stripe' ? 'PAID' : 'UNPAID';
+
     const createdOrder = await db.order.create({
       data: {
         orderNumber,
@@ -411,6 +414,7 @@ export async function POST(request: NextRequest) {
         snapNotes: notes ?? null,
         pickupDateTime: new Date(pickupStartIso),
         deliveryDateTime: new Date(deliveryStartIso),
+        paymentMethod: mappedPaymentMethod,
         orderServices: {
           create: orderServicesCreate,
         },

@@ -105,6 +105,7 @@ interface Order {
   isPickedUp: boolean
   isDelivered: boolean
   snapNotes?: string
+  paymentMethod?: string
   snap: OrderSnap
 }
 
@@ -121,6 +122,7 @@ type ColumnKey =
   | "serviceType"
   | "totalAmount"
   | "status"
+  | "paymentMethod"
   | "pickupTime"
   | "deliveryTime"
   | "actions"
@@ -131,6 +133,7 @@ const allColumns: { key: ColumnKey; label: string }[] = [
   { key: "serviceType", label: "Paslaugos" },
   { key: "totalAmount", label: "Suma" },
   { key: "status", label: "Būsena" },
+  { key: "paymentMethod", label: "Mokėjimas" },
   { key: "pickupTime", label: "Paėmimas" },
   { key: "deliveryTime", label: "Pristatymas" },
   { key: "actions", label: "Veiksmai" },
@@ -142,6 +145,7 @@ const defaultColumns: ColumnKey[] = [
   "serviceType",
   "totalAmount",
   "status",
+  "paymentMethod",
   "pickupTime",
   "deliveryTime",
   "actions",
@@ -338,6 +342,27 @@ export default function Orders() {
       default:
         return "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400"
     }
+  }
+
+  const getPaymentMethodBadge = (method?: string) => {
+    if (method === "PAID") {
+      return (
+        <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+          Sumokėta
+        </Badge>
+      )
+    } else if (method === "UNPAID") {
+      return (
+        <Badge className="bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400">
+          Nesumokėta
+        </Badge>
+      )
+    }
+    return (
+      <Badge className="bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">
+        Klaida
+      </Badge>
+    )
   }
 
   const handleStatusChange = async (orderId: string, newStatus: string) => {
@@ -615,6 +640,7 @@ export default function Orders() {
                       {visibleColumns.has("serviceType") && <TableHead>Paslaugos</TableHead>}
                       {visibleColumns.has("totalAmount") && <TableHead>Suma</TableHead>}
                       {visibleColumns.has("status") && <TableHead>Būsena</TableHead>}
+                      {visibleColumns.has("paymentMethod") && <TableHead>Mokėjimas</TableHead>}
                       {visibleColumns.has("pickupTime") && <TableHead className="min-w-[180px]">Paėmimas</TableHead>}
                       {visibleColumns.has("deliveryTime") && (
                         <TableHead className="min-w-[180px]">Pristatymas</TableHead>
@@ -704,6 +730,9 @@ export default function Orders() {
                                 </PopoverContent>
                               </Popover>
                             </TableCell>
+                          )}
+                          {visibleColumns.has("paymentMethod") && (
+                            <TableCell>{getPaymentMethodBadge(order.paymentMethod)}</TableCell>
                           )}
                           {visibleColumns.has("pickupTime") && (
                             <TableCell onClick={(e) => e.stopPropagation()}>
@@ -829,6 +858,10 @@ export default function Orders() {
                   <Badge className={getStatusColor(selectedOrder.status)} variant="secondary">
                     {statusOptions.find((s) => s.value === selectedOrder.status)?.label}
                   </Badge>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Mokėjimo būsena</p>
+                  {getPaymentMethodBadge(selectedOrder.paymentMethod)}
                 </div>
               </div>
 

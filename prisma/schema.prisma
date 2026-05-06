@@ -186,6 +186,12 @@ enum OrderStatus {
   COMPLETED
   CANCELLED
 }
+// Paid - Stripe
+// Unpaid - Cash
+enum PaymentMethod {
+  PAID
+  UNPAID
+}
 
 model Order {
   id          String @id @default(cuid())
@@ -215,6 +221,7 @@ model Order {
 
   // global order status & timestamps
   status    OrderStatus @default(NEW)
+  paymentMethod PaymentMethod @default(UNPAID)
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
 

@@ -1,8 +1,6 @@
 ## **TODO**
 
-- <del>  Stripe payment.</del> (still in sandbox);
-
-- ```Payment method, stripe or cash (database update);```
+- <del>Stripe payment.</del> (still in sandbox);
 
 - PickupDeliveryTime check if available time before payment;
 
