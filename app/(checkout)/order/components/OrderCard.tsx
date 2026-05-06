@@ -1,5 +1,5 @@
 import { OrderDetails } from '../../lib/types';
-import { getStatusLabel } from '../../utils/order';
+import { getStatusLabel, getStatusColor } from '../../utils/order';
 import { formatRange } from '../../utils/formatters';
 
 type Props = {
@@ -34,9 +34,9 @@ export function OrderCard({ order, onClick }: Props) {
         </div>
         <div>
           <p className="text-xs text-gray-600 mb-1">Statusas</p>
-          <span className="inline-flex px-3 py-1 rounded-full bg-blue-100 text-sm font-medium text-blue-700">
-            {getStatusLabel(order.status)}
-          </span>
+            <span className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}`}>
+              {getStatusLabel(order.status)}
+            </span>
         </div>
         <div>
           <p className="text-xs text-gray-600 mb-1">Paėmimas</p>

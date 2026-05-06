@@ -6,7 +6,7 @@ import {
   DialogClose,
 } from '@/components/ui/dialog';
 import { OrderDetails } from '../../lib/types';
-import { getStatusLabel, calculateTotalPrice } from '../../utils/order';
+import { getStatusLabel, calculateTotalPrice, getStatusColor } from '../../utils/order';
 import { formatDate, formatRange } from '../../utils/formatters';
 
 type Props = {
@@ -146,10 +146,8 @@ export function OrderDetailModal({ order, open, onOpenChange }: Props) {
             <div className="grid gap-4 grid-cols-2">
               <div>
                 <p className="text-xs text-gray-600">Užsakymo statusas</p>
-                <div className="mt-2 inline-flex px-3 py-1 rounded-full bg-blue-100">
-                  <span className="text-sm font-medium text-blue-700">
-                    {getStatusLabel(order.status)}
-                  </span>
+                <div className={`mt-2 inline-flex px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}`}>
+                  {getStatusLabel(order.status)}
                 </div>
               </div>
               <div>

@@ -10,10 +10,7 @@
 
 - mail.ts updates (order email);
 
-- Update user order page (changes like search, filter);
-
-- Update admin panel after updating database (payment method filter);
-
-- Rename page names to lithuanian, example "/order" to "/uzsakymas" ```(not urgent or needed)```;
+(not urgent or needed):
+- Rename page names to lithuanian, example "/order" to "/uzsakymas";
 
 - Remove admin role select in **`app/(protected)/settings/page.tsx`** (left it for now for testing user/admin interfaces).
