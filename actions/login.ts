@@ -1,118 +1,131 @@
 "use server";
 
 import * as z from "zod";
+import { AuthError } from "next-auth";
 
 import { LoginSchema } from "@/schemas";
 import { signIn } from "@/auth";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
-import { AuthError } from "next-auth";
 import { getTwoFactorTokenByEmail } from "@/data/two-factor-token";
 import {
-    generateVerificationToken,
-    generateTwoFactorToken
+  generateVerificationToken,
+  generateTwoFactorToken,
 } from "@/lib/tokens";
 import { getUserByEmail } from "@/data/user";
 import {
-    sendVerificationEmail,
-    sendTwoFactorTokenEmail
+  sendVerificationEmail,
+  sendTwoFactorTokenEmail,
 } from "@/lib/mail";
 import { db } from "@/lib/db";
 import { getTwoFactorConfirmationByUserId } from "@/data/two-factor-confirmation";
 
+type LoginActionResult =
+  | { error: string }
+  | { success: string }
+  | { twoFactor: true };
+
 export const login = async (
-    values: z.infer<typeof LoginSchema>,
-    callbackUrl?: string | null,
-) => {
-    const validatedFields = LoginSchema.safeParse(values);
+  values: z.infer<typeof LoginSchema>,
+  callbackUrl?: string | null
+): Promise<LoginActionResult> => {
+  const validatedFields = LoginSchema.safeParse(values);
 
-    if(!validatedFields.success){
-        return { error: "Neteisingi duomenys!" };
-    }
-    
-    const { email, password, code } = validatedFields.data;
+  if (!validatedFields.success) {
+    return { error: "Neteisingi duomenys!" };
+  }
 
-    const existingUser = await getUserByEmail(email);
+  const { email, password, code } = validatedFields.data;
 
-    if (!existingUser || !existingUser.email || !existingUser.password){
-        return { error: "El. paštas neegzistuoja!" };
-    }
+  const existingUser = await getUserByEmail(email);
 
-    if (!existingUser.emailVerified){
-        const verificationToken = await generateVerificationToken(
-            existingUser.email
-        );
+  if (!existingUser || !existingUser.email || !existingUser.password) {
+    return { error: "El. paštas neegzistuoja!" };
+  }
 
-        await sendVerificationEmail(
-            verificationToken.email,
-            verificationToken.token,
-        );
+  if (!existingUser.emailVerified) {
+    const verificationToken = await generateVerificationToken(existingUser.email);
 
-        return { success: "Patvirtinimo el. laiškas išsiųstas!" };
-    }
+    await sendVerificationEmail(
+      verificationToken.email,
+      verificationToken.token
+    );
 
-    if (existingUser.isTwoFactorEnabled && existingUser.email){
-        if(code){
-            const twoFactorToken = await getTwoFactorTokenByEmail(
-                existingUser.email
-            );
-            
-            if (!twoFactorToken) {
-                return { error: "Neteisingas kodas!" };
-            }
+    return { success: "Patvirtinimo el. laiškas išsiųstas!" };
+  }
 
-            if (twoFactorToken.token !== code) {
-                return { error: "Neteisingas kodas!" };
-            }
+  if (existingUser.isTwoFactorEnabled && existingUser.email) {
+    if (code) {
+      const twoFactorToken = await getTwoFactorTokenByEmail(existingUser.email);
 
-            const hasExpired = new Date(twoFactorToken.expires) < new Date();
+      if (!twoFactorToken) {
+        return { error: "Neteisingas kodas!" };
+      }
 
-            if (hasExpired) {
-                return { error: "Kodo galiojimas pasibaigė!" };
-            }
+      if (twoFactorToken.token !== code) {
+        return { error: "Neteisingas kodas!" };
+      }
 
-            await db.twoFactorToken.delete({
-                where: { id: twoFactorToken.id }
-            });
+      const hasExpired = new Date(twoFactorToken.expires) < new Date();
 
-            const existingConfirmation = await getTwoFactorConfirmationByUserId(existingUser.id);
-            if (existingConfirmation) {
-                await db.twoFactorConfirmation.delete({
-                    where: { id: existingConfirmation.id }
-                });
-            }
+      if (hasExpired) {
+        return { error: "Kodo galiojimas pasibaigė!" };
+      }
 
-            await db.twoFactorConfirmation.create({
-                data: {
-                    userId: existingUser.id,
-                }
-            });
+      await db.twoFactorToken.delete({
+        where: { id: twoFactorToken.id },
+      });
 
-        } else {
-            const twoFactorToken = await generateTwoFactorToken(existingUser.email);
-            await sendTwoFactorTokenEmail(
-                twoFactorToken.email,
-                twoFactorToken.token,
-            );
+      const existingConfirmation = await getTwoFactorConfirmationByUserId(
+        existingUser.id
+      );
 
-            return { twoFactor: true };
-        }
-    }
-
-    try {
-        await signIn("credentials", {
-            email,
-            password,
-            redirectTo: callbackUrl || DEFAULT_LOGIN_REDIRECT,
+      if (existingConfirmation) {
+        await db.twoFactorConfirmation.delete({
+          where: { id: existingConfirmation.id },
         });
-    } catch (error){
-        if (error instanceof AuthError) {
-            switch (error.type) {
-                case "CredentialsSignin":
-                    return { error: "Neteisingi prisijungimo duomenys!" };
-                default:
-                    return { error: "Įvyko klaida!" };
-            }
-        }
-        throw error;
+      }
+
+      await db.twoFactorConfirmation.create({
+        data: {
+          userId: existingUser.id,
+        },
+      });
+    } else {
+      const twoFactorToken = await generateTwoFactorToken(existingUser.email);
+
+      await sendTwoFactorTokenEmail(
+        twoFactorToken.email,
+        twoFactorToken.token
+      );
+
+      return { twoFactor: true };
     }
+  }
+
+  try {
+    const safeCallbackUrl =
+      callbackUrl && callbackUrl.startsWith("/")
+        ? callbackUrl
+        : DEFAULT_LOGIN_REDIRECT;
+
+    await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+      callbackUrl: safeCallbackUrl,
+    });
+
+    return { success: "Prisijungta!" };
+  } catch (error) {
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case "CredentialsSignin":
+          return { error: "Neteisingi prisijungimo duomenys!" };
+        default:
+          return { error: "Įvyko klaida!" };
+      }
+    }
+
+    throw error;
+  }
 };

@@ -20,17 +20,33 @@ import {
 } from "@/components/ui/tooltip"
 
 const Navbar = () => {
-  const { data: session } = useSession()
+  // Destructure `status` so we can tell "loading" apart from "authenticated"/"unauthenticated"
+  const { data: session, status } = useSession()
   const pathname = usePathname()
   const router = useRouter()
 
   const [services, setServices] = useState<Service[]>([])
-  const [loading, setLoading] = useState(true)
+  const [servicesLoading, setServicesLoading] = useState(true)
   const [modalOpen, setModalOpen] = useState(false)
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null)
+  // Optimistic logged-out flag: flips to true the instant the user clicks logout,
+  // so the navbar switches to the Login icon without waiting for the session to clear.
+  const [optimisticLoggedOut, setOptimisticLoggedOut] = useState(false)
 
-  const isUserLoggedIn = !!session
+  // True only once BOTH the session AND the services fetch have resolved.
+  // This prevents the navbar from briefly rendering the wrong auth state.
+  const loading = status === "loading" || servicesLoading
+
+  const isUserLoggedIn = !optimisticLoggedOut && status === "authenticated" && !!session
   const isAdmin = session?.user?.role === "ADMIN"
+
+  // If Next-Auth reports an authenticated session, clear the optimistic flag
+  // so the logged-in icons reappear after a fresh login.
+  useEffect(() => {
+    if (status === "authenticated" && session) {
+      setOptimisticLoggedOut(false)
+    }
+  }, [status, session])
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -43,7 +59,7 @@ const Navbar = () => {
       } catch (error) {
         console.error("Error fetching services:", error)
       } finally {
-        setLoading(false)
+        setServicesLoading(false)
       }
     }
 
@@ -68,36 +84,29 @@ const Navbar = () => {
     </div>
   )
 
-  // logout handler: sign out without redirect, show toast and refresh
+  // logout handler: flip optimistic state immediately so the navbar switches
+  // to the Login icon right away, then sign out in the background.
   const handleLogout = async () => {
     try {
+      setOptimisticLoggedOut(true)
       await signOut({ redirect: false })
       toast.success("Atsijungta")
       router.refresh()
     } catch (err) {
+      // Roll back the optimistic flag if sign-out failed
+      setOptimisticLoggedOut(false)
       console.error("Logout failed", err)
       toast.error("Atsijungti nepavyko")
     }
   }
 
-  /**
-   * Clicking the login icon:
-   * - If the session is already present (but the UI didn't update), re-check session via getSession().
-   *   If getSession() returns a session, redirect to /settings.
-   * - If no session, navigate to the custom login page (/prisijungimas).
-   *
-   * This prevents the case where the user is logged in (cookie/session present) but the UI still shows
-   * the "login" icon. The check is synchronous-ish from the user's POV (single click -> redirect).
-   */
   const handleLoginClick = async (e?: React.MouseEvent) => {
     e?.preventDefault()
     try {
       const current = await getSession()
       if (current) {
-        // user is logged in according to the session endpoint — send them to settings
         router.push(USER_NAV_LINKS.account?.href ?? "/settings")
       } else {
-        // not logged in, go to the login page
         router.push(USER_NAV_LINKS.login.href ?? "/prisijungimas")
       }
     } catch (err) {
@@ -142,7 +151,6 @@ const Navbar = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div className="hover:bg-red-100 rounded-full p-1 duration-300 cursor-pointer inline-flex">
-                            {/* visually identical - now calls handleLogout */}
                             <button onClick={handleLogout} aria-label="Atsijungti" className="inline-flex items-center">
                               <LogoutIcon />
                             </button>
@@ -231,7 +239,7 @@ const Navbar = () => {
 
               {/* Desktop services links */}
               <div className="hidden xl:flex w-full flex-row justify-center space-x-6 overflow-hidden">
-                {loading ? (
+                {servicesLoading ? (
                   [...Array(5)].map((_, i) => (
                     <div key={i} className="flex-1 flex justify-center items-center">
                       <div className="h-4 w-24 bg-[#e4ddd8] rounded-md animate-pulse" />

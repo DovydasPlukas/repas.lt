@@ -206,6 +206,11 @@ const SettingsPage = () => {
                   )}
                 />
               )}
+              {user?.is0Auth && (
+                <div className="mb-4 rounded-lg border p-3 text-sm bg-muted">
+                  Prisijungta su Google paskyra.
+                </div>
+              )}
             </div>
 
             <FormError message={error} />
