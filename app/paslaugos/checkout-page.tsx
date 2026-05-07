@@ -27,7 +27,7 @@ const STEPS = [
 const CheckoutPage: React.FC = () => {
   const serviceSelectionRef = useRef<ServiceSelectionHandle>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
-
+  const [overviewCanProceed, setOverviewCanProceed] = useState(false);
   const { cart, currentStep, setCurrentStep, addService, editService, removeService, clearCart } = useCheckoutCart();
   const { formData, handleFormDataChange, clearForm, isProcessing, setIsProcessing } = useCheckoutForm();
   const { handleSubmit: executeCheckout } = useCheckoutSubmit();
@@ -35,7 +35,8 @@ const CheckoutPage: React.FC = () => {
   const totalPrice = cart.reduce(
     (sum, item) => sum + item.addons.reduce((s, a) => s + a.addonPrice, 0), 0
   );
-  const canProceed = canProceedToNextStep(currentStep, cart, formData);
+  const baseCanProceed = canProceedToNextStep(currentStep, cart, formData);
+  const finalCanProceed = currentStep === 5 ? overviewCanProceed : baseCanProceed;
 
   const handleNext = () => setCurrentStep((s) => Math.min(s + 1, STEPS.length));
   const handlePrev = () => setCurrentStep((s) => Math.max(s - 1, 1));
@@ -60,7 +61,6 @@ const CheckoutPage: React.FC = () => {
     );
   };
 
-  // ServiceSelection stays mounted on every step so the edit dialog ref is always reachable
   const serviceSelectionProps = {
     ref: serviceSelectionRef,
     onAddService: addService,
@@ -79,7 +79,6 @@ const CheckoutPage: React.FC = () => {
 
             {/* Form area */}
             <div className="lg:col-span-2">
-              {/* Error message block */}
               {submitError && (
                 <div className="mb-6 rounded-lg bg-red-50 border border-red-200 p-4">
                   <div className="flex items-start gap-3">
@@ -89,7 +88,6 @@ const CheckoutPage: React.FC = () => {
                 </div>
               )}
 
-              {/* Always mounted; hidden on other steps so the edit-dialog ref stays alive */}
               <div className={currentStep !== 1 ? 'hidden' : ''}>
                 <ServiceSelection {...serviceSelectionProps} />
               </div>
@@ -102,12 +100,21 @@ const CheckoutPage: React.FC = () => {
               {currentStep === 2 && <PickupDeliveryTime formData={formData} onFormDataChange={handleFormDataChange} />}
               {currentStep === 3 && <AddressSelection formData={formData} onFormDataChange={handleFormDataChange} />}
               {currentStep === 4 && <ContactsInfo formData={formData} onFormDataChange={handleFormDataChange} />}
-              {currentStep === 5 && <OrderOverview cart={cart} formData={formData} totalPrice={totalPrice} onFormDataChange={handleFormDataChange} />}
+              
 
+              {currentStep === 5 && (
+                <OrderOverview 
+                  cart={cart} 
+                  formData={formData} 
+                  totalPrice={totalPrice} 
+                  onFormDataChange={handleFormDataChange}
+                  onCanProceedChange={setOverviewCanProceed}
+                />
+              )}
               <CheckoutNavigation
                 currentStep={currentStep}
                 totalSteps={STEPS.length}
-                canProceed={canProceed}
+                canProceed={finalCanProceed}
                 isProcessing={isProcessing}
                 onPrev={handlePrev}
                 onNext={handleNext}
@@ -115,17 +122,17 @@ const CheckoutPage: React.FC = () => {
               />
             </div>
 
-            {/* Sticky order summary (hidden on final overview step) */}
-            <div> {/* div to contain the order summary */ }
-            {currentStep !== 5 && (
-              <OrderSummary
-                cart={cart}
-                totalPrice={totalPrice}
-                formData={formData}
-                onEditService={(i) => setTimeout(() => serviceSelectionRef.current?.openEditDialog(i), 0)}
-                onRemoveService={removeService}
-              />
-            )}
+            {/* Sticky order summary */}
+            <div>
+              {currentStep !== 5 && (
+                <OrderSummary
+                  cart={cart}
+                  totalPrice={totalPrice}
+                  formData={formData}
+                  onEditService={(i) => setTimeout(() => serviceSelectionRef.current?.openEditDialog(i), 0)}
+                  onRemoveService={removeService}
+                />
+              )}
             </div>
 
           </div>

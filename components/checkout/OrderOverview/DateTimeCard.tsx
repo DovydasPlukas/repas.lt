@@ -8,13 +8,14 @@ interface DateTimeCardProps {
   label: string;
   date?: string;
   time?: string;
+  isConflict?: boolean;
 }
 
-const DateTimeCard: React.FC<DateTimeCardProps> = ({ label, date, time }) => {
-  const isComplete = !!date && !!time;
+const DateTimeCard: React.FC<DateTimeCardProps> = ({ label, date, time, isConflict = false }) => {
+  const isComplete = !!date && !!time && !isConflict;
 
   return (
-    <div className="rounded-lg border border-gray-200 p-4">
+    <div className={`rounded-lg border p-4 ${isConflict ? 'border-red-300 bg-red-50' : 'border-gray-200'}`}>
       <div className="mb-2 flex items-center gap-2">
         {isComplete ? (
           <Check className="h-5 w-5 text-green-500" />
@@ -32,6 +33,9 @@ const DateTimeCard: React.FC<DateTimeCardProps> = ({ label, date, time }) => {
           <p className="text-xs text-gray-600">Laikas</p>
           <p className="font-medium">{time}</p>
         </div>
+        {isConflict && (
+          <p className="mt-2 text-xs text-red-600 font-medium">Laikas užimtas — pasirinkite kitą</p>
+        )}
       </div>
     </div>
   );
