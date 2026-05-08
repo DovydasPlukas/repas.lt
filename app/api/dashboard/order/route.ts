@@ -2,6 +2,7 @@
 
 import { type NextRequest, NextResponse } from "next/server"
 import { db } from "@/lib/db"
+import { requireAdmin } from "@/lib/adminAuth"
 
 function mapOrderForList(o: any) {
   const customer = `${o.snapFirstName ?? ""} ${o.snapLastName ?? ""}`.trim()
@@ -74,6 +75,9 @@ function mapOrderForList(o: any) {
 }
 
 export async function GET(request: NextRequest) {
+  const guard = await requireAdmin()
+  if (guard) return guard
+
   try {
     const searchParams = request.nextUrl.searchParams
     const status = searchParams.get("status")
@@ -90,7 +94,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (search) {
-    const normalized = search.toLowerCase()
+      const normalized = search.toLowerCase()
 
       let mappedPayment: "PAID" | "UNPAID" | undefined
       // Lithuanian
@@ -99,7 +103,6 @@ export async function GET(request: NextRequest) {
       // English
       else if (normalized.includes("unpaid")) mappedPayment = "UNPAID"
       else if (normalized.includes("paid")) mappedPayment = "PAID"
-
 
       where.OR = [
         { snapFirstName: { contains: search, mode: "insensitive" } },
@@ -119,9 +122,7 @@ export async function GET(request: NextRequest) {
       ]
 
       if (mappedPayment) {
-        where.OR.push({
-          paymentMethod: { equals: mappedPayment },
-        })
+        where.OR.push({ paymentMethod: { equals: mappedPayment } })
       }
     }
 
@@ -175,7 +176,6 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // If searching, get all results; otherwise paginate
     const queryOptions: any = {
       where,
       include: {
@@ -210,9 +210,11 @@ export async function GET(request: NextRequest) {
   }
 }
 
-
 // Mass update orders
 export async function PATCH(request: NextRequest) {
+  const guard = await requireAdmin()
+  if (guard) return guard
+
   try {
     const body = await request.json()
     const { orderIds, status, isPickedUp, isDelivered } = body
@@ -240,6 +242,9 @@ export async function PATCH(request: NextRequest) {
 
 // Mass delete orders
 export async function DELETE(request: NextRequest) {
+  const guard = await requireAdmin()
+  if (guard) return guard
+
   try {
     const body = await request.json()
     const { orderIds } = body

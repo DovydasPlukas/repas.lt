@@ -2,6 +2,7 @@
 
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
+import { requireAdmin } from "@/lib/adminAuth"
 
 function mapOrderForList(o: any) {
   const customer = `${o.snapFirstName ?? ""} ${o.snapLastName ?? ""}`.trim()
@@ -13,7 +14,6 @@ function mapOrderForList(o: any) {
   if (o.snapFloor) addressParts.push(o.snapFloor)
   const address = addressParts.join(", ")
 
-  // Build items from orderServices and their addons
   const items = (o.orderServices ?? []).map((os: any) => {
     const serviceName = os.service?.name ?? os.serviceId
     const addonsTotal =
@@ -67,6 +67,9 @@ function mapOrderForList(o: any) {
 }
 
 export async function GET() {
+  const guard = await requireAdmin()
+  if (guard) return guard
+
   try {
     const now = new Date()
 
@@ -77,7 +80,6 @@ export async function GET() {
       cancelledOrders,
       completedOrders,
       completedOrdersData,
-
       rawUpcomingPickups,
       rawUpcomingDeliveries,
       rawOverdueOrders,
@@ -88,13 +90,18 @@ export async function GET() {
       db.order.count({ where: { status: "CANCELLED" } }),
       db.order.count({ where: { status: "COMPLETED" } }),
 
-      // all completed orders' totals for revenue calculation
       db.order.findMany({
         where: { status: "COMPLETED" },
-        select: { orderServices: { select: { servicePriceAtPurchase: true, orderAddons: { select: { snapPrice: true } } } } },
+        select: {
+          orderServices: {
+            select: {
+              servicePriceAtPurchase: true,
+              orderAddons: { select: { snapPrice: true } },
+            },
+          },
+        },
       }),
 
-      // upcoming pickups (future pickups, not yet picked up, ignore cancelled)
       db.order.findMany({
         where: {
           pickupDateTime: { gt: now },
@@ -108,7 +115,6 @@ export async function GET() {
         take: 10,
       }),
 
-      // upcoming deliveries (future deliveries, not yet delivered, ignore cancelled)
       db.order.findMany({
         where: {
           deliveryDateTime: { gt: now },
@@ -122,7 +128,6 @@ export async function GET() {
         take: 10,
       }),
 
-      // overdue: pickup or delivery in past and not completed for that step (ignore cancelled)
       db.order.findMany({
         where: {
           OR: [
@@ -139,17 +144,17 @@ export async function GET() {
       }),
     ])
 
-    // compute totalRevenue from completedOrdersData
     const totalRevenue = completedOrdersData.reduce((sum: number, o: any) => {
-      // each o.orderServices is an array of { servicePriceAtPurchase, orderAddons }
       const orderTotal = (o.orderServices ?? []).reduce((osSum: number, os: any) => {
-        const addonsTotal = (os.orderAddons ?? []).reduce((aSum: number, a: any) => aSum + Number(a?.snapPrice ?? 0), 0)
+        const addonsTotal = (os.orderAddons ?? []).reduce(
+          (aSum: number, a: any) => aSum + Number(a?.snapPrice ?? 0),
+          0,
+        )
         return osSum + Number(os.servicePriceAtPurchase ?? 0) + addonsTotal
       }, 0)
       return sum + orderTotal
     }, 0)
 
-    // map records to the expected shape
     const upcomingPickups = rawUpcomingPickups.map(mapOrderForList)
     const upcomingDeliveries = rawUpcomingDeliveries.map(mapOrderForList)
     const overdueOrders = rawOverdueOrders.map(mapOrderForList)
@@ -161,7 +166,6 @@ export async function GET() {
       cancelledOrders,
       completedOrders,
       totalRevenue,
-
       upcomingPickups,
       upcomingDeliveries,
       overdueOrders,
