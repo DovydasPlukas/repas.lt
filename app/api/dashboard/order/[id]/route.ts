@@ -80,7 +80,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
             orderAddons: { include: { serviceAddon: true } },
           },
         },
-        Service: true,
       },
     })
 
@@ -117,7 +116,6 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
             orderAddons: { include: { serviceAddon: true } },
           },
         },
-        Service: true,
       },
     })
 

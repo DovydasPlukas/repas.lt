@@ -185,7 +185,6 @@ export async function GET(request: NextRequest) {
             orderAddons: { include: { serviceAddon: true } },
           },
         },
-        Service: true,
       },
       orderBy: { createdAt: "desc" },
     }
