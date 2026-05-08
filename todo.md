@@ -1,6 +1,10 @@
 ## **TODO**
 
-- Not logged in user, can't order (needs to be fixed, session error);
+- Stripe payment order-confirmation can't be look again after refresh (logged-in);
+
+- Cash payment can't be looked, auth protected (not logged-in);
+
+- API routes protection;
 
 (not urgent or needed):
 - mail.ts updates (order email);

@@ -14,9 +14,30 @@ function isSameDate(a: Date, b: Date) {
 }
 
 function getTargetDates(order: OrderDetails): Date[] {
-  return [order.pickupDateTime, order.deliveryDateTime]
+  // Prefer the synthesized local YYYY-MM-DD strings returned by the API over
+  // the raw ISO DateTime strings — this avoids UTC-vs-local date mismatches
+  // when the server stores dates in UTC.
+  // The API augments orders with synthesized local date strings 
+  // (pickupDate / deliveryDate). Cast to a known shape rather than using `any`.
+  const augmented = order as OrderDetails & {
+    pickupDate?: string | null;
+    deliveryDate?: string | null;
+  };
+  const rawDates: (string | null | undefined)[] = [
+    augmented.pickupDate ?? order.pickupDateTime,
+    augmented.deliveryDate ?? order.deliveryDateTime,
+  ];
+
+  return rawDates
     .filter((d): d is string => d != null)
-    .map((d) => new Date(d));
+    .map((d) => {
+      // YYYY-MM-DD -> parse as local midnight to avoid UTC offset shifting the date
+      if (/^\d{4}-\d{2}-\d{2}$/.test(d)) {
+        const [y, m, day] = d.split('-').map(Number);
+        return new Date(y, m - 1, day);
+      }
+      return new Date(d);
+    });
 }
 
 type FilterType = null | 'today' | 'tomorrow' | 'yesterday' | 'thisWeek' | 'thisMonth';
@@ -98,7 +119,7 @@ export function useOrders() {
     const fetchOrders = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/api/orders');
+        const response = await fetch('/api/orders/user');
         if (!response.ok) throw new Error('Failed to fetch orders');
         const data = await response.json();
         setOrders(Array.isArray(data) ? data : []);

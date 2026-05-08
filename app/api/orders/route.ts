@@ -71,8 +71,11 @@ function synthesizeDateAndRangeFromIso(iso?: string | Date | null) {
   if (!iso) return { date: null, range: null };
   const d = typeof iso === 'string' ? new Date(iso) : iso;
   if (isNaN(d.getTime())) return { date: null, range: null };
-  const isoStr = d.toISOString();
-  const datePart = isoStr.split('T')[0];
+  // Use LOCAL date parts so date and hour stay consistent across timezones
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  const datePart = `${year}-${month}-${day}`;
   const hour = d.getHours();
   const start = String(hour).padStart(2, '0') + ':00';
   const end = String(hour + 1).padStart(2, '0') + ':00';
@@ -80,40 +83,12 @@ function synthesizeDateAndRangeFromIso(iso?: string | Date | null) {
 }
 
 // ------------------ GET handler ------------------
+// Always returns compact occupied slot data (pickup + delivery separately)
+// for all users — used by TimeSlotSelect to block unavailable times.
+// For authenticated user orders, use GET /api/orders/user.
 export async function GET(request: NextRequest) {
   try {
-    const user = await currentUser();
-
-    // Authenticated: return full orders for that user (array of full objects)
-    if (user?.id) {
-      const orders = await db.order.findMany({
-        where: { userId: user.id },
-        include: {
-          orderServices: {
-            include: {
-              service: true,
-              orderAddons: { include: { serviceAddon: true } },
-            },
-          },
-        },
-        orderBy: { createdAt: 'desc' },
-      });
-
-      const mapped = orders.map((o) => {
-        const plain = JSON.parse(JSON.stringify(o));
-        const { date: pickupDate, range: pickupTime } = synthesizeDateAndRangeFromIso(o.pickupDateTime ?? null);
-        const { date: deliveryDate, range: deliveryTime } = synthesizeDateAndRangeFromIso(o.deliveryDateTime ?? null);
-        plain.pickupDate = pickupDate;
-        plain.pickupTime = pickupTime;
-        plain.deliveryDate = deliveryDate;
-        plain.deliveryTime = deliveryTime;
-        return plain;
-      });
-
-      return NextResponse.json(mapped);
-    }
-
-    // Unauthenticated: return only occupied slot times (compact), next 14 days
+    // Return only occupied slot times (compact), next 14 days
     const since = new Date();
     const until = new Date();
     until.setDate(until.getDate() + 14);
@@ -208,6 +183,30 @@ export async function POST(request: NextRequest) {
       email?: string | null;
     };
 
+    // validateOnly: email-exists pre-flight for the Stripe redirect flow.
+    // Handled as a fully separate early exit BEFORE any field validation — the
+    // pre-flight body only contains { email, validateOnly: true } and has no
+    // services, dates, or address fields, so all the normal validators would fire.
+    if (body.validateOnly === true) {
+      let preflight_userId: string | undefined;
+      try { preflight_userId = (await currentUser())?.id; } catch { /* guest */ }
+
+      if (!preflight_userId) {
+        const preflightEmail = body.email as string | undefined;
+        if (!preflightEmail) {
+          return NextResponse.json({ error: 'Email required' }, { status: 400 });
+        }
+        const existing = await db.user.findUnique({ where: { email: preflightEmail } });
+        if (existing) {
+          return NextResponse.json(
+            { error: 'el. pastas egzistuoja, prisijunkite' },
+            { status: 409 }
+          );
+        }
+      }
+      return NextResponse.json({ ok: true });
+    }
+
     if (!Array.isArray(services) || services.length === 0) {
       return NextResponse.json({ error: 'No services selected' }, { status: 400 });
     }
@@ -245,8 +244,15 @@ export async function POST(request: NextRequest) {
     }
 
     // Determine user: either currentUser() or create/find by email
-    let user = await currentUser();
-    let userId: string | undefined = user?.id;
+    // Wrapped in try/catch — some auth setups throw instead of returning null
+    // for unauthenticated requests.
+    let userId: string | undefined;
+    try {
+      const user = await currentUser();
+      userId = user?.id;
+    } catch {
+      userId = undefined;
+    }
 
     // Normalize phone and lat/lon
     const normalizedPhone = formatLithuanianPhone(phone ?? null);
@@ -258,100 +264,86 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Email required for guest checkout' }, { status: 400 });
       }
 
-      const existing = await db.user.findUnique({
-        where: { email },
-        include: { contact: true },
+      const existing = await db.user.findUnique({ where: { email } });
+
+      if (existing) {
+        // Email already belongs to a registered account — guest must sign in
+        return NextResponse.json(
+          { error: 'el. pastas egzistuoja, prisijunkite' },
+          { status: 409 }
+        );
+      }
+
+      // --- Create the bare user row first (no nested relations) ---
+      // Keeping contact/address creation separate means a phoneNumber uniqueness
+      // conflict (Contact.phoneNumber is @unique) won't roll back the whole order.
+      const encryptedPassword = await generateEncryptedPassword();
+      const created = await db.user.create({
+        data: {
+          email,
+          password: encryptedPassword,
+          role: 'USER',
+        },
+        select: { id: true },
       });
+      userId = created.id;
 
-      if (existing && existing.id) {
-        userId = existing.id;
-
-        // upsert contact (assumes contact.userId unique)
-        try {
-          await db.contact.upsert({
-            where: { userId: existing.id },
-            update: {
-              firstName: firstName || undefined,
-              lastName: lastName || undefined,
-              phoneNumber: normalizedPhone || undefined,
-            },
-            create: {
-              userId: existing.id,
-              firstName: firstName || '',
-              lastName: lastName || '',
-              phoneNumber: normalizedPhone || '',
-            },
-          });
-        } catch (e) {
-          console.warn('Contact upsert failed (check Contact model/unique):', e);
-        }
-
-        // upsert address (Address.userId is unique per your schema)
-        try {
-          await db.address.upsert({
-            where: { userId: existing.id },
-            update: {
-              street: street ?? '',
-              apartment: apartment ?? null,
-              floor: floor ?? null,
-              comments: null,
-              latitude: latVal,
-              longitude: lonVal,
-            },
-            create: {
-              userId: existing.id,
-              street: street ?? '',
-              apartment: apartment ?? null,
-              floor: floor ?? null,
-              comments: null,
-              latitude: latVal,
-              longitude: lonVal,
-            },
-          });
-        } catch (e) {
-          console.warn('Address upsert failed (check Address model/unique):', e);
-        }
-      } else {
-        const encryptedPassword = await generateEncryptedPassword();
-
-        // create user with contact
-        const created = await db.user.create({
+      // --- Create contact separately; swallow uniqueness conflicts ---
+      // Contact.phoneNumber is @unique so the same phone used by a previous
+      // account would otherwise blow up the entire request.
+      try {
+        // Build a phone value that is guaranteed unique for this new user
+        // even when the supplied number is already taken or empty.
+        const phoneForContact = normalizedPhone || `+guest-${userId}`;
+        await db.contact.create({
           data: {
-            email,
-            password: encryptedPassword, // change key if your schema uses different password column name
-            role: 'USER',
-            contact: {
-              create: {
+            userId,
+            firstName: firstName || '',
+            lastName: lastName || '',
+            phoneNumber: phoneForContact,
+          },
+        });
+      } catch (e: any) {
+        if (e?.code === 'P2002') {
+          // Unique constraint on phoneNumber — try again with a guaranteed-unique value
+          try {
+            await db.contact.create({
+              data: {
+                userId,
                 firstName: firstName || '',
                 lastName: lastName || '',
-                phoneNumber: normalizedPhone || '',
+                phoneNumber: '', // blank phone for uniqueness; contact can update it later
               },
-            },
-          },
-          select: { id: true },
-        });
-
-        userId = created.id;
-
-        // create address row for the new user
-        try {
-          await db.address.create({
-            data: {
-              userId: userId,
-              street: street ?? '',
-              apartment: apartment ?? null,
-              floor: floor ?? null,
-              comments: null,
-              latitude: latVal,
-              longitude: lonVal,
-            },
-          });
-        } catch (e) {
-          console.warn('Address create failed:', e);
+            });
+          } catch (e2) {
+            console.warn('Contact create failed (fallback):', e2);
+          }
+        } else {
+          console.warn('Contact create failed:', e);
         }
-
-        // optionally send welcome/reset email with password (not implemented)
       }
+
+      // --- Create address separately; errors are non-fatal ---
+      try {
+        await db.address.create({
+          data: {
+            userId,
+            street: street ?? '',
+            apartment: apartment ?? null,
+            floor: floor ?? null,
+            comments: null,
+            latitude: latVal,
+            longitude: lonVal,
+          },
+        });
+      } catch (e) {
+        console.warn('Address create failed:', e);
+      }
+    }
+
+    // Guard: userId must be set before creating the order
+    if (!userId) {
+      return NextResponse.json({ error: 'Could not resolve user for order' }, { status: 500 });
     }
 
     // Build nested orderServices payload

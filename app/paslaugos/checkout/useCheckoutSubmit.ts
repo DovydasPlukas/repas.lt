@@ -81,13 +81,26 @@ export function useCheckoutSubmit() {
 
 /**
  * Handle Stripe payment flow
- * Flow: Create Stripe session -> Stripe checkout -> Payment verification -> Create order
+ * Flow: Email pre-check -> Create Stripe session -> Stripe checkout -> Payment verification -> Create order
  */
 async function handleStripePayment(
   orderData: OrderData,
   router: ReturnType<typeof useRouter>,
   options?: HandleSubmitOptions
 ): Promise<void> {
+  // Pre-flight: check for existing email before redirecting to Stripe.
+  // Skip if user is logged in (no email conflict possible).
+  const preCheck = await fetch('/api/orders', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: orderData.email, validateOnly: true }),
+  });
+
+  if (!preCheck.ok) {
+    const preCheckData = await preCheck.json();
+    throw new Error(preCheckData.error || 'Nepavyko patikrinti el. pašto');
+  }
+
   // Build the payment details for Stripe
   const stripeOrderDetails = {
     email: orderData.email || '',
@@ -138,6 +151,14 @@ async function handleCashPayment(
 
   if (!response.ok) {
     throw new Error(data.error || 'Nepavyko sukurti užsakymo');
+  }
+
+  // Cache the full order so the confirmation page can display it without
+  // needing an authenticated GET — guests can't fetch from /api/orders.
+  try {
+    sessionStorage.setItem('guestOrderData', JSON.stringify(data.order));
+  } catch (e) {
+    console.warn('Could not cache order data in sessionStorage:', e);
   }
 
   options?.onSuccess?.();

@@ -1,8 +1,5 @@
-// Note: The authentication and ownership checks have been removed to allow public access to order details via unique ID.
-// Find a way to keep order IDs unguessable for security.
-
 import { db } from '@/lib/db';
-// import { currentUser } from '@/lib/auth';
+import { currentUser } from '@/lib/auth';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
@@ -10,16 +7,13 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // const user = await currentUser();
+    const user = await currentUser();
 
-    // if user is not authenticated
-    /* Removed to allow public access to order details via unique ID
-
+    // 1. Authentication check: Block anyone not logged in
     if (!user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    */
     const { id } = await params;
     const orderId = id;
 
@@ -43,14 +37,11 @@ export async function GET(
       return NextResponse.json({ error: 'Order not found' }, { status: 404 });
     }
 
-    // Ownership check
-    /* Removed to allow public access to order details via unique ID
-
+    // 2. Ownership check: Block users trying to view orders that don't belong to them
+    // This also naturally blocks authenticated users from viewing guest orders (where userId might be null)
     if (order.userId !== user.id) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
-
-    */
 
     return NextResponse.json(order);
   } catch (error) {

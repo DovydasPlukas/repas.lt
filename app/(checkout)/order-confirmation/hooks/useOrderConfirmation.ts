@@ -68,6 +68,16 @@ async function verifyStripePayment(
       console.log('Order created successfully with ID:', createData.orderId);
       sessionStorage.removeItem('pendingOrderData');
 
+      // Cache the full order so the confirmation page can display it without
+      // needing an authenticated API call — guests can't use GET /api/orders.
+      try {
+        if (createData.order) {
+          sessionStorage.setItem('guestOrderData', JSON.stringify(createData.order));
+        }
+      } catch (e) {
+        console.warn('Could not cache Stripe order data:', e);
+      }
+
       // Give the database a moment to sync before fetching
       await new Promise((resolve) => setTimeout(resolve, 500));
 
@@ -88,10 +98,21 @@ async function fetchSingleOrder(
   id: string,
   mounted: { current: boolean },
   setOrder: (o: OrderDetails) => void,
+  setError: (msg: string) => void,
   setLoading: (v: boolean) => void,
 ): Promise<boolean> {
   try {
     const res = await fetch(`/api/orders/${id}`);
+    
+    // Catch backend protection mechanisms directly
+    if (res.status === 401 || res.status === 403) {
+      if (mounted.current) {
+        setError('Prisijunkite, norėdami peržiūrėti užsakymą.');
+        setLoading(false);
+      }
+      return true; // Handled the flow by prompting for auth
+    }
+
     if (res.ok) {
       const json = await res.json();
       const candidate = json?.order ?? json;
@@ -117,10 +138,23 @@ async function fetchOrderFromList(
   try {
     console.log('Fetching orders list to find order:', id);
     const res = await fetch('/api/orders');
+    
+    if (res.status === 401 || res.status === 403) {
+      setError('Prisijunkite, norėdami peržiūrėti užsakymą.');
+      return;
+    }
+    
     if (!res.ok) throw new Error('Failed to fetch orders list');
 
     const json = await res.json();
     console.log('Orders list fetched, count:', Array.isArray(json) ? json.length : 'N/A');
+
+    // Protect against the guest GET /api/orders behavior which returns compact slots
+    // If the first item lacks an 'id', this is a guest trying to map slots to an order
+    if (Array.isArray(json) && json.length > 0 && !('id' in json[0])) {
+      setError('Prisijunkite, norėdami peržiūrėti užsakymą.');
+      return;
+    }
 
     let found = null;
     if (id && Array.isArray(json)) {
@@ -184,12 +218,36 @@ export function useOrderConfirmation() {
         }
       }
 
-      const ok = resolvedOrderId
-        ? await fetchSingleOrder(resolvedOrderId, mounted, setOrder, setLoading)
-        : false;
+      // For guests, the order was cached in sessionStorage at creation time.
+      // Use it directly to avoid needing authenticated API access.
+      let resolvedFromCache = false;
+      if (resolvedOrderId) {
+        try {
+          const cached = sessionStorage.getItem('guestOrderData');
+          if (cached) {
+            const cachedOrder = JSON.parse(cached);
+            if (cachedOrder?.id === resolvedOrderId) {
+              if (mounted.current) {
+                setOrder(cachedOrder);
+                setLoading(false);
+              }
+              sessionStorage.removeItem('guestOrderData');
+              resolvedFromCache = true;
+            }
+          }
+        } catch (e) {
+          console.warn('Could not read cached order data:', e);
+        }
+      }
 
-      if (!ok) {
-        await fetchOrderFromList(resolvedOrderId, mounted, setOrder, setError, setLoading);
+      if (!resolvedFromCache) {
+        const ok = resolvedOrderId
+          ? await fetchSingleOrder(resolvedOrderId, mounted, setOrder, setError, setLoading)
+          : false;
+
+        if (!ok) {
+          await fetchOrderFromList(resolvedOrderId, mounted, setOrder, setError, setLoading);
+        }
       }
     })();
 
