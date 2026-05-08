@@ -76,14 +76,7 @@ export const parseDateTime = (date?: string, range?: string): Date | null => {
   return result;
 };
 
-// ---------------------------------------------------------------------------
 // DISPLAY HELPERS
-//
-// The DB stores pickupDateTime / deliveryDateTime as UTC. These helpers
-// convert them back to Europe/Vilnius local time for display — so the
-// page always shows the time the customer actually selected,
-// regardless of which server (localhost or Vercel) renders the page.
-// ---------------------------------------------------------------------------
 
 /**
  * Format a UTC datetime (ISO string or Date) as a short Vilnius date.
@@ -139,12 +132,6 @@ export interface DateOption {
   label: string; // Lithuanian label
 }
 
-/**
- * Returns upcoming selectable dates starting from `minDate` (YYYY-MM-DD).
- *
- * For Pristatymas, pass minDate = addDays(pickupDate, 2) so "Rytoj" is never shown
- * and delivery is always at least 2 days after pickup.
- */
 export const getUpcomingDates = (minDate: string, count = 14): DateOption[] => {
   const options: DateOption[] = [];
 
@@ -175,4 +162,18 @@ export const getUpcomingDates = (minDate: string, count = 14): DateOption[] => {
   }
 
   return options;
+};
+
+// ---------------------------------------------------------------------------
+// NEW CLIENT/SERVER BRIDGE HELPER
+// ---------------------------------------------------------------------------
+
+/**
+ * Convert a Vilnius date + time range into a strict UTC ISO string.
+ * e.g., "2026-05-10" + "17:00-18:00" -> "2026-05-10T14:00:00.000Z"
+ * Call this in useCheckoutSubmit before sending the payload to the server.
+ */
+export const slotToISO = (date?: string, range?: string): string | null => {
+  const d = parseDateTime(date, range);
+  return d ? d.toISOString() : null;
 };

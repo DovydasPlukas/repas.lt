@@ -3,9 +3,19 @@
 /* eslint-disable */
 
 import { useRouter } from 'next/navigation';
+import { slotToISO } from '@/components/checkout/PickupDeliveryTime/time-utils';
 
 interface OrderData {
-  services: Array<{serviceId?: string; serviceName?: string; servicePrice?: number | string; addons: Array<{addonId?: string; addonName?: string; addonPrice?: number | string}>}>;
+  services: Array<{
+    serviceId?: string; 
+    serviceName?: string; 
+    servicePrice?: number | string; 
+    addons: Array<{
+      addonId?: string; 
+      addonName?: string; 
+      addonPrice?: number | string
+    }>
+  }>;
   street: string;
   apartment?: string | null;
   floor?: string | null;
@@ -21,19 +31,6 @@ interface OrderData {
   deliveryDate?: string | null;
   deliveryTime?: string | null;
   email?: string | null;
-}
-
-interface OrderService {
-  serviceId: string;
-  serviceName: string;
-  servicePrice: number | string;
-  addons: OrderAddon[];
-}
-
-interface OrderAddon {
-  addonId: string;
-  addonName: string;
-  addonPrice: number | string;
 }
 
 interface HandleSubmitOptions {
@@ -89,7 +86,6 @@ async function handleStripePayment(
   options?: HandleSubmitOptions
 ): Promise<void> {
   // Pre-flight: check for existing email before redirecting to Stripe.
-  // Skip if user is logged in (no email conflict possible).
   const preCheck = await fetch('/api/orders', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -122,9 +118,16 @@ async function handleStripePayment(
     throw new Error(sessionData.error || 'Nepavyko sukurti mokėjimo sesijos. Prašome bandyti dar kartą.');
   }
 
-  // Store order data in sessionStorage for use after payment verification
+  // Pre-compute the UTC ISO strings before storing for post-payment order creation
+  const finalOrderData = {
+    ...orderData,
+    pickupDateTime: slotToISO(orderData.pickupDate ?? undefined, orderData.pickupTime ?? undefined),
+    deliveryDateTime: slotToISO(orderData.deliveryDate ?? undefined, orderData.deliveryTime ?? undefined),
+  };
+
+  // Store processed order data in sessionStorage for use after payment verification
   try {
-    sessionStorage.setItem('pendingOrderData', JSON.stringify(orderData));
+    sessionStorage.setItem('pendingOrderData', JSON.stringify(finalOrderData));
   } catch (e) {
     console.warn('Could not store order data in sessionStorage:', e);
   }
@@ -141,10 +144,17 @@ async function handleCashPayment(
   router: ReturnType<typeof useRouter>,
   options?: HandleSubmitOptions
 ): Promise<void> {
+  // Transform raw date/time strings into pre-computed UTC ISO strings for the server
+  const payload = {
+    ...orderData,
+    pickupDateTime: slotToISO(orderData.pickupDate ?? undefined, orderData.pickupTime ?? undefined),
+    deliveryDateTime: slotToISO(orderData.deliveryDate ?? undefined, orderData.deliveryTime ?? undefined),
+  };
+
   const response = await fetch('/api/orders', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(orderData),
+    body: JSON.stringify(payload), // Send the payload with UTC ISO strings
   });
 
   const data = await response.json();
@@ -153,8 +163,7 @@ async function handleCashPayment(
     throw new Error(data.error || 'Nepavyko sukurti užsakymo');
   }
 
-  // Cache the full order so the confirmation page can display it without
-  // needing an authenticated GET — guests can't fetch from /api/orders.
+  // Cache the full order so the confirmation page can display it
   try {
     sessionStorage.setItem('guestOrderData', JSON.stringify(data.order));
   } catch (e) {

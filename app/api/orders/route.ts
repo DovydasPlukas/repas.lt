@@ -11,24 +11,6 @@ function toFixed2String(value: number | string | undefined | null) {
   return Number(value).toFixed(2);
 }
 
-function parseRange(range?: string | null): [string, string] | null {
-  if (!range || typeof range !== 'string') return null;
-  const parts = range.split('-').map((p) => p.trim());
-  if (parts.length !== 2) return null;
-  const [a, b] = parts;
-  const timeRe = /^\d{2}:\d{2}$/;
-  if (!timeRe.test(a) || !timeRe.test(b)) return null;
-  return [a, b];
-}
-
-function buildIso(date?: string | null, time?: string | null): string | null {
-  if (!date || !time) return null;
-  const iso = `${date}T${time}:00`;
-  const d = new Date(iso);
-  if (isNaN(d.getTime())) return null;
-  return d.toISOString();
-}
-
 async function generateEncryptedPassword(): Promise<string> {
   const randomPassword = uuidv4().substring(0, 20);
   const hashedPassword = await hash(randomPassword, 10);
@@ -39,10 +21,6 @@ async function generateEncryptedPassword(): Promise<string> {
 function formatLithuanianPhone(raw?: string | null | undefined) {
   if (!raw) return null;
   const digits = raw.replace(/\D/g, '');
-  // Common cases:
-  // - "60000000" (8 digits) -> +37060000000
-  // - "860000000" (9 digits, leading 8) -> +37060000000
-  // - "37060000000" (11 digits) -> +37060000000
   if (digits.length === 8) {
     return `+370${digits}`;
   }
@@ -71,14 +49,26 @@ function synthesizeDateAndRangeFromIso(iso?: string | Date | null) {
   if (!iso) return { date: null, range: null };
   const d = typeof iso === 'string' ? new Date(iso) : iso;
   if (isNaN(d.getTime())) return { date: null, range: null };
-  // Use LOCAL date parts so date and hour stay consistent across timezones
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  const datePart = `${year}-${month}-${day}`;
-  const hour = d.getHours();
-  const start = String(hour).padStart(2, '0') + ':00';
-  const end = String(hour + 1).padStart(2, '0') + ':00';
+
+  // Force Vilnius timezone instead of relying on the server's local timezone
+  // This guarantees Vercel and Localhost produce the exact same display strings
+  const formatter = new Intl.DateTimeFormat('sv-SE', {
+    timeZone: 'Europe/Vilnius',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+
+  // e.g., "2026-05-10 17:00"
+  const formatted = formatter.format(d); 
+  const [datePart, timePart] = formatted.split(' ');
+
+  const startHour = parseInt(timePart.split(':')[0], 10);
+  const start = String(startHour).padStart(2, '0') + ':00';
+  const end = String(startHour + 1).padStart(2, '0') + ':00';
+
   return { date: datePart, range: `${start}-${end}` };
 }
 
@@ -142,7 +132,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// ------------------ POST handler (guest checkout + create user + address) ------------------
+// ------------------ POST handler ------------------
 export async function POST(request: NextRequest) {
   try {
     const body = (await request.json()) as any;
@@ -159,34 +149,12 @@ export async function POST(request: NextRequest) {
       lastName,
       phone,
       paymentMethod,
-      pickupDate,
-      pickupTime,
-      deliveryDate,
-      deliveryTime,
+      pickupDateTime,
+      deliveryDateTime,
       email,
-    } = body as {
-      services: any[];
-      street: string;
-      apartment?: string | null;
-      floor?: string | null;
-      latitude: number | string;
-      longitude: number | string;
-      notes?: string | null;
-      firstName: string;
-      lastName: string;
-      phone: string;
-      paymentMethod?: string | null;
-      pickupDate?: string | null;
-      pickupTime?: string | null;
-      deliveryDate?: string | null;
-      deliveryTime?: string | null;
-      email?: string | null;
-    };
+    } = body;
 
     // validateOnly: email-exists pre-flight for the Stripe redirect flow.
-    // Handled as a fully separate early exit BEFORE any field validation — the
-    // pre-flight body only contains { email, validateOnly: true } and has no
-    // services, dates, or address fields, so all the normal validators would fire.
     if (body.validateOnly === true) {
       let preflight_userId: string | undefined;
       try { preflight_userId = (await currentUser())?.id; } catch { /* guest */ }
@@ -211,41 +179,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No services selected' }, { status: 400 });
     }
 
-    const pickupRange = parseRange(pickupTime ?? null);
-    const deliveryRange = parseRange(deliveryTime ?? null);
-
-    if (!pickupDate || !pickupRange) {
-      return NextResponse.json({ error: 'Invalid or missing pickup date/time range' }, { status: 400 });
-    }
-    if (!deliveryDate || !deliveryRange) {
-      return NextResponse.json({ error: 'Invalid or missing delivery date/time range' }, { status: 400 });
+    if (!pickupDateTime || !deliveryDateTime) {
+      return NextResponse.json({ error: 'Missing pickup or delivery datetime' }, { status: 400 });
     }
 
-    const [pickupStartTime, pickupEndTime] = pickupRange;
-    const [deliveryStartTime, deliveryEndTime] = deliveryRange;
+    const pickupDateObj = new Date(pickupDateTime);
+    const deliveryDateObj = new Date(deliveryDateTime);
 
-    const pickupStartIso = buildIso(pickupDate, pickupStartTime);
-    const pickupEndIso = buildIso(pickupDate, pickupEndTime);
-    const deliveryStartIso = buildIso(deliveryDate, deliveryStartTime);
-    const deliveryEndIso = buildIso(deliveryDate, deliveryEndTime);
-
-    if (!pickupStartIso || !pickupEndIso || !deliveryStartIso || !deliveryEndIso) {
-      return NextResponse.json({ error: 'Invalid times' }, { status: 400 });
+    if (isNaN(pickupDateObj.getTime()) || isNaN(deliveryDateObj.getTime())) {
+      return NextResponse.json({ error: 'Invalid dates provided' }, { status: 400 });
     }
 
-    if (new Date(pickupStartIso) >= new Date(pickupEndIso)) {
-      return NextResponse.json({ error: 'Pickup start must be before pickup end' }, { status: 400 });
-    }
-    if (new Date(deliveryStartIso) >= new Date(deliveryEndIso)) {
-      return NextResponse.json({ error: 'Delivery start must be before delivery end' }, { status: 400 });
-    }
-    if (new Date(pickupStartIso) >= new Date(deliveryStartIso)) {
+    if (pickupDateObj >= deliveryDateObj) {
       return NextResponse.json({ error: 'Pickup must be before delivery' }, { status: 400 });
     }
 
-    // Determine user: either currentUser() or create/find by email
-    // Wrapped in try/catch — some auth setups throw instead of returning null
-    // for unauthenticated requests.
     let userId: string | undefined;
     try {
       const user = await currentUser();
@@ -254,7 +202,6 @@ export async function POST(request: NextRequest) {
       userId = undefined;
     }
 
-    // Normalize phone and lat/lon
     const normalizedPhone = formatLithuanianPhone(phone ?? null);
     const latVal = parseLatLong(latitude);
     const lonVal = parseLatLong(longitude);
@@ -267,16 +214,12 @@ export async function POST(request: NextRequest) {
       const existing = await db.user.findUnique({ where: { email } });
 
       if (existing) {
-        // Email already belongs to a registered account — guest must sign in
         return NextResponse.json(
           { error: 'el. pastas egzistuoja, prisijunkite' },
           { status: 409 }
         );
       }
 
-      // --- Create the bare user row first (no nested relations) ---
-      // Keeping contact/address creation separate means a phoneNumber uniqueness
-      // conflict (Contact.phoneNumber is @unique) won't roll back the whole order.
       const encryptedPassword = await generateEncryptedPassword();
       const created = await db.user.create({
         data: {
@@ -288,12 +231,7 @@ export async function POST(request: NextRequest) {
       });
       userId = created.id;
 
-      // --- Create contact separately; swallow uniqueness conflicts ---
-      // Contact.phoneNumber is @unique so the same phone used by a previous
-      // account would otherwise blow up the entire request.
       try {
-        // Build a phone value that is guaranteed unique for this new user
-        // even when the supplied number is already taken or empty.
         const phoneForContact = normalizedPhone || `+guest-${userId}`;
         await db.contact.create({
           data: {
@@ -305,14 +243,13 @@ export async function POST(request: NextRequest) {
         });
       } catch (e: any) {
         if (e?.code === 'P2002') {
-          // Unique constraint on phoneNumber — try again with a guaranteed-unique value
           try {
             await db.contact.create({
               data: {
                 userId,
                 firstName: firstName || '',
                 lastName: lastName || '',
-                phoneNumber: '', // blank phone for uniqueness; contact can update it later
+                phoneNumber: '', 
               },
             });
           } catch (e2) {
@@ -323,7 +260,6 @@ export async function POST(request: NextRequest) {
         }
       }
 
-      // --- Create address separately; errors are non-fatal ---
       try {
         await db.address.create({
           data: {
@@ -341,12 +277,10 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Guard: userId must be set before creating the order
     if (!userId) {
       return NextResponse.json({ error: 'Could not resolve user for order' }, { status: 500 });
     }
 
-    // Build nested orderServices payload
     const orderServicesCreate: any[] = [];
     for (const s of services) {
       if (!s?.serviceId) {
@@ -386,8 +320,6 @@ export async function POST(request: NextRequest) {
     }
 
     const orderNumber = `ORD-${Date.now()}-${uuidv4().slice(0, 8)}`;
-
-    // Map paymentMethod string to PaymentMethod enum
     const mappedPaymentMethod = paymentMethod === 'stripe' ? 'PAID' : 'UNPAID';
 
     const createdOrder = await db.order.create({
@@ -404,8 +336,8 @@ export async function POST(request: NextRequest) {
         snapLatitude: String(latVal ?? '0'),
         snapLongitude: String(lonVal ?? '0'),
         snapNotes: notes ?? null,
-        pickupDateTime: new Date(pickupStartIso),
-        deliveryDateTime: new Date(deliveryStartIso),
+        pickupDateTime: pickupDateObj,
+        deliveryDateTime: deliveryDateObj,
         paymentMethod: mappedPaymentMethod,
         orderServices: {
           create: orderServicesCreate,
