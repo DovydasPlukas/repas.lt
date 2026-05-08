@@ -1,11 +1,4 @@
 ## **TODO**
-
-- Stripe payment order-confirmation can't be look again after refresh (logged-in);
-
-- Cash payment can't be looked, auth protected (not logged-in);
-
-- Fix time zone missmatch (localhost and vercel have 2 different TZ, probably);
-
 (not urgent or needed):
 - mail.ts updates (order email);
 

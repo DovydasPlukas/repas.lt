@@ -68,8 +68,7 @@ async function verifyStripePayment(
       console.log('Order created successfully with ID:', createData.orderId);
       sessionStorage.removeItem('pendingOrderData');
 
-      // Cache the full order so the confirmation page can display it without
-      // needing an authenticated API call — guests can't use GET /api/orders.
+      // Cache the full order so guests can display it without an authenticated API call.
       try {
         if (createData.order) {
           sessionStorage.setItem('guestOrderData', JSON.stringify(createData.order));
@@ -103,7 +102,6 @@ async function fetchSingleOrder(
 ): Promise<boolean> {
   try {
     const res = await fetch(`/api/orders/${id}`);
-    
     // Catch backend protection mechanisms directly
     if (res.status === 401 || res.status === 403) {
       if (mounted.current) {
@@ -138,12 +136,10 @@ async function fetchOrderFromList(
   try {
     console.log('Fetching orders list to find order:', id);
     const res = await fetch('/api/orders');
-    
     if (res.status === 401 || res.status === 403) {
       setError('Prisijunkite, norėdami peržiūrėti užsakymą.');
       return;
     }
-    
     if (!res.ok) throw new Error('Failed to fetch orders list');
 
     const json = await res.json();
@@ -204,7 +200,7 @@ export function useOrderConfirmation() {
         const orderDataStr = sessionStorage.getItem('pendingOrderData');
 
         if (orderDataStr) {
-          // Fresh load after payment — verify and create order
+          // Fresh load after Stripe redirect — verify payment and create order
           const stripeOrderId = await verifyStripePayment(sessionId, setError);
           if (!stripeOrderId) {
             setLoading(false);
@@ -212,14 +208,17 @@ export function useOrderConfirmation() {
           }
           resolvedOrderId = stripeOrderId;
           console.log('Stripe payment verified, resolved orderId:', resolvedOrderId);
+          window.history.replaceState(
+            {},
+            '',
+            `/order-confirmation?order=${resolvedOrderId}`,
+          );
         } else {
-          // Refresh after payment — order already created, fall through to list fetch
-          console.log('Refresh detected (no sessionStorage), will fetch order from list');
+          // Refresh after payment — order already created, fall through to cache / API fetch
+          console.log('Refresh detected (no sessionStorage), will fetch order from cache or API');
         }
       }
 
-      // For guests, the order was cached in sessionStorage at creation time.
-      // Use it directly to avoid needing authenticated API access.
       let resolvedFromCache = false;
       if (resolvedOrderId) {
         try {
@@ -231,7 +230,6 @@ export function useOrderConfirmation() {
                 setOrder(cachedOrder);
                 setLoading(false);
               }
-              sessionStorage.removeItem('guestOrderData');
               resolvedFromCache = true;
             }
           }

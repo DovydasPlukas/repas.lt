@@ -11,7 +11,7 @@ export const generateTimeRanges = (): string[] => {
 
 export const TIME_RANGES = generateTimeRanges();
 
-/**Format a Date as YYYY-MM-DD using LOCAL date parts.*/
+/** Format a Date as YYYY-MM-DD using LOCAL date parts. */
 export const toISODate = (d: Date): string => {
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, '0');
@@ -40,18 +40,93 @@ export const slotKey = (date?: string, time?: string): string =>
 /** Extract the start time (HH:MM) from a range string like "10:00-11:00" */
 export const getRangeStart = (range: string): string => range.split('-')[0];
 
-/**
- * Parse a date string and time-range into a Date object using the range's
- * start time. Returns null if inputs are missing or invalid.
- */
+// TIMEZONE CONSTANTS
+const VILNIUS_TZ = 'Europe/Vilnius';
+// ---------------------------------------------------------------------------
+// INTERNAL HELPER: convert a "Vilnius local" ISO string to a real UTC Date.
+// Treat the input string as Vilnius local time regardless of runtime TZ.
+//
+// Example — user picks 17:00 in Vilnius (UTC+3 / EEST):
+//   asUtc        = 2025-05-10T17:00:00Z
+//   vilniusShown = 2025-05-10T20:00:00Z  (Intl says "UTC+3 shows 20:00 for 17:00Z")
+//   offset       = +3 h
+//   result       = 2025-05-10T14:00:00Z  <- correct UTC representation of 17:00 Vilnius
+// ---------------------------------------------------------------------------
+function vilniusLocalToUTC(localIso: string): Date | null {
+  // Treat the string as UTC to get a reference Date
+  const asUtc = new Date(`${localIso}Z`);
+  if (isNaN(asUtc.getTime())) return null;
+
+  // What does Vilnius *display* for this UTC moment?
+  // sv-SE locale returns a sortable "YYYY-MM-DD HH:MM:SS" format.
+  const vilniusDisplayed = asUtc.toLocaleString('sv-SE', { timeZone: VILNIUS_TZ });
+  const vilniusShown = new Date(`${vilniusDisplayed}Z`);
+
+  // offset in ms: how far ahead Vilnius is from UTC at this instant
+  const offsetMs = vilniusShown.getTime() - asUtc.getTime();
+
+  // Subtract the offset to go from "local treated as UTC" -> actual UTC
+  return new Date(asUtc.getTime() - offsetMs);
+}
+
 export const parseDateTime = (date?: string, range?: string): Date | null => {
   if (!date || !range) return null;
-  const [y, m, d] = date.split('-').map(Number);
-  const [h, min] = getRangeStart(range).split(':').map(Number);
-  const dt = new Date(y, m - 1, d, h, min);
-  if (Number.isNaN(dt.getTime())) return null;
-  return dt;
+  const start = getRangeStart(range);
+  const result = vilniusLocalToUTC(`${date}T${start}:00`);
+  return result;
 };
+
+// ---------------------------------------------------------------------------
+// DISPLAY HELPERS
+//
+// The DB stores pickupDateTime / deliveryDateTime as UTC. These helpers
+// convert them back to Europe/Vilnius local time for display — so the
+// page always shows the time the customer actually selected,
+// regardless of which server (localhost or Vercel) renders the page.
+// ---------------------------------------------------------------------------
+
+/**
+ * Format a UTC datetime (ISO string or Date) as a short Vilnius date.
+ * e.g. "2025-05-10T14:00:00.000Z" -> "2025-05-10"
+ */
+export const formatVilniusDate = (utc: string | Date): string => {
+  const d = typeof utc === 'string' ? new Date(utc) : utc;
+  return d.toLocaleDateString('sv-SE', { timeZone: VILNIUS_TZ }); // "YYYY-MM-DD"
+};
+
+/**
+ * Format a UTC datetime (ISO string or Date) as a Vilnius time string.
+ * e.g. "2025-05-10T14:00:00.000Z" -> "17:00"
+ */
+export const formatVilniusTime = (utc: string | Date): string => {
+  const d = typeof utc === 'string' ? new Date(utc) : utc;
+  return d.toLocaleTimeString('lt-LT', {
+    timeZone: VILNIUS_TZ,
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+};
+
+/**
+ * Format a UTC datetime (ISO string or Date) as a full Vilnius date + time
+ * label suitable for the order confirmation page.
+ * e.g. "2025-05-10T14:00:00.000Z" -> "Šeš, 10 geg., 17:00"
+ */
+export const formatVilniusDateTime = (utc: string | Date): string => {
+  const d = typeof utc === 'string' ? new Date(utc) : utc;
+  return d.toLocaleString('lt-LT', {
+    timeZone: VILNIUS_TZ,
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+};
+
+// DATE PICKER HELPERS
 
 const LT_DAYS_SHORT = ['Sek', 'Pir', 'Ant', 'Tre', 'Ket', 'Pen', 'Šeš'] as const;
 const LT_MONTHS_GEN = [
