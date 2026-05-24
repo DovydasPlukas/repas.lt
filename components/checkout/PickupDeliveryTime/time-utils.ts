@@ -42,16 +42,21 @@ export const getRangeStart = (range: string): string => range.split('-')[0];
 
 // TIMEZONE CONSTANTS
 const VILNIUS_TZ = 'Europe/Vilnius';
-// ---------------------------------------------------------------------------
-// INTERNAL HELPER: convert a "Vilnius local" ISO string to a real UTC Date.
-// Treat the input string as Vilnius local time regardless of runtime TZ.
-//
-// Example — user picks 17:00 in Vilnius (UTC+3 / EEST):
-//   asUtc        = 2025-05-10T17:00:00Z
-//   vilniusShown = 2025-05-10T20:00:00Z  (Intl says "UTC+3 shows 20:00 for 17:00Z")
-//   offset       = +3 h
-//   result       = 2025-05-10T14:00:00Z  <- correct UTC representation of 17:00 Vilnius
-// ---------------------------------------------------------------------------
+/**
+ * INTERNAL HELPER: convert a "Vilnius local" ISO string to a real UTC Date.
+ * 
+ * Treat the input string as Vilnius local time regardless of runtime TZ.
+ *
+ * Example — user picks 17:00 in Vilnius (UTC+3 / EEST):
+ * 
+ *   asUtc        = 2025-05-10T17:00:00Z
+ * 
+ *   vilniusShown = 2025-05-10T20:00:00Z  (Intl says "UTC+3 shows 20:00 for 17:00Z")
+ * 
+ *   offset       = +3 h
+ * 
+ *   result       = 2025-05-10T14:00:00Z  <- correct UTC representation of 17:00 Vilnius
+ */ 
 function vilniusLocalToUTC(localIso: string): Date | null {
   // Treat the string as UTC to get a reference Date
   const asUtc = new Date(`${localIso}Z`);

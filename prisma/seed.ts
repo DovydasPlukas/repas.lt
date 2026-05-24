@@ -1,10 +1,8 @@
 // npx prisma db seed
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
+/* eslint-disable */
 const fs = require('fs');
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 const path = require('path');
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { PrismaClient } = require('@prisma/client');
 
 
@@ -12,7 +10,7 @@ const seed = new PrismaClient();
 
 async function main() {
     // Change the path to your SQL file as needed
-  const sqlPath = path.join(__dirname, '../scripts/seed_database_3.sql');
+  const sqlPath = path.join(__dirname, '../scripts/seed_database.sql');
 
   const sql = fs.readFileSync(sqlPath, 'utf-8');
 

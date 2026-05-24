@@ -29,7 +29,7 @@ export const settings = async (
         return { error: "Neleistina" };
     }
 
-    // Blokuojame pakeitimus, jei vartotojas 0Auth
+    // Block changes if user is OAuth
     if (user.is0Auth){
         values.email = undefined;
         values.password = undefined;
@@ -37,7 +37,7 @@ export const settings = async (
         values.isTwoFactorEnabled = undefined;
     }
 
-    // Tikriname, ar keičiamas email
+    // Check if email is being changed
     if (values.email && values.email !== user.email){
         const existingUser = await getUserByEmail(values.email);
 
@@ -59,7 +59,7 @@ export const settings = async (
         return { success: "Patvirtinimo el. laiškas išsiųstas!" };
     }
 
-    // Keičiamas slaptažodis
+    // Change password
     if (values.password && values.newPassword && dbUser.password){
         const passwordsMatch = await bcrypt.compare(
             values.password,

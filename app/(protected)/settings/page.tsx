@@ -153,6 +153,7 @@ const SettingsPage = () => {
                 </>
               )}
 
+              {/* role switch */}
               <FormField
                 control={form.control}
                 name="role"

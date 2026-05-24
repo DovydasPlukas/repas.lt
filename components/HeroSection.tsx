@@ -26,7 +26,7 @@ export default function HeroSection() {
 
   return (
     <div className="relative w-full h-[500px] sm:h-[550px] md:h-[600px] lg:h-[650px] rounded-xl overflow-hidden bg-gradient-to-r from-[#D0E6F7]/10 via-[#E4F0FA]/50 to-[#D0E6F7]/40 animate-gradient-x">
-      {/* --- BACKGROUND: dynamic rising bubbles --- */}
+      {/* Background: dynamic rising bubbles */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         {bubbles.map((bubble) => (
           <div
@@ -43,7 +43,7 @@ export default function HeroSection() {
         ))}
       </div>
 
-      {/* --- BACKGROUND: animated waves at the bottom --- */}
+      {/* Background: animated waves at the bottom */}
       <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] z-0 pointer-events-none">
         <svg
           className="relative block w-[200%] h-[100px] sm:h-[150px] animate-wave opacity-60"

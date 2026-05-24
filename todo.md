@@ -6,4 +6,4 @@
 
 - Rename page names to lithuanian, example "/order" to "/uzsakymas";
 
-- Remove admin role select in **`app/(protected)/settings/page.tsx`** (left it for now for testing user/admin interfaces).
+- Remove admin role select (role switch) in **`app/(protected)/settings/page.tsx`** (left it for now for testing user/admin interfaces).

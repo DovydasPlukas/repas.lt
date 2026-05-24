@@ -33,6 +33,7 @@ export const NewPasswordSchema = z.object({
     }),
 });
 
+// role switch - "role: z.enum([UserRole.ADMIN, UserRole.USER]),"
 export const SettingsSchema = z.object({
     isTwoFactorEnabled: z.optional(z.boolean()),
     role: z.enum([UserRole.ADMIN, UserRole.USER]),
